@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mundo das Flores</title>
+<style>
+:root{--pink:#e95b94;--pink2:#ffd7e6;--green:#2f7d4a;--green2:#dff2e4;--dark:#173d25;--white:#fffafd}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;color:var(--dark);background:linear-gradient(180deg,#fff9fc,#f1fff4);min-height:100vh}
+header{position:sticky;top:0;z-index:9;background:#fffafcee;border-bottom:2px solid var(--pink2);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.logo{font-size:21px;font-weight:900;color:var(--green)}
+nav{display:flex;gap:7px;flex-wrap:wrap}button{border:0;border-radius:13px;padding:10px 13px;font-weight:800;cursor:pointer;transition:.18s}button:hover{transform:translateY(-2px)}
+.nav{background:var(--pink2);color:var(--dark)}
+main{max-width:1050px;margin:auto;padding:24px 15px 60px}.screen{display:none}.active{display:block}
+.hero{text-align:center;padding:48px 8px}.petals{font-size:42px;letter-spacing:8px}.hero h1{font-size:clamp(42px,8vw,76px);margin:18px 0 8px;color:var(--pink)}.hero p{font-size:19px;max-width:700px;margin:0 auto 25px}
+.book{max-width:600px;margin:28px auto;display:grid;grid-template-columns:1fr 1fr;gap:4px}.page{min-height:260px;padding:28px;background:#fff4f8;border:5px solid #e4b5c8}.left{border-radius:20px 4px 4px 20px}.right{border-radius:4px 20px 20px 4px}.flower{font-size:90px}.explore{font-size:22px;background:var(--pink);color:#fff;padding:16px 30px;box-shadow:0 10px 26px #e95b9444}
+.card{background:#ffffffee;border:2px solid #e8c1d2;border-radius:20px;padding:21px;margin:15px 0;box-shadow:0 12px 28px #275c3615}.title{color:var(--green)}
+.row{display:flex;gap:9px;flex-wrap:wrap}.row input{flex:1;min-width:230px;padding:14px;border:2px solid #b9d6bf;border-radius:13px;font-size:16px}.search{background:var(--green);color:white}
+.photo{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}.photo label,.photo button{flex:1;min-width:180px;text-align:center}.photo label{padding:13px;background:var(--green2);border:2px solid #b9d6bf;border-radius:13px;cursor:pointer;font-weight:800}.photo input{display:none}#preview{display:none;max-width:100%;max-height:300px;margin-top:13px;border-radius:15px;border:3px solid var(--pink2)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;margin-top:15px}.flowerbtn{min-height:110px;background:linear-gradient(135deg,#fff0f6,#e9f7ec);border:2px solid #e6c1d2;color:var(--dark)}.flowerbtn span{display:block;font-size:40px;margin-bottom:5px}
+.result{display:grid;grid-template-columns:1fr 1.2fr;gap:18px}.result img{width:100%;max-height:360px;object-fit:cover;border-radius:17px;border:3px solid #e8bbce;background:#fff0f6}@media(max-width:720px){.result{grid-template-columns:1fr}.book{grid-template-columns:1fr}}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{flex:1;min-width:145px}.save{background:var(--green);color:white}.fav{background:var(--pink2);color:#74264b}.listen{background:var(--green2);color:#235c34}
+.loader{text-align:center;padding:70px}.spin{width:50px;height:50px;border:6px solid var(--pink2);border-top-color:var(--green);border-radius:50%;margin:auto auto 15px;animation:s .7s linear infinite}@keyframes s{to{transform:rotate(360deg)}}
+.item{padding:14px;border-radius:13px;background:#fff5f8;border:1px solid #efbfd2;margin:9px 0}.trophy{display:inline-block;font-size:53px;text-align:center;padding:19px;margin:5px;border-radius:18px;border:2px solid #e2c0d0;background:linear-gradient(135deg,#fff0f6,#edf8ef)}
+.chat{height:220px;overflow:auto;background:#f7fff8;border:1px solid #cae2cf;border-radius:13px;padding:11px}.msg{background:#e3f3e6;padding:9px;border-radius:11px;margin:6px 0;max-width:85%}.me{background:#f7d9e5;margin-left:auto}.toast{display:none;position:fixed;right:16px;bottom:16px;background:var(--green);color:white;padding:12px 16px;border-radius:13px;font-weight:800;z-index:30}
+footer{text-align:center;color:#4d7658;padding:30px 10px}
+</style>
+
+<style id="brilho-extra">
+body{
+  background:
+    radial-gradient(circle at 15% 12%,rgba(255,183,211,.72) 0 2%,transparent 12%),
+    radial-gradient(circle at 86% 18%,rgba(157,224,177,.62) 0 2%,transparent 13%),
+    radial-gradient(circle at 50% 55%,rgba(255,218,233,.38) 0 2%,transparent 18%),
+    linear-gradient(180deg,#fff9fc 0%,#f0fff4 48%,#fff7fb 100%);
+}
+body::before,body::after{
+  content:"✦";
+  position:fixed;
+  font-size:30px;
+  pointer-events:none;
+  z-index:0;
+  opacity:.65;
+  animation:sparkleFloat 4.8s ease-in-out infinite;
+}
+body::before{left:5vw;top:25vh;color:#e95b94}
+body::after{right:6vw;top:70vh;color:#58a86f;animation-delay:1.7s}
+header,main,footer{position:relative;z-index:1}
+.logo{
+  text-shadow:0 0 10px rgba(233,91,148,.5),0 0 18px rgba(82,157,101,.25);
+  animation:softGlow 2.4s ease-in-out infinite;
+}
+.nav{
+  box-shadow:0 0 0 1px rgba(255,255,255,.5) inset,0 5px 14px rgba(233,91,148,.12);
+}
+.nav:hover{
+  box-shadow:0 0 16px rgba(233,91,148,.38),0 5px 14px rgba(47,125,74,.12);
+}
+.hero{
+  background:radial-gradient(circle at center,rgba(255,255,255,.72),transparent 62%);
+}
+.petals{
+  filter:drop-shadow(0 0 8px rgba(233,91,148,.35));
+  animation:petalGlow 2.3s ease-in-out infinite, float 4s ease-in-out infinite;
+}
+.hero h1{
+  animation:titlePulse 2.6s ease-in-out infinite;
+}
+.flowerbook{
+  position:relative;
+}
+.flowerbook::before,.flowerbook::after{
+  content:"✦";
+  position:absolute;
+  color:#f4a4c4;
+  font-size:34px;
+  filter:drop-shadow(0 0 8px rgba(233,91,148,.85));
+  animation:twinkle 1.8s ease-in-out infinite;
+  pointer-events:none;
+}
+.flowerbook::before{left:-23px;top:28px}
+.flowerbook::after{right:-23px;bottom:25px;animation-delay:.8s;color:#72b983}
+.page{
+  box-shadow:0 12px 28px rgba(47,125,74,.10),0 0 18px rgba(233,91,148,.09);
+  transition:transform .35s ease,box-shadow .35s ease;
+}
+.page:hover{
+  transform:translateY(-5px) rotate(-.4deg);
+  box-shadow:0 18px 35px rgba(47,125,74,.14),0 0 28px rgba(233,91,148,.2);
+}
+.page.right:hover{transform:translateY(-5px) rotate(.4deg)}
+.flower{
+  filter:drop-shadow(0 0 9px rgba(233,91,148,.45));
+  animation:flowerBreath 2.2s ease-in-out infinite;
+}
+.explore{
+  position:relative;
+  animation:buttonGlow 1.7s ease-in-out infinite;
+  overflow:hidden;
+}
+.explore::after{
+  content:"";
+  position:absolute;
+  top:-20%;
+  left:-80%;
+  width:45%;
+  height:140%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.8),transparent);
+  transform:skewX(-20deg);
+  animation:shineSweep 2.8s linear infinite;
+}
+.card{
+  box-shadow:0 12px 28px rgba(39,92,54,.10),0 0 22px rgba(233,91,148,.09);
+  transition:box-shadow .25s ease,transform .25s ease;
+}
+.card:hover{
+  box-shadow:0 16px 34px rgba(39,92,54,.12),0 0 28px rgba(233,91,148,.15);
+}
+.flowerbtn{
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 7px 18px rgba(47,125,74,.08);
+}
+.flowerbtn::after{
+  content:"";
+  position:absolute;
+  inset:-60%;
+  background:radial-gradient(circle,rgba(255,255,255,.8) 0 4%,transparent 5% 100%);
+  opacity:0;
+  animation:cardSparkle 3.2s ease-in-out infinite;
+}
+.flowerbtn:nth-child(2)::after{animation-delay:.4s}
+.flowerbtn:nth-child(3)::after{animation-delay:.8s}
+.flowerbtn:nth-child(4)::after{animation-delay:1.2s}
+.flowerbtn:nth-child(5)::after{animation-delay:1.6s}
+.flowerbtn:nth-child(6)::after{animation-delay:2s}
+.flowerbtn:nth-child(7)::after{animation-delay:2.4s}
+.flowerbtn:nth-child(8)::after{animation-delay:2.8s}
+.flowerbtn span{
+  filter:drop-shadow(0 0 7px rgba(233,91,148,.35));
+  animation:miniFlower 2.1s ease-in-out infinite;
+}
+.flowerbtn:nth-child(even) span{animation-delay:.35s}
+.search{
+  box-shadow:0 0 14px rgba(47,125,74,.25);
+}
+.search:hover{box-shadow:0 0 20px rgba(47,125,74,.38)}
+.actions button{
+  box-shadow:0 6px 15px rgba(36,86,52,.08);
+}
+.save:hover,.listen:hover,.fav:hover{
+  box-shadow:0 0 20px rgba(233,91,148,.25);
+}
+.resultImage{
+  box-shadow:0 0 22px rgba(233,91,148,.18);
+}
+.trophy{
+  animation:trophyGlow 2.4s ease-in-out infinite;
+}
+.trophy:nth-child(odd){animation-delay:.7s}
+.toast{
+  box-shadow:0 0 22px rgba(47,125,74,.35);
+}
+@keyframes softGlow{
+  0%,100%{text-shadow:0 0 8px rgba(233,91,148,.35),0 0 16px rgba(82,157,101,.2)}
+  50%{text-shadow:0 0 16px rgba(233,91,148,.65),0 0 26px rgba(82,157,101,.35)}
+}
+@keyframes sparkleFloat{
+  0%,100%{transform:translateY(0) scale(.9);opacity:.35}
+  50%{transform:translateY(-18px) scale(1.15);opacity:.85}
+}
+@keyframes petalGlow{
+  0%,100%{filter:drop-shadow(0 0 6px rgba(233,91,148,.25))}
+  50%{filter:drop-shadow(0 0 15px rgba(233,91,148,.65))}
+}
+@keyframes titlePulse{
+  0%,100%{transform:scale(1);text-shadow:0 5px 0 #ffe3ee,0 0 0 rgba(233,91,148,0)}
+  50%{transform:scale(1.025);text-shadow:0 5px 0 #ffe3ee,0 0 24px rgba(233,91,148,.34)}
+}
+@keyframes twinkle{
+  0%,100%{transform:scale(.65) rotate(0);opacity:.25}
+  50%{transform:scale(1.2) rotate(20deg);opacity:1}
+}
+@keyframes flowerBreath{
+  0%,100%{transform:scale(1) rotate(0)}
+  50%{transform:scale(1.055) rotate(-2deg)}
+}
+@keyframes buttonGlow{
+  0%,100%{box-shadow:0 0 0 5px #ffe1ec,0 12px 28px rgba(225,79,143,.22),0 0 8px rgba(233,91,148,.18)}
+  50%{box-shadow:0 0 0 7px #ffe1ec,0 14px 35px rgba(225,79,143,.32),0 0 24px rgba(233,91,148,.35)}
+}
+@keyframes shineSweep{
+  0%{left:-85%}
+  55%,100%{left:130%}
+}
+@keyframes miniFlower{
+  0%,100%{transform:translateY(0) scale(1)}
+  50%{transform:translateY(-3px) scale(1.08)}
+}
+@keyframes cardSparkle{
+  0%,100%{opacity:0;transform:translate(0,0) rotate(0)}
+  50%{opacity:.6;transform:translate(25%,10%) rotate(10deg)}
+}
+@keyframes trophyGlow{
+  0%,100%{box-shadow:0 0 0 rgba(233,91,148,0),0 12px 20px rgba(47,125,74,.08)}
+  50%{box-shadow:0 0 23px rgba(233,91,148,.3),0 12px 24px rgba(47,125,74,.1)}
+}
+
+/* ✨ MAIS BRILHOS — Mundo das Flores */
+.sparkles{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  overflow:hidden;
+}
+.sparkles span{
+  position:absolute;
+  color:#fff;
+  font-size:18px;
+  text-shadow:0 0 6px #fff,0 0 14px #e95b94,0 0 24px #72b983;
+  animation:sparkleDrift linear infinite;
+  opacity:0;
+}
+.sparkles span:nth-child(1){left:8%;top:15%;animation-duration:4.5s;animation-delay:.2s}
+.sparkles span:nth-child(2){left:22%;top:72%;animation-duration:5.7s;animation-delay:1.1s}
+.sparkles span:nth-child(3){left:38%;top:28%;animation-duration:4.9s;animation-delay:2s}
+.sparkles span:nth-child(4){left:55%;top:82%;animation-duration:6.2s;animation-delay:.7s}
+.sparkles span:nth-child(5){left:70%;top:18%;animation-duration:5.1s;animation-delay:1.8s}
+.sparkles span:nth-child(6){left:84%;top:48%;animation-duration:4.7s;animation-delay:2.6s}
+.sparkles span:nth-child(7){left:93%;top:78%;animation-duration:5.9s;animation-delay:.4s}
+.sparkles span:nth-child(8){left:47%;top:8%;animation-duration:4.2s;animation-delay:3s}
+.sparkles span:nth-child(9){left:13%;top:48%;animation-duration:6.4s;animation-delay:1.5s}
+.sparkles span:nth-child(10){left:77%;top:88%;animation-duration:4.8s;animation-delay:2.2s}
+.sparkles span:nth-child(11){left:31%;top:91%;animation-duration:5.4s;animation-delay:.9s}
+.sparkles span:nth-child(12){left:62%;top:38%;animation-duration:6s;animation-delay:3.2s}
+
+@keyframes sparkleDrift{
+  0%{transform:translateY(20px) scale(.35) rotate(0deg);opacity:0}
+  18%{opacity:.9}
+  50%{transform:translateY(-18px) scale(1.25) rotate(90deg);opacity:1}
+  82%{opacity:.7}
+  100%{transform:translateY(-55px) scale(.45) rotate(180deg);opacity:0}
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="sparkles" aria-hidden="true">
+  <span>✦</span><span>✧</span><span>✦</span><span>✧</span>
+  <span>✦</span><span>✧</span><span>✦</span><span>✧</span>
+  <span>✦</span><span>✧</span><span>✦</span><span>✧</span>
+</div>
+<header>
+<div class="logo">🌸 Mundo das Flores</div>
+<nav>
+<button class="nav" onclick="show('inicio')">Início</button>
+<button class="nav" onclick="show('descobrir')">Descobrir</button>
+<button class="nav" onclick="show('professor')">🤖 Professor</button>
+<button class="nav" onclick="show('livro')">📖 Livro</button>
+<button class="nav" onclick="show('conquistas')">🏆 Conquistas</button>
+</nav>
+</header>
+
+<main>
+<section id="inicio" class="screen active">
+<div class="hero">
+<div class="petals">🌸 🌿 🌷 🌿 🌺</div>
+<h1>Mundo das Flores</h1>
+<p>Um jardim mágico para descobrir flores, aprender curiosidades e guardar suas descobertas.</p>
+<div class="book">
+<div class="page left"><div class="flower">🌹</div><h2>Segredos das Flores</h2><p>Cores, perfumes, cuidados e curiosidades.</p></div>
+<div class="page right"><div class="flower">🌷</div><h2>Livro Floral</h2><p>Salve suas flores e conquiste troféus.</p></div>
+</div>
+<button class="explore" onclick="show('descobrir')">EXPLORAR O JARDIM ✨</button>
+</div>
+</section>
+
+<section id="descobrir" class="screen">
+<div class="card">
+<h1 class="title">🌷 Descobrir uma flor</h1>
+<p>Este site agora é focado somente em flores, com tema rosa e verde.</p>
+<div class="row"><input id="q" placeholder="Qual flor você quer descobrir?"><button class="search" onclick="searchFlower()">🔎 PESQUISAR</button></div>
+<div class="photo">
+<label>📸 Escolher foto<input id="photo" type="file" accept="image/*" onchange="preview(event)"></label>
+<button class="search" onclick="sendPhoto()">🌸 ENVIAR FOTO</button>
+</div>
+<img id="preview" alt="Prévia">
+<div class="magic-line" style="text-align:center;color:#e95b94;font-size:24px;letter-spacing:6px;margin:8px 0 14px">✦ 🌸 ✧ 🌿 ✦ 🌷 ✧ 🌺 ✦</div>
+<h2 class="title">🌺 Flores do jardim</h2>
+<div class="grid">
+<button class="flowerbtn" onclick="openFlower('rosa')"><span>🌹</span>Rosa</button>
+<button class="flowerbtn" onclick="openFlower('girassol')"><span>🌻</span>Girassol</button>
+<button class="flowerbtn" onclick="openFlower('tulipa')"><span>🌷</span>Tulipa</button>
+<button class="flowerbtn" onclick="openFlower('orquidea')"><span>🌺</span>Orquídea</button>
+<button class="flowerbtn" onclick="openFlower('margarida')"><span>🌼</span>Margarida</button>
+<button class="flowerbtn" onclick="openFlower('lavanda')"><span>💜</span>Lavanda</button>
+<button class="flowerbtn" onclick="openFlower('jasmim')"><span>🤍</span>Jasmim</button>
+<button class="flowerbtn" onclick="openFlower('hibisco')"><span>🌺</span>Hibisco</button>
+</div>
+</div>
+</section>
+
+<section id="loading" class="screen"><div class="loader"><div class="spin"></div><h2>🌿 Abrindo o jardim...</h2><p>Preparando sua descoberta.</p></div></section>
+
+<section id="resultado" class="screen">
+<div class="card"><h1 class="title">✨ Descoberta floral</h1>
+<div class="result"><div><img id="rimg" alt="Flor"></div><div><h2 id="rname"></h2><p id="rtags"></p><p id="rhab"></p><p id="rcare"></p><p id="rcur"></p><p id="rdanger"></p>
+<div class="actions"><button class="save" onclick="save()">💾 Salvar descoberta</button><button class="fav" onclick="favorite()">⭐ Favoritar</button><button class="listen" onclick="listen()">🔊 Ouvir informações</button></div>
+</div></div></div>
+</section>
+
+<section id="livro" class="screen"><div class="card"><h1 class="title">📖 Livro Mágico das Flores</h1><h2>🌸 Primeiras descobertas</h2><div id="saved"></div><h2>🎖️ Conquistas dentro do livro</h2><p>Suas descobertas salvas aparecem aqui.</p></div></section>
+
+<section id="conquistas" class="screen"><div class="card"><h1 class="title">🏆 Conquistas</h1><p>Aqui ficam somente os troféus.</p>
+<div class="trophy">🌱<br><small>Primeira flor</small></div><div class="trophy">🌸<br><small>Exploradora Floral</small></div><div class="trophy">👑<br><small>Mestre das Flores</small></div>
+</div></section>
+
+<section id="professor" class="screen"><div class="card"><h1 class="title">🤖 Professor das Flores</h1><div id="chat" class="chat"><div class="msg">Olá! 🌿 Pergunte sobre flores, pétalas, polinização ou jardins.</div></div>
+<div class="row" style="margin-top:10px"><input id="question" placeholder="Pergunte ao Professor..."><button class="search" onclick="ask()">ENVIAR</button></div>
+<div class="actions"><button class="fav" onclick="lesson()">📚 Aula especial</button><button class="listen" onclick="pronounce()">🗣️ Desafio de pronúncia</button></div>
+</div></section>
+</main>
+
+<footer>🌸 Mundo das Flores • rosa + verde • jardim de descobertas 🌿</footer>
+<div id="toast" class="toast"></div>
+
+<script>
+const F={
+rosa:{n:"Rosa",i:"🌹",t:"🌸 Flor ornamental • 💗 Muitas variedades",h:"Jardins e áreas cultivadas com luz e condições adequadas.",c:"Precisa de água, luz e cuidados com o solo.",u:"Existem rosas de muitas cores e variedades.",d:"⚠️ Algumas roseiras têm espinhos; manuseie com cuidado."},
+girassol:{n:"Girassol",i:"🌻",t:"☀️ Flor • 🐝 Polinizadores",h:"Áreas de cultivo com bastante luz solar.",c:"Precisa de água e nutrientes para crescer.",u:"Suas flores podem atrair diferentes polinizadores.",d:"✅ Sem alerta especial nesta demonstração."},
+tulipa:{n:"Tulipa",i:"🌷",t:"🌷 Ornamental • 🎨 Muitas cores",h:"Jardins e vasos, especialmente em condições de clima adequadas.",c:"Gosta de boas condições de solo, água e luz.",u:"Há tulipas de muitas cores e formatos.",d:"✅ Sem alerta especial nesta demonstração."},
+orquidea:{n:"Orquídea",i:"🌺",t:"🌺 Flor diversa • 🌿 Muitas espécies",h:"O habitat varia conforme a espécie.",c:"Luz, água e ventilação devem ser adequadas à espécie.",u:"A família das orquídeas tem enorme diversidade.",d:"✅ Sem alerta especial nesta demonstração."},
+margarida:{n:"Margarida",i:"🌼",t:"🌼 Flor • 🐝 Polinizadores",h:"Jardins e áreas abertas.",c:"Precisa de luz e água em quantidade adequada.",u:"O centro reúne muitas pequenas estruturas importantes para a reprodução.",d:"✅ Sem alerta especial nesta demonstração."},
+lavanda:{n:"Lavanda",i:"💜",t:"💜 Perfumada • 🐝 Polinizadores",h:"Locais ensolarados e com boa drenagem.",c:"Prefere solo bem drenado e bastante luz.",u:"É conhecida por seu aroma característico.",d:"✅ Sem alerta especial nesta demonstração."},
+jasmim:{n:"Jasmim",i:"🤍",t:"🤍 Perfumado • 🌿 Jardim",h:"Muitas espécies são cultivadas em jardins.",c:"Precisa de luz e água adequadas à espécie.",u:"Muitas espécies são conhecidas por suas flores perfumadas.",d:"✅ Sem alerta especial nesta demonstração."},
+hibisco:{n:"Hibisco",i:"🌺",t:"🌺 Ornamental • 🌿 Arbusto",h:"Jardins e regiões de clima adequado à espécie.",c:"Gosta de luz e rega adequada.",u:"As flores grandes e coloridas são muito chamativas.",d:"✅ Sem alerta especial nesta demonstração."}
+};
+let current=null, photoUrl=null;
+
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");if(id==="livro")renderSaved();scrollTo(0,0)}
+function toast(t){const e=document.getElementById("toast");e.textContent=t;e.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>e.style.display="none",1600)}
+function picture(key){const f=F[key],c=document.createElement("canvas");c.width=800;c.height=500;const x=c.getContext("2d");const g=x.createLinearGradient(0,0,800,500);g.addColorStop(0,"#fff0f6");g.addColorStop(1,"#e6f7ea");x.fillStyle=g;x.fillRect(0,0,800,500);x.font="220px Arial";x.textAlign="center";x.textBaseline="middle";x.fillText(f.i,400,235);x.fillStyle="#2f7d4a";x.font="bold 38px Arial";x.fillText(f.n,400,430);return c.toDataURL()}
+function openFlower(key, img=null){const f=F[key];if(!f)return;current={key,f};document.getElementById("rname").textContent=f.n;document.getElementById("rtags").textContent=f.t;document.getElementById("rhab").textContent="🏡 Habitat: "+f.h;document.getElementById("rcare").textContent="💧 Cuidados: "+f.c;document.getElementById("rcur").textContent="💡 Curiosidade: "+f.u;document.getElementById("rdanger").textContent=f.d;document.getElementById("rimg").src=img||picture(key);show("resultado")}
+function searchFlower(){const q=(document.getElementById("q").value||"").trim().toLowerCase();if(!q){toast("Digite o nome de uma flor 🌸");return}const k=Object.keys(F).find(k=>q.includes(k)||F[k].n.toLowerCase().includes(q));if(k)openFlower(k);else toast("Essa flor ainda não está no jardim desta versão. 🌿")}
+function preview(e){const f=e.target.files?.[0];if(!f)return;photoUrl=URL.createObjectURL(f);const p=document.getElementById("preview");p.src=photoUrl;p.style.display="block";toast("Foto pronta! Toque em ENVIAR FOTO.")}
+function sendPhoto(){if(!photoUrl){toast("Escolha uma foto primeiro 📸");return}show("loading");setTimeout(()=>{show("descobrir");toast("Foto recebida! Nesta versão, escolha a flor pelo nome para ver as informações.")},220)}
+function save(){if(!current)return;const a=JSON.parse(localStorage.getItem("savedFlowers")||"[]");if(!a.some(x=>x.name===current.f.n)){a.push({name:current.f.n,icon:current.f.i,curiosity:current.f.u});localStorage.setItem("savedFlowers",JSON.stringify(a));toast("💾 Salva no Livro Mágico! +50 pontos")}else toast("Essa flor já está salva.")}
+function favorite(){toast("⭐ Flor adicionada aos favoritos!")}
+function renderSaved(){const a=JSON.parse(localStorage.getItem("savedFlowers")||"[]"),b=document.getElementById("saved");b.innerHTML=a.length?a.map(x=>`<div class="item"><b>${x.icon} ${x.name}</b><p>💡 ${x.curiosity}</p></div>`).join(""):"<p>🌱 Nenhuma flor salva ainda.</p>"}
+function listen(){if(!current)return;if("speechSynthesis"in window){speechSynthesis.cancel();const f=current.f,u=new SpeechSynthesisUtterance(f.n+". "+f.u+". "+f.h+". "+f.c);u.lang="pt-BR";speechSynthesis.speak(u);toast("🔊 O Professor está lendo.")}else toast("Leitura de voz não disponível.")}
+function ask(){const i=document.getElementById("question"),q=i.value.trim();if(!q)return;const c=document.getElementById("chat");c.innerHTML+=`<div class="msg me">${safe(q)}</div>`;const l=q.toLowerCase();let a=l.includes("polin")?"Muitas flores são visitadas por polinizadores, como abelhas e borboletas. 🐝🦋":l.includes("petala")||l.includes("pétala")?"As pétalas ajudam a deixar muitas flores chamativas e podem ajudar a atrair polinizadores. 🌸":"Escolha uma flor no jardim e eu conto habitat, cuidados e curiosidades. 🌿";c.innerHTML+=`<div class="msg">${a}</div>`;c.scrollTop=c.scrollHeight;i.value=""}
+function lesson(){toast("📚 Aula especial: como as flores ajudam o jardim!")}
+function pronounce(){if("speechSynthesis"in window){const u=new SpeechSynthesisUtterance("flor");u.lang="pt-BR";u.rate=.65;speechSynthesis.cancel();speechSynthesis.speak(u)}toast("🗣️ Repita a palavra!")}
+function safe(t){return String(t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+</script>
+</body>
+</html>
