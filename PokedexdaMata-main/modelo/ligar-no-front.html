@@ -1,0 +1,34 @@
+<!--
+  COLE ESTE BLOCO NO FINAL DO index.html DO GRUPO, logo ANTES do </body>.
+  Ele liga o front do grupo ao back-end e à ficha padrão em pop-up.
+
+  O que trocar:
+    - icone, cor e cor2: o emoji e as duas cores principais do front do grupo;
+    - escuro: () => true se o front é escuro, () => false se é claro;
+    - noturno / claro: as cores da ficha (fundo, texto e texto mais apagado);
+    - carregando: a frase de "procurando" do próprio grupo;
+    - esconder: o resultado ANTIGO do front (para não aparecer duas vezes);
+    - salvar: o que acontece no botão "💾 Salvar no álbum" (clicar no botão de
+      salvar do grupo e abrir a aba do álbum). Se o front não tem álbum, apague;
+    - novaFoto: o que acontece no botão "🔍 Reconhecer outra".
+  Tudo que você não souber, pode apagar: só o icone e as cores são importantes.
+-->
+<script src="/comum/ficha.js"></script>
+<script src="/comum/adaptador.js"></script>
+<script>
+PokedexAdaptador.iniciar({
+  icone: "🌸", fauna: false,                 // fauna: true para animais
+  cor: "#ff63ad", cor2: "#a76cff",
+  escuro: () => true,
+  noturno: { fundo: "#1b0d2e", texto: "#fffaff", suave: "#dbcde8" },
+  claro:   { fundo: "#fcf8ff", texto: "#35105e", suave: "#654b78" },
+  carregando: "🔎 Procurando pistas na foto...",
+  esconder: ["#result"],
+  // Campos que o front do grupo pede à IA e que você quer mostrar na ficha:
+  extras: info => [["🌿 Onde vive", info.habitat]],
+  // Aviso vermelho na ficha (ex.: planta venenosa):
+  alerta: info => info.perigoso === true ? (info.aviso || "Cuidado! Peça ajuda a um adulto.") : "",
+  salvar: () => { document.getElementById("saveBtn").click(); document.getElementById("abaAlbum").click(); },
+  novaFoto: () => document.getElementById("fotoInput").click()
+});
+</script>

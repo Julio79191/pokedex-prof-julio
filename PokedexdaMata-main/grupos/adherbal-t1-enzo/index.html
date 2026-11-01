@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10251b">
+  <title>Mundo dos Mamíferos | Aventura na Mata</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <main>
+    <section id="welcome" class="welcome screen">
+      <div class="welcome-card">
+        <div class="eyebrow">EXPEDIÇÃO • FLORESTA AMAZÔNICA</div>
+        <h1>Mundo dos <em>Mamíferos</em></h1>
+        <p class="lead">A natureza está cheia de histórias. Vamos descobrir algumas?</p>
+        <div class="intro-grid">
+          <div class="intro-copy">
+            <h2>O que são mamíferos?</h2>
+            <p>Mamíferos são animais que, em geral, têm pelos e respiram ar. As mães alimentam seus filhotes com leite. Existem mamíferos enormes, como a baleia, e pequenos, como alguns morcegos.</p>
+            <p><strong>Na nossa expedição:</strong> observe animais, aprenda curiosidades, encontre trilhas e ganhe conquistas.</p>
+            <button class="btn btn-gold btn-large" id="startAdventure">Iniciar exploração <span>↗</span></button>
+          </div>
+          <div class="intro-art" role="img" aria-label="Ilustração de floresta tropical com animais">
+            <span class="art-tag">GUIA DE CAMPO Nº 01</span>
+            <div class="art-animals">🐆 <span>🦜</span></div>
+            <div class="art-caption">Vida selvagem · Amazônia</div>
+          </div>
+        </div>
+        <div class="welcome-foot"><span>◉ APRENDA</span><span>◉ EXPLORE</span><span>◉ PRESERVE</span></div>
+      </div>
+    </section>
+
+    <section id="mainMenu" class="screen hidden">
+      <header class="topbar">
+        <a class="brand" href="#" id="brandHome"><span class="brand-mark">✳</span><span>MUNDO DOS <b>MAMÍFEROS</b></span></a>
+        <nav class="tabs" aria-label="Menu principal">
+          <button class="tab active" data-view="habitat">Explorar</button>
+          <button class="tab" data-view="identify">📷 Identificar</button>
+          <button class="tab" data-view="album">📖 Álbum</button>
+          <button class="tab" data-view="achievements">Conquistas <span class="tiny-count" id="achievementCount">0/4</span></button>
+          <button class="tab" data-view="map">Mapa da aventura</button>
+          <button class="tab" data-view="game">Fuga selvagem</button>
+        </nav>
+      </header>
+
+      <section id="view-habitat" class="view">
+        <div class="section-heading">
+          <div><div class="eyebrow">ESCOLHA SUA TRILHA</div><h2>Dois grandes felinos. Uma aventura.</h2></div>
+          <button id="roarButton" class="btn btn-outline">🔊 Ouvir rugido da onça</button>
+        </div>
+        <div class="habitat-split">
+          <button class="animal-panel jaguar-panel" data-animal="onca">
+            <span class="panel-number">01 / AMAZÔNIA</span>
+            <span class="animal-emoji">🐆</span>
+            <span class="panel-copy"><span class="panel-label">O GUARDIÃO DA MATA</span><strong>Onça-pintada</strong><small>Conheça o maior felino das Américas.</small></span>
+            <span class="panel-arrow">↗</span>
+          </button>
+          <button class="animal-panel tiger-panel" data-animal="tigre">
+            <span class="panel-number">02 / ÁSIA</span>
+            <span class="animal-emoji">🐅</span>
+            <span class="panel-copy"><span class="panel-label">O REI DAS LISTRAS</span><strong>Tigre</strong><small>Descubra o grande felino asiático.</small></span>
+            <span class="panel-arrow">↗</span>
+          </button>
+        </div>
+        <div class="bottom-cards">
+          <article class="info-card"><span class="info-icon">📷</span><div><h3>Identifique um mamífero</h3><p>Envie uma foto e descubra o que aparece nela.</p></div><button class="text-btn" data-view="identify">Abrir câmera →</button></article>
+          <article class="info-card"><span class="info-icon">🌿</span><div><h3>Explore com cuidado</h3><p>Observe os animais de longe e nunca tente tocá-los.</p></div><button class="text-btn" data-view="map">Ver mapa →</button></article>
+        </div>
+      </section>
+
+      <section id="view-achievements" class="view hidden">
+        <div class="eyebrow">DIÁRIO DO EXPLORADOR</div><h2>Conquistas</h2>
+        <p class="section-sub">Cada descoberta deixa sua expedição mais completa.</p>
+        <div class="progress-card"><div><span class="progress-label">PROGRESSO DA EXPEDIÇÃO</span><strong id="progressText">0 de 4 conquistas</strong></div><div class="progress-track"><span id="progressBar"></span></div></div>
+        <div id="achievementList" class="achievement-grid"></div>
+      </section>
+
+      <section id="view-map" class="view hidden">
+        <div class="eyebrow">TRILHAS E DESCOBERTAS</div><h2>Mapa da aventura</h2>
+        <p class="section-sub">Selecione um ponto para conhecer uma área. Algumas trilhas precisam de uma conquista.</p>
+        <div class="map-layout">
+          <div class="illustrated-map" aria-label="Mapa ilustrado interativo da floresta">
+            <div class="river"></div><div class="trail trail-a"></div><div class="trail trail-b"></div><div class="trail trail-c"></div>
+            <button class="map-point point-camp" data-point="camp" aria-label="Acampamento">🏕️<small>Acampamento</small></button>
+            <button class="map-point point-jaguar" data-point="jaguar" aria-label="Trilha da onça">🐆<small>Trilha da onça</small></button>
+            <button class="map-point point-river" data-point="river" aria-label="Rio das capivaras">🦫<small>Rio tranquilo</small></button>
+            <button class="map-point point-canopy" data-point="canopy" aria-label="Mirante das copas">🌳<small>Mirante das copas</small></button>
+            <button class="map-point point-deep" data-point="deep" aria-label="Mata profunda">🔒<small>Mata profunda</small></button>
+            <div class="map-compass">N<br>↑</div>
+          </div>
+          <aside class="map-detail" id="mapDetail"><div class="detail-icon">🧭</div><h3>Escolha um ponto</h3><p>Toque em um marcador no mapa para ver a atividade daquela área.</p></aside>
+        </div>
+      </section>
+
+      <section id="view-game" class="view hidden">
+        <div class="eyebrow">MINIGAME • REFLEXOS E ATENÇÃO</div><h2>Fuga selvagem</h2>
+        <p class="section-sub">Ajude a onça a dirigir pela estrada e desviar dos obstáculos. Use ← → ou A/D. No celular, toque nas setas.</p>
+        <div class="game-stats"><div><small>PONTUAÇÃO</small><strong id="score">0</strong></div><div><small>RECORDE</small><strong id="bestScore">0</strong></div><div><small>VELOCIDADE</small><strong id="speedLabel">1×</strong></div></div>
+        <div class="game-wrap">
+          <canvas id="gameCanvas" width="720" height="900" aria-label="Jogo de corrida da onça"></canvas>
+          <div id="gameOverlay" class="game-overlay"><div class="overlay-emoji">🐆 🚙</div><h3>Pronto para a fuga?</h3><p>Desvie de troncos e pedras e tente bater seu recorde.</p><button class="btn btn-gold" id="playButton">▶ Jogar</button></div>
+          <div id="crashOverlay" class="game-overlay hidden"><div class="overlay-emoji">🌿</div><h3>Fim da trilha!</h3><p>Sua pontuação: <strong id="finalScore">0</strong></p><button class="btn btn-gold" id="againButton">↻ Jogar novamente</button></div>
+        </div>
+        <div class="game-controls"><button class="btn btn-outline" id="leftControl" aria-label="Mover para esquerda">←</button><button class="btn btn-outline" id="pauseButton">Ⅱ Pausar</button><button class="btn btn-outline" id="rightControl" aria-label="Mover para direita">→</button></div>
+        <p class="game-hint">Dica: quanto mais tempo você resistir, mais rápido o jogo fica!</p>
+      </section>
+
+      <section id="view-identify" class="view hidden">
+        <div class="eyebrow">GUIA DE CAMPO</div><h2>Identifique um mamífero</h2>
+        <p class="section-sub">Escolha uma foto nítida de um mamífero. Se a IA não tiver certeza, ela vai pedir outra foto.</p>
+        <div class="identify-card">
+          <label for="photoInput" class="upload-zone"><span>📷</span><strong>Toque para tirar a foto</strong><small>JPG, PNG ou WebP</small></label>
+          <input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp" capture="environment">
+          <img id="photoPreview" alt="Prévia da foto escolhida" class="photo-preview hidden">
+          <button class="btn btn-gold" id="identifyButton">🔎 Identificar mamífero</button>
+          <div id="identifyMessage" class="message hidden" role="status"></div>
+          <article id="identifyResult" class="identify-result hidden"><h3 id="resultName"></h3><p><b>Confiança:</b> <span id="resultConfidence"></span>%</p><p><b>Curiosidades</b></p><p id="resultFacts"></p><p id="resultSafety" class="safety-note hidden">⚠️ Atenção: este animal pode ser perigoso. Observe de longe e não tente se aproximar.</p></article>
+        </div>
+      </section>
+
+      <section id="view-album" class="view hidden">
+        <div class="eyebrow">DIÁRIO DO EXPLORADOR</div><h2>Álbum de mamíferos</h2>
+        <p class="section-sub">Cada mamífero que você identificar e salvar aparece aqui. Toque na figurinha para ver a ficha de novo.</p>
+        <div id="albumComum"></div>
+        <button class="btn btn-gold" data-view="identify" style="margin-top:20px">📷 Identificar outro mamífero</button>
+      </section>
+
+      <section id="animalModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="animalModalTitle">
+        <div class="modal-card"><button class="modal-close" id="closeAnimalModal" aria-label="Fechar">×</button><div id="animalModalEmoji" class="modal-emoji">🐆</div><div class="eyebrow">FICHA DO EXPLORADOR</div><h2 id="animalModalTitle">Onça-pintada</h2><p id="animalModalText"></p><button class="btn btn-gold" id="animalChallenge">Concluir mini desafio</button></div>
+      </section>
+      <footer class="footer"><span>✳ Mundo dos Mamíferos</span><span>Explore • Aprenda • Preserve</span></footer>
+    </section>
+  </main>
+  <audio id="jaguarAudio" preload="none">
+    <source src="https://deadsounds.com/wp-content/uploads/2023/08/jaguar-sound-2.mp3" type="audio/mpeg">
+  </audio>
+
+<style id="ajustes-tablet">
+/* Ajustes de visual para tablet (deitado e em pé) e computador.
+   O visual e as ideias são do grupo; aqui só arrumamos tamanho, espaço e alinhamento. */
+html{font-size:17.5px}
+.tab{min-height:44px;font-size:.95rem}
+.eyebrow{font-size:.78rem}
+/* menu inteiro visível no tablet em pé (quebra a linha em vez de cortar) */
+@media(max-width:900px){.tabs{flex-wrap:wrap!important;overflow:visible!important}.tab{white-space:nowrap}}
+</style>
+<!-- POKÉDEX: ficha padrão em pop-up + ligação com o back-end do grupo
+     (comum/ficha.js e comum/adaptador.js). O resto da página é do grupo. -->
+<script src="/comum/ficha.js"></script>
+<script src="/comum/adaptador.js"></script>
+<script>
+PokedexAdaptador.iniciar({
+  // botões por etapa: o de identificar só aparece depois de escolher a foto
+  etapas: { foto: ["#identifyButton"] },
+  galeria: { depoisDe: "label.upload-zone", input: "#photoInput", classe: "btn btn-outline", texto: "🖼️ Escolher da galeria" },
+  icone: "🐾", fauna: true,
+  cor: "#e7b95f", cor2: "#7fc28e",
+  escuro: () => true,
+  noturno: { fundo: "#10251b", texto: "#f6f0e3", suave: "#9cae9f" },
+  carregando: "🔎 O explorador está observando a foto...",
+  esconder: ["#identifyResult", "#identifyMessage"],
+  album: { el: "#albumComum", depois: () => showView("album") },
+  alerta: info => info.perigoso === true ? "Este animal pode ser perigoso. Observe de longe e chame um adulto." : ""
+});
+</script>
+</body>
+</html>

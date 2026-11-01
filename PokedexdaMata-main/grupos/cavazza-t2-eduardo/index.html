@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>As Frutas Brasileiras</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #071b16;
+    color: #f4fff9;
+  }
+  header {
+    background: linear-gradient(135deg, #087f5b, #1261a0);
+    padding: 20px;
+    text-align: center;
+    border-bottom-left-radius: 28px;
+    border-bottom-right-radius: 28px;
+  }
+  header .fox { font-size: 48px; }
+  h1 { margin: 5px 0; font-size: 28px; }
+  header p { margin: 5px 0 0; }
+
+  main { max-width: 850px; margin: auto; padding: 20px; }
+  .card {
+    background: #0d2b25;
+    border: 1px solid #176a5a;
+    border-radius: 22px;
+    padding: 20px;
+    margin-bottom: 18px;
+    box-shadow: 0 8px 25px rgba(0,0,0,.2);
+  }
+  .camera {
+    text-align: center;
+    border: 2px dashed #22b8cf;
+  }
+  button {
+    border: 0;
+    border-radius: 16px;
+    padding: 13px 18px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    background: #20c997;
+    color: #06251e;
+    margin: 5px;
+  }
+  button.secondary { background: #228be6; color: white; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+
+  input[type=file] { display: none; }
+  .preview {
+    width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: 16px;
+    margin: 12px 0;
+    display: none;
+    background: #061410;
+  }
+  .status {
+    display: none;
+    padding: 16px;
+    border-radius: 16px;
+    margin-top: 12px;
+    background: #123b34;
+  }
+  .result { display: none; }
+  .fruit-title {
+    font-size: 30px;
+    margin: 0 0 8px;
+    color: #63e6be;
+  }
+  .danger {
+    display: none;
+    background: #7f1d1d;
+    border: 2px solid #ff8787;
+    padding: 12px;
+    border-radius: 14px;
+    margin: 12px 0;
+    font-weight: bold;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .stat {
+    background: #123b34;
+    border-radius: 16px;
+    padding: 15px;
+    text-align: center;
+  }
+  .stat strong { display: block; font-size: 24px; color: #74c0fc; }
+  .map {
+    min-height: 150px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #2f9e44, #087f5b, #1261a0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+  }
+  .album {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 12px;
+  }
+  .album-item {
+    background: #123b34;
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+  }
+  .album-item img {
+    width: 100%;
+    height: 110px;
+    object-fit: cover;
+    display: block;
+  }
+  .album-item p {
+    margin: 8px;
+    font-weight: bold;
+    font-size: 14px;
+  }
+  .empty { opacity: .7; text-align: center; padding: 15px; }
+  footer { text-align: center; padding: 20px; opacity: .7; }
+
+
+  /* VISUAL REALISTA — floresta brasileira cinematográfica */
+  :root {
+    --forest-950: #06120d;
+    --forest-900: #092018;
+    --forest-800: #103629;
+    --leaf: #8fd694;
+    --gold: #f2c66d;
+    --glass: rgba(5, 24, 17, .88);
+    --line: rgba(183, 218, 157, .28);
+  }
+  html { min-height: 100%; scroll-behavior: smooth; }
+  body {
+    min-height: 100vh;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    color: #f5f4e8;
+    background-color: var(--forest-950);
+    background-image:
+      linear-gradient(180deg, rgba(2, 15, 10, .42) 0%, rgba(3, 19, 12, .70) 42%, #06120d 100%),
+      url("https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=2200&q=85");
+    background-position: center top;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+  header {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: clamp(36px, 7vw, 76px) 20px 46px;
+    border-radius: 0 0 34px 34px;
+    border-bottom: 1px solid rgba(220, 190, 112, .45);
+    background:
+      linear-gradient(90deg, rgba(3, 18, 11, .82), rgba(8, 39, 23, .47), rgba(3, 18, 11, .72)),
+      url("https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1800&q=85") center 48%/cover;
+    box-shadow: 0 16px 50px rgba(0,0,0,.42);
+  }
+  header::before {
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background: radial-gradient(ellipse at center, transparent 5%, rgba(0,0,0,.34) 100%);
+  }
+  header .fox {
+    display: inline-grid; place-items: center;
+    width: 88px; height: 88px; margin-bottom: 10px;
+    font-size: 56px; border-radius: 50%;
+    background: rgba(8, 28, 18, .72);
+    border: 1px solid rgba(236, 201, 124, .58);
+    box-shadow: 0 8px 28px rgba(0,0,0,.4), inset 0 0 18px rgba(242,198,109,.12);
+    animation: foxFloat 4s ease-in-out infinite;
+  }
+  h1 {
+    margin: 8px 0; font-size: clamp(30px, 5vw, 48px);
+    letter-spacing: .4px; color: #ffe4a0;
+    text-shadow: 0 3px 0 #4c3215, 0 7px 24px rgba(0,0,0,.85);
+  }
+  header p { font-size: clamp(15px, 2vw, 19px); color: #f4f3e6; text-shadow: 0 2px 8px #000; }
+  main { max-width: 1080px; margin: 0 auto; padding: 26px 20px 34px; }
+  .card {
+    position: relative; overflow: hidden;
+    background: linear-gradient(145deg, rgba(11, 42, 29, .94), rgba(4, 22, 16, .96));
+    border: 1px solid rgba(193, 165, 95, .42);
+    border-radius: 22px; padding: clamp(18px, 3vw, 26px); margin-bottom: 20px;
+    box-shadow: 0 14px 32px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.06);
+    backdrop-filter: blur(9px);
+  }
+  .card::before {
+    content: ""; position: absolute; inset: 0 0 auto; height: 3px;
+    background: linear-gradient(90deg, transparent, #779f55, #d8b96e, transparent); opacity: .8;
+  }
+  .card h2, .card h3 { color: #f6e8bd; text-shadow: 0 2px 10px rgba(0,0,0,.35); }
+  .camera {
+    border: 1px solid rgba(100, 195, 150, .58);
+    background: linear-gradient(145deg, rgba(8, 45, 30, .95), rgba(4, 24, 17, .96));
+    text-align: center;
+  }
+  button {
+    border: 1px solid rgba(214, 239, 183, .35); border-radius: 13px;
+    padding: 13px 19px; font-size: 15px; font-weight: 700;
+    cursor: pointer; color: #fff9e8; margin: 5px;
+    background: linear-gradient(180deg, #4caa62, #17643b 58%, #104b2d);
+    box-shadow: 0 5px 0 #092c1b, 0 8px 18px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.25);
+    transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+  }
+  button:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.12); box-shadow: 0 7px 0 #092c1b, 0 12px 22px rgba(0,0,0,.34); }
+  button:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 #092c1b; }
+  button.secondary { background: linear-gradient(180deg, #4d9fc0, #205a78 60%, #16465f); color: white; }
+  button:disabled { opacity: .52; cursor: not-allowed; filter: saturate(.5); }
+  input[type=file] { display: none; }
+  .preview {
+    width: min(100%, 640px); max-height: 380px; object-fit: contain;
+    border-radius: 16px; margin: 14px auto; display: none;
+    background: #061410; border: 1px solid rgba(179, 218, 159, .28);
+    box-shadow: 0 12px 30px rgba(0,0,0,.38);
+  }
+  .status { display: none; padding: 15px 17px; border-radius: 14px; margin-top: 14px; background: rgba(18,59,52,.95); border: 1px solid rgba(141,214,148,.3); }
+  .fruit-title { font-size: clamp(27px, 4vw, 36px); margin: 0 0 8px; color: #a6e6a0; }
+  .danger { display: none; background: linear-gradient(135deg, rgba(116,27,24,.96), rgba(72,17,17,.96)); border: 1px solid #ff8787; padding: 13px; border-radius: 14px; margin: 12px 0; font-weight: bold; }
+  .stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .stat {
+    background: linear-gradient(145deg, rgba(24,69,48,.9), rgba(7,32,23,.95));
+    border: 1px solid rgba(151, 196, 126, .25); border-radius: 16px;
+    padding: 17px 12px; text-align: center; box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+  }
+  .stat strong { display: block; font-size: 26px; color: var(--gold); margin-bottom: 4px; text-shadow: 0 2px 10px rgba(0,0,0,.4); }
+  .map {
+    min-height: 150px; border-radius: 18px;
+    background: linear-gradient(120deg, rgba(13,73,44,.85), rgba(15,52,70,.8)), url("https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1200&q=80") center/cover;
+    display: flex; align-items: center; justify-content: center; text-align: center; padding: 22px;
+    border: 1px solid rgba(180, 212, 144, .25); font-size: 17px; font-weight: 600;
+    text-shadow: 0 2px 6px rgba(0,0,0,.85);
+  }
+  .album { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; }
+  .album-item { background: linear-gradient(145deg, #17452e, #092318); border: 1px solid rgba(193,165,95,.28); border-radius: 15px; overflow: hidden; position: relative; box-shadow: 0 8px 18px rgba(0,0,0,.25); transition: transform .2s ease; }
+  .album-item:hover { transform: translateY(-4px); }
+  .album-item img { width: 100%; height: 125px; object-fit: cover; display: block; }
+  .album-item p { margin: 0; padding: 11px; font-weight: bold; font-size: 14px; color: #f6e8bd; }
+  .empty { opacity: .8; text-align: center; padding: 22px 15px; color: #d5e5d4; }
+  footer { text-align: center; padding: 24px 18px; color: #d6e4d2; background: rgba(3,15,10,.75); border-top: 1px solid rgba(193,165,95,.25); }
+  @keyframes foxFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+  @media (max-width: 600px) {
+    header { padding: 34px 16px 30px; }
+    header .fox { width: 72px; height: 72px; font-size: 46px; }
+    main { padding: 18px 12px 24px; }
+    .card { border-radius: 18px; padding: 17px; }
+    .stats { gap: 8px; }
+    .stat { padding: 13px 8px; }
+    .stat strong { font-size: 23px; }
+    body { background-attachment: scroll; }
+  }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+
+</style>
+</head>
+<body>
+<header>
+  <div class="fox" role="img" aria-label="Raposa exploradora da floresta">🦊</div>
+  <h1>As Frutas Brasileiras</h1>
+  <p>Descubra frutas da nossa natureza! 🍎🌿</p>
+</header>
+
+<main>
+  <section class="card camera">
+    <h2>🔍 Descobrir uma fruta</h2>
+    <p>Tire uma foto ou escolha uma foto da sua galeria.</p>
+    <button id="choosePhotoBtn" type="button">📸 Escolher foto</button>
+    <input id="photoInput" type="file" accept="image/*" aria-label="Escolher uma foto de fruta">
+    <img id="preview" class="preview" alt="Foto escolhida">
+    <button id="identifyBtn" class="secondary" disabled>🦊 Descobrir fruta</button>
+    <div id="status" class="status"></div>
+  </section>
+
+  <section id="result" class="card result">
+    <h2 id="fruitName" class="fruit-title"></h2>
+    <div id="danger" class="danger"></div>
+    <p id="curiosities"></p>
+
+    <div class="stats">
+      <div class="stat"><strong id="points">0</strong>Pontos</div>
+      <div class="stat"><strong id="medals">🏅 0</strong>Medalhas</div>
+    </div>
+
+    <h3>🗺️ Onde ela vive?</h3>
+    <div class="map" id="mapText">Brasil 🌎</div>
+
+    <button id="saveBtn">💾 Salvar no álbum</button>
+  </section>
+
+  <section class="card">
+    <h2>🏆 Minhas descobertas</h2>
+    <div class="stats">
+      <div class="stat"><strong id="totalPoints">0</strong>Pontos</div>
+      <div class="stat"><strong id="totalMedals">🏅 0</strong>Medalhas</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>📚 Álbum das frutas</h2>
+    <div id="album" class="album">
+      <div id="emptyAlbum" class="empty">Suas frutas salvas vão aparecer aqui! 🍓🍍</div>
+    </div>
+  </section>
+</main>
+
+<footer>Feito para explorar a natureza com curiosidade! 🌱🦊</footer>
+
+<script>
+const photoInput = document.getElementById("photoInput");
+const choosePhotoBtn = document.getElementById("choosePhotoBtn");
+const preview = document.getElementById("preview");
+const identifyBtn = document.getElementById("identifyBtn");
+const statusBox = document.getElementById("status");
+const result = document.getElementById("result");
+const fruitName = document.getElementById("fruitName");
+const curiosities = document.getElementById("curiosities");
+const dangerBox = document.getElementById("danger");
+const mapText = document.getElementById("mapText");
+const saveBtn = document.getElementById("saveBtn");
+
+let selectedFile = null;
+let currentPhotoData = null;
+let currentFruit = null;
+
+let points = Number(localStorage.getItem("frutas_points") || 0);
+let medals = Number(localStorage.getItem("frutas_medals") || 0);
+let album = JSON.parse(localStorage.getItem("frutas_album") || "[]");
+
+function showStatus(message, isError = false) {
+  statusBox.style.display = "block";
+  statusBox.textContent = message;
+  statusBox.style.background = isError ? "#5c2020" : "#123b34";
+}
+
+function hideStatus() {
+  statusBox.style.display = "none";
+}
+
+function updateStats() {
+  document.getElementById("totalPoints").textContent = points;
+  document.getElementById("totalMedals").textContent = "🏅 " + medals;
+}
+
+function renderAlbum() {
+  const albumBox = document.getElementById("album");
+  albumBox.textContent = "";
+
+  if (!album.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = "Suas frutas salvas vão aparecer aqui! 🍓🍍";
+    albumBox.appendChild(empty);
+    return;
+  }
+
+  album.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "album-item";
+
+    const img = document.createElement("img");
+    img.src = item.photo;
+    img.alt = "Foto de " + item.name;
+
+    const name = document.createElement("p");
+    name.textContent = item.name;
+
+    card.appendChild(img);
+    card.appendChild(name);
+    albumBox.appendChild(card);
+  });
+}
+
+// Abre o seletor de arquivos diretamente ao clicar no botão.
+choosePhotoBtn.addEventListener("click", () => photoInput.click());
+
+photoInput.addEventListener("change", () => {
+  selectedFile = photoInput.files[0];
+  result.style.display = "none";
+  hideStatus();
+
+  if (!selectedFile) {
+    identifyBtn.disabled = true;
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = event => {
+    currentPhotoData = event.target.result;
+    preview.src = currentPhotoData;
+    preview.style.display = "block";
+    identifyBtn.disabled = false;
+  };
+  reader.readAsDataURL(selectedFile);
+});
+
+identifyBtn.addEventListener("click", async () => {
+  if (!selectedFile) return;
+
+  identifyBtn.disabled = true;
+  result.style.display = "none";
+  showStatus("🦊 A raposa está olhando a foto...");
+
+  try {
+    const base64 = currentPhotoData.split(",")[1];
+
+    const pedido = {
+      modelo: "gemini-3.6-flash",
+      body: {
+        contents: [{
+          parts: [
+            {
+              text: `Você é um ajudante que identifica frutas brasileiras em fotos.
+Responda somente no formato pedido pelo esquema.
+Analise a foto com cuidado e nunca invente uma identificação.
+Se não tiver certeza de que é uma fruta ou se não conseguir identificar com pelo menos 80% de confiança, use identificado=false.
+Se identificar, informe um nome simples da fruta, 2 ou 3 curiosidades curtas, regiões do Brasil onde ela é encontrada e se há algum perigo importante relacionado a comer a fruta.
+O campo perigo deve ser true somente quando houver um aviso importante e verdadeiro para a fruta identificada.`
+            },
+            {
+              inline_data: {
+                mime_type: selectedFile.type || "image/jpeg",
+                data: base64
+              }
+            }
+          ]
+        }],
+        generationConfig: {
+          temperature: 0.2,
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: "object",
+            properties: {
+              identificado: { type: "boolean" },
+              confianca: { type: "integer" },
+              nome: { type: "string" },
+              curiosidades: { type: "array", items: { type: "string" } },
+              regioes: { type: "string" },
+              perigo: { type: "boolean" },
+              aviso: { type: "string" }
+            },
+            required: ["identificado", "confianca"]
+          }
+        }
+      }
+    };
+
+    const response = await fetch("/api/identificar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(pedido)
+    });
+
+    if (!response.ok) {
+      let detalhe = "O servidor de identificação respondeu com erro (HTTP " + response.status + ").";
+      try {
+        const erroServidor = await response.json();
+        if (erroServidor && erroServidor.error) detalhe = erroServidor.error;
+      } catch (_) {}
+      throw new Error(detalhe);
+    }
+
+    const resposta = await response.json();
+    const texto = resposta?.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("") || "";
+    if (!texto) throw new Error("O serviço não retornou uma identificação. Confira a chave da API e tente novamente.");
+    let dados;
+    try {
+      dados = JSON.parse(texto);
+    } catch (_) {
+      throw new Error("O serviço retornou uma resposta inesperada. Tente novamente com outra foto.");
+    }
+
+    if (!dados.identificado || dados.confianca < 80) {
+      showStatus("Hmm... 🦊 Não consegui ter certeza. Tente tirar outra foto, de mais perto e com boa luz!");
+      return;
+    }
+
+    currentFruit = dados;
+    fruitName.textContent = dados.nome || "Fruta encontrada!";
+
+    curiosities.textContent = "";
+    const titulo = document.createElement("strong");
+    titulo.textContent = "💡 Curiosidades: ";
+    curiosities.appendChild(titulo);
+
+    const lista = Array.isArray(dados.curiosidades) ? dados.curiosidades : [];
+    curiosities.appendChild(document.createTextNode(lista.join(" • ")));
+
+    if (dados.perigo) {
+      dangerBox.style.display = "block";
+      dangerBox.textContent = "⚠️ ATENÇÃO: " + (dados.aviso || "Esta fruta precisa de cuidado. Não coma sem orientação de um adulto.");
+    } else {
+      dangerBox.style.display = "none";
+    }
+
+    mapText.textContent = dados.regioes || "Regiões do Brasil 🌎";
+    result.style.display = "block";
+    hideStatus();
+
+    points += 10;
+    medals += 1;
+    localStorage.setItem("frutas_points", points);
+    localStorage.setItem("frutas_medals", medals);
+    updateStats();
+  } catch (error) {
+    console.error("Erro ao identificar fruta:", error);
+    const msg = error?.message || "Falha ao identificar a fruta.";
+    const dica = (location.protocol === "file:")
+      ? " Você abriu o HTML diretamente. Inicie o servidor e abra o jogo pelo endereço http://localhost:3000."
+      : " Confira se o servidor está ligado e se a chave GEMINI_API_KEY está configurada.";
+    showStatus("Ops! 🌧️ " + msg + dica, true);
+  } finally {
+    identifyBtn.disabled = false;
+  }
+});
+
+saveBtn.addEventListener("click", async () => {
+  if (!currentFruit || !currentPhotoData) return;
+
+  album.unshift({
+    name: currentFruit.nome || "Fruta",
+    photo: await reduzirParaAlbum(currentPhotoData)
+  });
+
+  localStorage.setItem("frutas_album", JSON.stringify(album));
+  renderAlbum();
+  showStatus("💚 Foto salva no seu álbum!");
+});
+
+updateStats();
+renderAlbum();
+</script>
+
+<style id="ajustes-tablet">
+/* Ajustes de visual para tablet (deitado e em pé) e computador.
+   O visual e as ideias são do grupo; aqui só arrumamos tamanho, espaço e alinhamento. */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800&display=swap');
+/* Ajustes de visual para tablet (deitado e em pé) e computador.
+   O visual e as ideias são do grupo; aqui deixamos mais colorido para as crianças:
+   a floresta continua no topo e o resto vira uma feira de frutas. */
+.empty{grid-column:1/-1;font-size:16px}
+button{min-height:48px;font-size:16px}
+.card p{font-size:16px}
+body{font-family:'Nunito',system-ui,sans-serif;color:#2b3a22;background-color:#fff7e6;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cg opacity='.22'%3E%3Ccircle cx='30' cy='34' r='11' fill='%23f4a72c'/%3E%3Cpath d='M30 23c2-6 7-8 11-7-2 5-6 7-11 7z' fill='%234caa62'/%3E%3Cpath d='M104 40c14-14 30-10 30-10s-2 18-18 24c-6 2-10 0-12-2z' fill='%234caa62'/%3E%3Ccircle cx='54' cy='108' r='9' fill='%23e94f37'/%3E%3Ccircle cx='68' cy='112' r='9' fill='%23e94f37'/%3E%3Cpath d='M60 100l2-10' stroke='%232f7d43' stroke-width='3'/%3E%3Cellipse cx='118' cy='118' rx='9' ry='14' fill='%23f6c445' transform='rotate%28-30 118 118%29'/%3E%3C/g%3E%3C/svg%3E"),linear-gradient(180deg,#fff7e6,#f3f9e4)!important;background-attachment:scroll!important}
+h1,h2,h3{font-family:'Fredoka','Nunito',sans-serif}
+header{border-bottom:6px solid #f4a72c}
+header::after{content:"🍌 🍍 🥭 🍊 🍇 🥥 🍓 🍉";position:absolute;left:0;right:0;bottom:10px;font-size:22px;letter-spacing:6px;opacity:.95}
+header .fox{background:#fff7e6;border:4px solid #f4a72c}
+h1{color:#fff;text-shadow:0 3px 0 #b35e12,0 7px 24px rgba(0,0,0,.6)}
+header p{font-weight:700;margin-bottom:22px}
+.card{background:#fffdf6;border:3px solid #cfe6b5;backdrop-filter:none;box-shadow:0 8px 0 #e3efcf,0 16px 30px #6b8a4a22;border-radius:26px}
+.card::before{height:8px;opacity:1;background:repeating-linear-gradient(90deg,#f4a72c 0 22px,#4caa62 22px 44px,#e94f37 44px 66px)}
+.card h2,.card h3{color:#2f7d43;text-shadow:none}
+.camera{background:linear-gradient(180deg,#ecf8df,#fffdf6);border:3px dashed #7cc36a}
+button{font-family:'Fredoka','Nunito',sans-serif;border:0;border-radius:18px;background:linear-gradient(180deg,#5cbf6d,#2f8a45);box-shadow:0 5px 0 #1f6531;letter-spacing:.3px}
+button.secondary{background:linear-gradient(180deg,#ffbe4d,#f08c1b);color:#4a2600;box-shadow:0 5px 0 #b35e12}
+button:disabled{filter:saturate(.3)}
+.preview{background:#fff;border:6px solid #fff;box-shadow:0 10px 24px #6b8a4a40}
+.status{background:#fff3d6;border:2px solid #f4c46b;color:#5a3a06}
+.stat{background:linear-gradient(180deg,#fff,#f2f9e8);border:2px solid #cfe6b5;color:#4f6b3a;font-weight:700}
+.stat:nth-child(2){background:linear-gradient(180deg,#fff,#fff1d8);border-color:#f6d39a}
+.stat strong{color:#e07a10;text-shadow:none}
+.album-item{background:#fff;border:3px solid #cfe6b5;box-shadow:0 6px 0 #e3efcf}
+.album-item p{color:#2f7d43}
+.empty{color:#6b7f58;opacity:1;background:#f6faef;border:2px dashed #cfe6b5;border-radius:18px}
+footer{background:#2f7d43;color:#fff8e6;border-top:6px solid #f4a72c;font-weight:700}
+.fruit-title{color:#2f7d43}
+body{background-size:150px 150px,auto!important;background-repeat:repeat!important}
+header{background-color:#1f5a33}
+</style>
+<!-- POKÉDEX: ficha padrão em pop-up + ligação com o back-end do grupo
+     (comum/ficha.js e comum/adaptador.js). O resto da página é do grupo. -->
+<script src="/comum/ficha.js"></script>
+<script src="/comum/adaptador.js"></script>
+<script>
+/* O álbum guardava a foto em tamanho original e o navegador não tinha espaço
+   (foto de celular tem vários MB): agora guarda uma versão menor. */
+window.reduzirParaAlbum = src => new Promise(res => { const img = new Image(); img.onload = () => { const k = Math.min(1, 700 / Math.max(img.width, img.height)); const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); res(c.toDataURL("image/jpeg", .8)); }; img.onerror = () => res(src); img.src = src; });
+PokedexAdaptador.iniciar({
+  // botões por etapa: o de identificar só aparece depois de escolher a foto
+  etapas: { foto: ["#identifyBtn"] },
+  icone: "🦊", fauna: false,
+  cor: "#2f8a45", cor2: "#f08c1b",
+  escuro: () => false,
+  claro: { fundo: "#fffdf6", texto: "#24361d", suave: "#55684a" },
+  carregando: "🦊 A raposa está olhando a foto...",
+  esconder: ["#result", "#status"],
+  extras: info => [["🗺️ Onde ela vive?", info.regioes]],
+  alerta: info => info.perigo ? (info.aviso || "Esta fruta precisa de cuidado. Não coma sem orientação de um adulto.") : "",
+  salvar: () => { document.getElementById("saveBtn").click(); setTimeout(() => document.getElementById("album").scrollIntoView({ behavior: "smooth" }), 300); },
+  novaFoto: () => document.getElementById("choosePhotoBtn").click()
+});
+</script>
+</body>
+</html>

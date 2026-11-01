@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cogumelo Explorer 🍄</title>
+<style>
+:root{
+  --red:#e31b23;
+  --dark:#13090a;
+  --dark2:#241012;
+  --white:#fff;
+  --muted:#cfc4c5;
+  --card:#211315;
+  --line:#4a292c;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--white);
+  background:radial-gradient(circle at 50% -10%,#64171b 0,#1b0b0d 45%,#090506 100%);
+  min-height:100vh;
+}
+button,input{font:inherit}
+button{cursor:pointer}
+.app{max-width:1050px;margin:auto;min-height:100vh}
+header{
+  position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;background:rgba(13,7,8,.94);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line)
+}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:21px}
+.logo{font-size:30px}.brand span:last-child{color:#ff3038}
+main{padding:24px 18px 100px}
+.hero{
+  display:grid;grid-template-columns:1.25fr .75fr;gap:18px;align-items:stretch;margin-bottom:18px
+}
+.panel{
+  background:linear-gradient(145deg,rgba(53,25,28,.96),rgba(25,12,14,.96));
+  border:1px solid var(--line);border-radius:25px;padding:24px;
+  box-shadow:0 18px 50px rgba(0,0,0,.3)
+}
+h1{font-size:clamp(32px,6vw,56px);margin:0 0 10px}
+h1 span{color:#ff343c}.subtitle{color:var(--muted);line-height:1.5}
+.mascot{
+  min-height:270px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 20%,#8e2027,#2b1114 58%,#120708)
+}
+.mushroom{position:relative;width:190px;height:180px}
+.cap{
+  position:absolute;top:10px;left:20px;width:150px;height:92px;border-radius:80% 80% 48% 48%;
+  background:radial-gradient(circle at 30% 25%,#fff 0 7px,transparent 8px),
+             radial-gradient(circle at 65% 22%,#fff 0 8px,transparent 9px),
+             radial-gradient(circle at 48% 50%,#fff 0 6px,transparent 7px),
+             linear-gradient(#fa3038,#b60d15);
+  border:4px solid #fff;box-shadow:0 10px 0 #78080d
+}
+.cap:after{content:"";position:absolute;left:50px;top:-30px;width:55px;height:38px;background:#171012;border:4px solid #9d7b4b;border-radius:50% 50% 10px 10px;transform:rotate(-8deg)}
+.stem{position:absolute;left:67px;top:82px;width:58px;height:82px;background:#f7eadb;border-radius:18px 18px 28px 28px;border:4px solid #e2d1c2}
+.eye{position:absolute;top:111px;width:9px;height:13px;background:#161010;border-radius:50%;z-index:2}.eye.l{left:82px}.eye.r{left:105px}
+.mustache{position:absolute;z-index:3;top:133px;left:78px;width:48px;height:20px}
+.mustache:before,.mustache:after{content:"";position:absolute;width:27px;height:13px;background:#171012;border-radius:100% 0 100% 100%}
+.mustache:before{left:0;transform:rotate(18deg)}.mustache:after{right:0;transform:scaleX(-1) rotate(18deg)}
+.suit{position:absolute;z-index:4;left:48px;top:153px;width:96px;height:30px;background:#171012;border-radius:18px 18px 5px 5px;border-top:5px solid #e31b23}
+.btn{
+  border:0;border-radius:15px;padding:13px 17px;font-weight:800;color:#fff;background:var(--red);
+  box-shadow:0 8px 20px rgba(227,27,35,.22);transition:.2s
+}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.btn.secondary{background:#fff;color:#9f1017;box-shadow:none}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.card{
+  background:rgba(30,16,18,.95);border:1px solid var(--line);border-radius:20px;padding:18px
+}
+.card h3{margin:9px 0 6px}.icon{font-size:30px}.small{font-size:13px;color:var(--muted);line-height:1.4}
+.section{margin-top:20px}.section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.section-title h2{margin:0}
+.scanner{
+  display:grid;grid-template-columns:1fr 1fr;gap:15px
+}
+.drop{
+  min-height:210px;border:2px dashed #8b4247;border-radius:20px;display:flex;align-items:center;
+  justify-content:center;text-align:center;padding:20px;background:#180c0e
+}
+.preview{max-width:100%;max-height:190px;border-radius:15px;display:none}
+.result{display:none}
+.result.show{display:block}
+.badge{display:inline-block;padding:6px 10px;border-radius:999px;background:#40191d;color:#ff8b8f;font-size:12px;font-weight:800}
+.warning{background:#4b1115;border:1px solid #a52a30;border-radius:15px;padding:13px;margin-top:12px;color:#ffd8d9}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.stat{background:#160a0c;border:1px solid var(--line);border-radius:14px;padding:10px 13px}
+.album{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.fungi{background:#160a0c;border:1px solid var(--line);border-radius:16px;padding:12px}
+.fungi .pic{height:90px;border-radius:12px;background:linear-gradient(135deg,#69151b,#261013);display:flex;align-items:center;justify-content:center;font-size:48px}
+nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(1050px,100%);
+  display:flex;justify-content:space-around;padding:10px;background:rgba(12,6,7,.96);
+  border-top:1px solid var(--line);z-index:6
+}
+nav button{background:none;border:0;color:#bcaeaf;font-weight:700;padding:8px 12px}
+nav button.active{color:#fff}
+.hidden{display:none!important}
+#status{min-height:22px;margin-top:10px;color:#ffb7ba;font-size:14px}
+@media(max-width:800px){
+ .hero,.scanner{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}.album{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:480px){
+ main{padding:16px 12px 90px}.panel{padding:18px}.grid{grid-template-columns:1fr 1fr}
+ .card{padding:14px}.brand{font-size:18px}
+}
+
+.guideTabs{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0}.guideTab{border:1px solid #5a3034;background:#180b0d;color:#fff;border-radius:999px;padding:10px 14px;font-weight:800}.guideTab.active{background:#e31b23;border-color:#e31b23}.guidePanel{background:#fff;color:#171012;border-radius:20px;padding:22px;margin-top:10px}.guidePanel h3{font-size:25px;margin:10px 0}.guideHero{font-size:55px}.guideSteps{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}.guideSteps div{display:flex;align-items:center;gap:10px;background:#f0eceb;border-radius:14px;padding:13px}.guideSteps b{width:30px;height:30px;border-radius:50%;background:#e31b23;color:#fff;display:grid;place-items:center}.safetyBox{background:#fff0f0;border:1px solid #e5aeb1;border-radius:15px;padding:16px;margin:15px 0;color:#851019}.guideList{line-height:1.8;color:#514b4c;padding-left:22px}.rarityGuide{display:grid;grid-template-columns:1fr 1fr;gap:14px}.rarityGuide div{background:#f0eceb;border-radius:16px;padding:17px}.rarityGuide span{font-size:35px;display:block}.exploreGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.exploreGrid div{background:#f0eceb;border-radius:15px;padding:16px;font-size:25px}.exploreGrid b{display:block;font-size:16px;margin-top:7px}.exploreGrid small{display:block;color:#6d6869;font-size:12px;margin-top:5px}@media(max-width:650px){.rarityGuide,.exploreGrid{grid-template-columns:1fr 1fr}.guideSteps{grid-template-columns:1fr}}
+
+.tutorialOverlay{position:fixed;inset:0;z-index:9999;background:radial-gradient(circle at 50% 0%,#72181e,#18090b 65%,#080405);display:flex;align-items:center;justify-content:center;padding:18px}.tutorialOverlay.done{display:none}.tutorialCard{width:min(520px,100%);background:#fff;color:#201416;border-radius:28px;padding:25px;box-shadow:0 25px 90px #000a;text-align:center;overflow:hidden}.tutorialTop{display:flex;align-items:center;justify-content:space-between}.tutorialMushroom{font-size:32px}.tutorialStep{font-size:11px;font-weight:900;letter-spacing:1px;color:#b20f18;background:#ffe8e9;padding:8px 10px;border-radius:99px}.tutorialMascot{position:relative;width:142px;height:130px;margin:15px auto 7px}.tCap{position:absolute;left:14px;top:18px;width:114px;height:65px;background:radial-gradient(circle at 25% 25%,#fff 0 5px,transparent 6px),radial-gradient(circle at 65% 30%,#fff 0 6px,transparent 7px),radial-gradient(circle at 48% 58%,#fff 0 4px,transparent 5px),#e71922;border:4px solid #fff;border-radius:70% 70% 45% 45%;box-shadow:0 5px 0 #9e1017;z-index:3}.tStem{position:absolute;left:48px;top:67px;width:48px;height:53px;background:#f6e8d9;border:3px solid #d8c6b6;border-radius:14px 14px 18px 18px;z-index:2}.tEye{position:absolute;top:84px;width:6px;height:9px;border-radius:50%;background:#160d0e;z-index:4}.tEye1{left:61px}.tEye2{left:79px}.tMustache{position:absolute;top:96px;left:58px;width:32px;height:13px;z-index:5}.tMustache:before,.tMustache:after{content:"";position:absolute;width:18px;height:9px;background:#170d0e;border-radius:100% 0 100% 100%}.tMustache:before{left:0;transform:rotate(15deg)}.tMustache:after{right:0;transform:scaleX(-1) rotate(15deg)}.tSuit{position:absolute;bottom:0;left:39px;width:66px;height:26px;border-top:4px solid #e71922;background:#191012;border-radius:14px 14px 5px 5px;z-index:1}.tHat{position:absolute;left:39px;top:0;width:62px;height:20px;background:#1b1112;border:3px solid #a9814a;border-radius:40% 40% 4px 4px;z-index:4;transform:rotate(-8deg)}.tutorialKicker{font-size:11px;letter-spacing:2px;color:#c0141c;font-weight:900;margin:8px 0}.tutorialCard h1{font-size:32px;line-height:1.1;margin:8px 0;color:#201416}.tutorialCard p{line-height:1.55;color:#665b5d}.tutorialDots{display:flex;justify-content:center;gap:7px;margin:20px 0}.tutorialDots i{width:8px;height:8px;border-radius:50%;background:#e6d6d7}.tutorialDots i.on{width:24px;border-radius:10px;background:#e71922}.tutorialButtons{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px}.tutorialSkip{border:0;background:transparent;color:#76686a;font-weight:800;padding:13px 8px}.tutorialNext{border:0;border-radius:13px;background:#e71922;color:#fff;font-weight:900;padding:14px 22px;box-shadow:0 8px 20px #e7192233}
+</style>
+</head>
+<body>
+<div id="tutorialOverlay" class="tutorialOverlay"><div class="tutorialCard"><div class="tutorialTop"><span class="tutorialMushroom">🍄</span><span class="tutorialStep" id="tutorialStep">PASSO 1 DE 4</span></div><div class="tutorialMascot"><div class="tCap"></div><div class="tStem"></div><div class="tEye tEye1"></div><div class="tEye tEye2"></div><div class="tMustache"></div><div class="tSuit"></div><div class="tHat"></div></div><p class="tutorialKicker">BEM-VINDO AO BOSQUE</p><h1 id="tutorialTitle">Olá, explorador!</h1><p id="tutorialText">Eu sou seu guia bigodudo. Vou mostrar como usar o Cogumelo Explorer.</p><div class="tutorialDots"><i class="on"></i><i></i><i></i><i></i></div><div class="tutorialButtons"><button id="tutorialSkip" class="tutorialSkip">Pular tutorial</button><button id="tutorialNext" class="tutorialNext">Vamos lá →</button></div></div></div>
+
+<div class="app">
+<header>
+  <div class="brand"><span class="logo">🍄</span> Cogumelo <span>Explorer</span></div>
+  <span>🧭</span>
+</header>
+
+<main>
+<section id="inicio">
+  <div class="hero">
+    <div class="panel">
+      <p class="badge">EXPLORADOR DA MATA</p>
+      <h1>Descubra o mundo dos <span>cogumelos</span> 🍄</h1>
+      <p class="subtitle">Tire uma foto e deixe a inteligência artificial ajudar a identificar o cogumelo. O app não mostra um resultado quando não tiver certeza.</p>
+      <div class="actions">
+        <button class="btn" onclick="document.getElementById('foto').click()">📷 Escanear cogumelo</button>
+        <button class="btn secondary" onclick="mostrar('album')">📖 Meu álbum</button>
+      </div>
+    </div>
+    <div class="panel mascot">
+      <div class="mushroom" aria-label="Mascote cogumelo com chapéu, roupa chique e bigode">
+        <div class="cap"></div><div class="stem"></div>
+        <div class="eye l"></div><div class="eye r"></div><div class="mustache"></div><div class="suit"></div>
+      </div>
+      <strong>Seu guia explorador 🎩</strong>
+      <span class="small">Bigode oficial do Cogumelo Explorer!</span>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card"><div class="icon">📷</div><h3>Escanear</h3><p class="small">Envie uma foto do cogumelo.</p></div>
+    <div class="card"><div class="icon">📖</div><h3>Álbum</h3><p class="small">Guarde suas descobertas.</p></div>
+    <div class="card"><div class="icon">🏆</div><h3>Pontos</h3><p class="small">Ganhe pontos por novas descobertas.</p></div>
+    <div class="card"><div class="icon">⭐</div><h3>Raridade</h3><p class="small">Veja se é comum ou difícil de encontrar.</p></div>
+  </div>
+</section>
+
+<section id="scanner" class="section hidden">
+  <div class="panel">
+    <div class="section-title"><h2>🔍 Explorar cogumelo</h2><button class="btn secondary" onclick="mostrar('inicio')">Voltar</button></div>
+    <div class="scanner">
+      <div>
+        <div class="drop" id="drop">
+          <div>
+            <div style="font-size:45px">📷</div>
+            <strong>Escolha uma foto</strong>
+            <p class="small">JPG ou imagem tirada pela câmera.</p>
+            <button class="btn" id="btnTirarFoto" onclick="document.getElementById('foto').click()">📷 Tirar foto</button>
+            <input id="foto" type="file" accept="image/jpeg,image/jpg,image/png,image/webp" capture="environment" hidden>
+          </div>
+        </div>
+        <img id="preview" class="preview" alt="Foto escolhida">
+        <div id="status"></div>
+      </div>
+      <div id="result" class="result card">
+        <span class="badge" id="tipo">TIPO</span>
+        <h2 id="nome">Cogumelo</h2>
+        <p id="confianca" class="small"></p>
+        <h3>⚠️ Possíveis efeitos</h3>
+        <p id="efeitos" class="small"></p>
+        <h3>💡 Curiosidades</h3>
+        <p id="curiosidades" class="small"></p>
+        <div id="aviso" class="warning hidden"></div>
+        <div class="stats">
+          <div class="stat">🏆 <strong id="pontos">+0</strong> pontos</div>
+          <div class="stat">⭐ <strong id="raridade">—</strong></div>
+        </div>
+        <button class="btn" style="margin-top:14px" onclick="adicionarAlbum()">📖 Adicionar ao álbum</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="album" class="section hidden">
+  <div class="panel">
+    <div class="section-title"><h2>📖 Álbum de descobertas</h2><button class="btn secondary" onclick="mostrar('inicio')">Início</button></div>
+    <p class="small">Quando um cogumelo novo entra no álbum, mostramos se ele é comum ou difícil de encontrar.</p>
+    <div id="albumGrid" class="album"></div>
+  </div>
+</section>
+<section id="guias" class="section hidden">
+ <div class="panel">
+  <div class="section-title"><h2>📚 Guias do Explorador</h2><button class="btn secondary" onclick="mostrar('inicio')">Início</button></div>
+  <p class="small">Aprenda a observar cogumelos com cuidado. Uma foto sozinha não confirma se um cogumelo é seguro para comer.</p>
+  <div class="guideTabs">
+   <button class="guideTab active" onclick="showGuide('identificar',this)">🔎 Identificar</button>
+   <button class="guideTab" onclick="showGuide('seguranca',this)">⚠️ Segurança</button>
+   <button class="guideTab" onclick="showGuide('raridade',this)">⭐ Raridade</button>
+   <button class="guideTab" onclick="showGuide('explorar',this)">🧭 Explorar</button>
+  </div>
+  <div id="guide-identificar" class="guidePanel"><div class="guideHero">📸</div><h3>Como tirar uma boa foto?</h3><div class="guideSteps"><div><b>1</b><span>Use bastante luz.</span></div><div><b>2</b><span>Mostre o cogumelo inteiro.</span></div><div><b>3</b><span>Evite foto tremida.</span></div><div><b>4</b><span>Se puder, tire mais de um ângulo.</span></div></div><button class="btn" onclick="mostrar('scanner')">📷 Tentar identificar</button></div>
+  <div id="guide-seguranca" class="guidePanel hidden"><div class="guideHero">⚠️</div><h3>Regra de ouro</h3><p class="small" style="color:#514b4c">Nunca coma um cogumelo só porque o aplicativo encontrou um nome. Alguns podem ser perigosos e a identificação por foto pode estar errada.</p><div class="safetyBox">🍄 <b>Observe, fotografe e aprenda.</b><br>Não experimente.</div><ul class="guideList"><li>Não coloque cogumelos desconhecidos na boca.</li><li>Lave as mãos depois de mexer em plantas e fungos.</li><li>Se alguém passar mal, avise um adulto e procure ajuda médica.</li></ul></div>
+  <div id="guide-raridade" class="guidePanel hidden"><div class="guideHero">⭐</div><h3>O que significa a raridade?</h3><div class="rarityGuide"><div><span>⭐</span><b>Comum</b><p>É encontrado com mais facilidade em lugares onde costuma viver.</p></div><div><span>🌟</span><b>Difícil de encontrar</b><p>É menos fácil de encontrar ou pode aparecer em lugares específicos.</p></div></div></div>
+  <div id="guide-explorar" class="guidePanel hidden"><div class="guideHero">🧭</div><h3>Modo Explorador</h3><p class="small" style="color:#514b4c">Vá com calma e observe a natureza sem destruir o lugar.</p><div class="exploreGrid"><div>🌳<b>Observe</b><small>Veja o ambiente.</small></div><div>📷<b>Fotografe</b><small>Registre a descoberta.</small></div><div>📖<b>Colecione</b><small>Guarde no álbum.</small></div><div>🏆<b>Aprenda</b><small>Descubra curiosidades.</small></div></div></div>
+ </div>
+</section>
+</main>
+
+<nav>
+  <button class="active" onclick="mostrar('inicio')">🏠 Início</button>
+  <button onclick="mostrar('scanner')">📷 Escanear</button>
+  <button onclick="mostrar('guias')">📚 Guias</button>
+  <button onclick="mostrar('album')">📖 Álbum</button>
+</nav>
+</div>
+
+<script>
+const foto = document.getElementById('foto');
+const preview = document.getElementById('preview');
+const statusEl = document.getElementById('status');
+const result = document.getElementById('result');
+
+let ultimaDescoberta = null;
+let album = JSON.parse(localStorage.getItem('cogumeloExplorerAlbum') || '[]');
+
+
+function showGuide(name,btn){document.querySelectorAll('.guidePanel').forEach(x=>x.classList.add('hidden'));const p=document.getElementById('guide-'+name);if(p)p.classList.remove('hidden');document.querySelectorAll('.guideTab').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active')}
+
+function mostrar(id){
+  ['inicio','scanner','album','guias'].forEach(x => document.getElementById(x).classList.toggle('hidden', x !== id));
+  if(id === 'album') renderAlbum();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+foto.addEventListener('change', async () => {
+  const file = foto.files[0];
+  if(!file) return;
+  if(!file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = async e => {
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+    result.classList.remove('show');
+    mostrar('scanner');
+    await identificar(file, e.target.result);
+  };
+  reader.readAsDataURL(file);
+});
+
+function base64SemPrefixo(dataUrl){
+  return dataUrl.substring(dataUrl.indexOf(',') + 1);
+}
+
+async function identificar(file, dataUrl){
+  statusEl.textContent = '🔎 Procurando pistas na foto...';
+  const prompt = `Você é um identificador cuidadoso de cogumelos. Analise a foto e responda somente no formato JSON pedido.
+Tente identificar apenas quando houver evidências suficientes. Nunca invente uma identificação.
+Informe nome, tipo, possíveis efeitos no corpo, curiosidades, pontos e raridade.
+A raridade deve ser apenas "Comum" ou "Difícil de encontrar".
+Se não houver segurança suficiente, identificado deve ser false.
+Importante: não diga que um cogumelo é seguro para comer apenas pela foto.`;
+
+  const payload = {
+    modelo: "gemini-3.6-flash",
+    body: {
+      contents: [{
+        parts: [
+          {text: prompt},
+          {inline_data: {mime_type: "image/jpeg", data: base64SemPrefixo(dataUrl)}}
+        ]
+      }],
+      generationConfig: {
+        temperature: 0.2,
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: "object",
+          properties: {
+            identificado: {type:"boolean"},
+            confianca: {type:"integer"},
+            nome: {type:"string"},
+            tipo: {type:"string"},
+            efeitos: {type:"string"},
+            curiosidades: {type:"string"},
+            pontos: {type:"integer"},
+            raridade: {type:"string"}
+          },
+          required: ["identificado","confianca"]
+        }
+      }
+    }
+  };
+
+  try{
+    const resposta = await fetch('/api/identificar', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    });
+    if(!resposta.ok) throw new Error('servidor');
+    const json = await resposta.json();
+    const texto = json?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if(!texto) throw new Error('resposta');
+    const dados = JSON.parse(texto);
+
+    if(dados.identificado !== true || Number(dados.confianca) < 80){
+      statusEl.textContent = '🍄 Hmm... não consegui ter certeza. Tente outra foto com mais luz e o cogumelo aparecendo inteiro!';
+      return;
+    }
+
+    ultimaDescoberta = dados;
+    preencherResultado(dados);
+    statusEl.textContent = '✨ Descoberta pronta!';
+  }catch(err){
+    statusEl.textContent = '😕 Não consegui falar com o servidor agora. Verifique a internet e tente novamente.';
+  }
+}
+
+function textoSeguro(valor, fallback='Não informado'){
+  return (typeof valor === 'string' && valor.trim()) ? valor : fallback;
+}
+
+function preencherResultado(d){
+  document.getElementById('nome').textContent = textoSeguro(d.nome,'Cogumelo identificado');
+  document.getElementById('tipo').textContent = textoSeguro(d.tipo,'Cogumelo');
+  document.getElementById('confianca').textContent = `Confiança da identificação: ${Number(d.confianca) || 0}%`;
+  document.getElementById('efeitos').textContent = textoSeguro(d.efeitos);
+  document.getElementById('curiosidades').textContent = textoSeguro(d.curiosidades);
+  document.getElementById('pontos').textContent = '+' + (Number.isFinite(Number(d.pontos)) ? Number(d.pontos) : 10);
+  document.getElementById('raridade').textContent = textoSeguro(d.raridade,'Comum');
+
+  const aviso = document.getElementById('aviso');
+  const efeitos = textoSeguro(d.efeitos,'');
+  if(/tóxic|venen|alucina|perig|intox/i.test((textoSeguro(d.tipo,'')+' '+efeitos))){
+    aviso.textContent = '⚠️ Cuidado! Este cogumelo pode fazer mal ao seu corpo. Não consuma.';
+    aviso.classList.remove('hidden');
+  }else{
+    aviso.classList.add('hidden');
+  }
+  result.classList.add('show');
+}
+
+function adicionarAlbum(){
+  if(!ultimaDescoberta) return;
+  const nome = textoSeguro(ultimaDescoberta.nome,'Cogumelo');
+  const existe = album.some(x => x.nome.toLowerCase() === nome.toLowerCase());
+  if(!existe){
+    album.push({
+      nome,
+      tipo:textoSeguro(ultimaDescoberta.tipo),
+      raridade:textoSeguro(ultimaDescoberta.raridade,'Comum'),
+      pontos:Number(ultimaDescoberta.pontos)||10,
+      data:new Date().toLocaleDateString('pt-BR')
+    });
+    localStorage.setItem('cogumeloExplorerAlbum', JSON.stringify(album));
+    alert('🍄 Nova descoberta adicionada ao álbum!');
+    renderAlbum();
+  }else{
+    alert('📖 Esse cogumelo já está no seu álbum!');
+  }
+}
+
+function renderAlbum(){
+  const grid = document.getElementById('albumGrid');
+  grid.textContent = '';
+  if(album.length === 0){
+    const empty = document.createElement('div');
+    empty.className='card';
+    empty.style.gridColumn='1/-1';
+    empty.innerHTML='<div class="icon">🍄</div><h3>Seu álbum está esperando!</h3><p class="small">Faça sua primeira descoberta para começar a coleção.</p>';
+    grid.appendChild(empty);
+    return;
+  }
+  album.forEach(item=>{
+    const card=document.createElement('div'); card.className='fungi';
+    const pic=document.createElement('div'); pic.className='pic'; pic.textContent='🍄';
+    const name=document.createElement('strong'); name.textContent=item.nome;
+    const type=document.createElement('div'); type.className='small'; type.textContent=item.tipo;
+    const rarity=document.createElement('div'); rarity.className='small'; rarity.textContent='⭐ '+item.raridade;
+    const pts=document.createElement('div'); pts.className='small'; pts.textContent='🏆 +'+item.pontos+' pontos';
+    card.append(pic,name,type,rarity,pts); grid.appendChild(card);
+  });
+}
+renderAlbum();
+
+const tutorialSlides=[{title:'Olá, explorador!',text:'Eu sou seu guia bigodudo. Vou mostrar como usar o Cogumelo Explorer antes de começarmos a aventura.',button:'Vamos lá →'},{title:'1. Fotografe com cuidado',text:'Toque em Escanear e escolha uma foto nítida. Mostre o cogumelo inteiro e tente usar boa iluminação.',button:'Próximo →'},{title:'2. Confira o resultado',text:'O app só mostra uma identificação quando a confiança chega a 80%. Se não tiver certeza, tente outra foto.',button:'Próximo →'},{title:'3. Colecione e aprenda',text:'Guarde novas descobertas no Álbum, veja a raridade e visite os Guias. Nunca coma um cogumelo desconhecido!',button:'Entrar no app 🍄'}];let tutorialIndex=0;function paintTutorial(){const s=tutorialSlides[tutorialIndex];document.getElementById('tutorialStep').textContent='PASSO '+(tutorialIndex+1)+' DE '+tutorialSlides.length;document.getElementById('tutorialTitle').textContent=s.title;document.getElementById('tutorialText').textContent=s.text;document.getElementById('tutorialNext').textContent=s.button;document.querySelectorAll('.tutorialDots i').forEach((d,i)=>d.classList.toggle('on',i===tutorialIndex))}function finishTutorial(){document.getElementById('tutorialOverlay').classList.add('done');try{localStorage.setItem('ce_tutorial_seen','yes')}catch(e){}}document.getElementById('tutorialNext').addEventListener('click',()=>{if(tutorialIndex<tutorialSlides.length-1){tutorialIndex++;paintTutorial()}else finishTutorial()});document.getElementById('tutorialSkip').addEventListener('click',finishTutorial);try{if(localStorage.getItem('ce_tutorial_seen')==='yes')finishTutorial()}catch(e){}paintTutorial();
+</script>
+
+<style id="ajustes-tablet">
+/* Ajustes de visual para tablet (deitado e em pé) e computador.
+   O visual e as ideias são do grupo; aqui só arrumamos tamanho, espaço e alinhamento. */
+.scanner{grid-template-columns:1fr!important}
+.drop{min-height:260px}
+nav button{font-size:15px;min-height:48px}
+nav button.active{color:#fff;background:#3a1418;border-radius:12px}
+.btn{min-height:46px}
+</style>
+<!-- POKÉDEX: ficha padrão em pop-up + ligação com o back-end do grupo
+     (comum/ficha.js e comum/adaptador.js). O resto da página é do grupo. -->
+<script src="/comum/ficha.js"></script>
+<script src="/comum/adaptador.js"></script>
+<script>
+/* A barra de baixo agora marca a aba em que você está. */
+(function () {
+  const original = window.mostrar;
+  window.mostrar = function (id) {
+    original(id);
+    document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", (b.getAttribute("onclick") || "").includes("'" + id + "'")));
+  };
+})();
+PokedexAdaptador.iniciar({
+  galeria: { depoisDe: "#btnTirarFoto", input: "#foto", classe: "btn secondary", texto: "🖼️ Galeria" },
+  icone: "🍄", fauna: false,
+  cor: "#e31b23", cor2: "#f7eadb",
+  escuro: () => true,
+  noturno: { fundo: "#241012", texto: "#fff6f6", suave: "#cfc4c5" },
+  carregando: "🔎 Procurando pistas na foto...",
+  esconder: ["#result", "#status"],
+  extras: info => [["🏷️ Tipo", info.tipo], ["⚠️ Possíveis efeitos", info.efeitos], ["⭐ Raridade", info.raridade]],
+  alerta: info => /tóxic|venen|alucina|perig|intox/i.test((info.tipo || "") + " " + (info.efeitos || "")) ? "Cuidado! Este cogumelo pode fazer mal ao seu corpo. Não consuma." : "Nunca coma um cogumelo só porque o app encontrou um nome.",
+  salvar: () => { adicionarAlbum(); mostrar("album"); },
+  novaFoto: () => document.getElementById("foto").click()
+});
+</script>
+</body>
+</html>

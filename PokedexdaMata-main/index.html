@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<!--
+  PAINEL DO PROFESSOR — a página inicial do projeto.
+  Lista todos os grupos (as pastas dentro de grupos/), com o link de cada
+  Pokédex e se o back-end do grupo está pronto. As informações vêm de
+  /api/identificar, que lê as pastas e confere as missões de cada grupo.
+  Não precisa mexer aqui quando entra um grupo novo: é só criar a pasta.
+-->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pokédex da Mata — Painel</title>
+<style>
+:root{--bg:#0b1410;--card:#13211b;--line:#24382e;--text:#eaf5ee;--dim:#9db5a8;--ok:#3ef0a0;--bad:#ff8f6b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:900px;margin:auto;padding:24px 16px 60px}
+h1{margin:0 0 4px;font-size:28px}
+.sub{color:var(--dim);margin:0 0 18px}
+.resumo{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+.pill{padding:8px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:14px}
+.busca{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:15px;margin-bottom:14px}
+.grupo{display:block;padding:14px 16px;margin-bottom:10px;border-radius:14px;background:var(--card);border:1px solid var(--line);color:inherit;text-decoration:none}
+.grupo:hover{border-color:var(--ok)}
+.topo{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.nome{font-weight:700;font-size:17px}
+.st{font-size:13px;white-space:nowrap}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+.meta{color:var(--dim);font-size:13px;margin-top:4px}
+.prob{margin:8px 0 0;padding-left:18px;color:var(--bad);font-size:13px}
+.pend{margin-top:8px;font-size:13px;color:#ffd166}
+.filtros{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--text);padding:10px 16px;border-radius:999px;font-size:15px;font-weight:600;cursor:pointer;min-height:44px}
+.chip span{color:var(--dim);font-weight:400;margin-left:4px}
+.chip.on{background:var(--ok);color:#06140d;border-color:var(--ok)}
+.chip.on span{color:#06140d}
+.turma{margin:18px 0 8px;color:var(--dim);font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+.vazio{color:var(--dim);padding:30px;text-align:center;border:1px dashed var(--line);border-radius:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🌿 Pokédex da Mata</h1>
+  <p class="sub">Painel dos grupos. Clique num grupo para abrir a Pokédex dele.</p>
+  <div class="resumo" id="resumo"><span class="pill">Carregando…</span></div>
+  <div class="filtros" id="filtros"></div>
+  <input class="busca" id="busca" placeholder="Buscar por escola, turma, grupo ou tema…">
+  <div id="lista"></div>
+</div>
+<script>
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let grupos=[];
+// Filtro por escola (fica lembrado neste aparelho)
+let escola="";
+try{escola=localStorage.getItem("painelEscola")||"";}catch(e){}
+function chips(){
+  const nomes=[...new Set(grupos.map(g=>g.escola).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+  if(escola&&!nomes.includes(escola))escola="";
+  const conta=e=>grupos.filter(g=>!e||g.escola===e).length;
+  document.getElementById("filtros").innerHTML=["",...nomes].map(e=>
+    `<button class="chip ${e===escola?"on":""}" data-escola="${esc(e)}">${e?"🏫 "+esc(e):"Todas as escolas"}<span>${conta(e)}</span></button>`).join("");
+  document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{escola=b.dataset.escola;try{localStorage.setItem("painelEscola",escola)}catch(e){}chips();desenhar();});
+}
+function cartao(g){return `
+    <a class="grupo" href="${esc(g.link)}">
+      <div class="topo"><span class="nome">${esc(g.nome)}</span>
+        <span class="st ${g.tudo_certo?"ok":"bad"}">${g.tudo_certo?"✅ pronto":"⚠️ falta arrumar"}</span></div>
+      <div class="meta">${[g.escola,g.turma,g.procurar&&("procura: "+g.procurar),g.integrantes].filter(Boolean).map(esc).join(" · ")}</div>
+      ${g.problemas?`<ul class="prob">${g.problemas.map(p=>`<li>${esc(p)}</li>`).join("")}</ul>`:""}
+      ${g.pendencias?`<div class="pend">⚠️ Completar com o grupo: ${esc(g.pendencias.join(", "))}</div>`:""}
+    </a>`;}
+function desenhar(){
+  const q=document.getElementById("busca").value.toLowerCase();
+  const lista=grupos.filter(g=>(!escola||g.escola===escola)&&JSON.stringify(g).toLowerCase().includes(q))
+    .sort((a,b)=>(a.escola||"").localeCompare(b.escola||"","pt-BR")||(a.turma||"").localeCompare(b.turma||"","pt-BR")||(a.nome||"").localeCompare(b.nome||"","pt-BR"));
+  if(!lista.length){document.getElementById("lista").innerHTML=`<div class="vazio">Nenhum grupo encontrado.</div>`;return;}
+  // agrupado por escola e turma
+  let html="",atual="";
+  lista.forEach(g=>{const t=(escola?"":(g.escola||"")+" · ")+(g.turma||"");if(t!==atual){atual=t;html+=`<div class="turma">${esc(t)}</div>`;}html+=cartao(g);});
+  document.getElementById("lista").innerHTML=html;
+}
+fetch("/api/identificar").then(r=>r.json()).then(d=>{
+  grupos=d.grupos||[];
+  document.getElementById("resumo").innerHTML=
+    `<span class="pill">${esc(d.chaves)}</span>`+
+    `<span class="pill">${d.grupos_ok} de ${d.grupos_total} grupos prontos</span>`+
+    `<span class="pill">Modelo: ${esc(d.modelo)}</span>`;
+  chips();desenhar();
+}).catch(()=>{document.getElementById("resumo").innerHTML='<span class="pill bad">Não consegui ler /api/identificar. O projeto foi publicado no Vercel?</span>'});
+document.getElementById("busca").oninput=desenhar;
+</script>
+</body>
+</html>

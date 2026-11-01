@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 220" role="img" aria-label="Menina elfa cientista">
+  <path d="M56 86C52 38 148 38 144 86l6 84q-50 12-100 0z" fill="#f2c94c"/>
+  <path d="M46 220c2-52 24-74 54-74s52 22 54 74z" fill="#f4fffb" stroke="#cfe9e3" stroke-width="2"/>
+  <path d="M84 148l16 38 16-38z" fill="#8b5cf6"/>
+  <path d="M84 148l16 38-10 10-14-36z" fill="#e3f4f0"/><path d="M116 148l-16 38 10 10 14-36z" fill="#e3f4f0"/>
+  <rect x="62" y="186" width="22" height="16" rx="3" fill="#e3f4f0" stroke="#cfe9e3"/>
+  <path d="M66 198c4-8 14-8 14-8s-2 9-14 8z" fill="#16734f"/>
+  <rect x="90" y="114" width="20" height="36" rx="8" fill="#f6c9a3"/>
+  <path d="M64 84L32 64l34 34z" fill="#f6c9a3" stroke="#e0a77f" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M136 84l32-20-34 34z" fill="#f6c9a3" stroke="#e0a77f" stroke-width="2" stroke-linejoin="round"/>
+  <circle cx="100" cy="86" r="38" fill="#f6c9a3"/>
+  <path d="M62 84c-2-34 22-44 38-42 20-2 42 10 38 42-10-14-22-22-34-24-8 10-24 16-42 24z" fill="#f2c94c"/>
+  <path d="M60 100c-4 30-2 50 6 66l10-6c-6-20-8-40-6-60z" fill="#f2c94c"/>
+  <path d="M140 100c4 30 2 50-6 66l-10-6c6-20 8-40 6-60z" fill="#f2c94c"/>
+  <path d="M63 62q37-24 74 0" stroke="#16734f" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <g fill="#baff32" stroke="#16734f" stroke-width="1.5">
+    <ellipse cx="74" cy="53" rx="6" ry="3.5" transform="rotate(-35 74 53)"/><ellipse cx="88" cy="46" rx="6" ry="3.5" transform="rotate(-20 88 46)"/>
+    <ellipse cx="100" cy="44" rx="6" ry="3.5"/><ellipse cx="112" cy="46" rx="6" ry="3.5" transform="rotate(20 112 46)"/>
+    <ellipse cx="126" cy="53" rx="6" ry="3.5" transform="rotate(35 126 53)"/>
+  </g>
+  <ellipse cx="86" cy="90" rx="5" ry="7" fill="#2b2140"/><ellipse cx="114" cy="90" rx="5" ry="7" fill="#2b2140"/>
+  <circle cx="88" cy="87" r="2" fill="#fff"/><circle cx="116" cy="87" r="2" fill="#fff"/>
+  <ellipse cx="77" cy="103" rx="6" ry="4" fill="#ff9bb0" opacity=".7"/><ellipse cx="123" cy="103" rx="6" ry="4" fill="#ff9bb0" opacity=".7"/>
+  <path d="M90 104q10 8 20 0" stroke="#a5475a" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M140 182q22-18 18-42" stroke="#f4fffb" stroke-width="16" stroke-linecap="round" fill="none"/>
+  <path d="M140 182q22-18 18-42" stroke="#cfe9e3" stroke-width="2" fill="none" opacity=".6"/>
+  <circle cx="158" cy="138" r="9" fill="#f6c9a3"/>
+  <path d="M160 134l11-18" stroke="#8a5a2b" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="176" cy="102" r="16" fill="#bff3ff" fill-opacity=".75" stroke="#c99a52" stroke-width="5"/>
+  <path d="M168 96q4-6 10-6" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>

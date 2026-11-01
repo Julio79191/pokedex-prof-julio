@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<!--
+  DETETIVES DE PENAS — Pokédex de aves do Brasil
+  Grupo: Hyan, Thales, Sophia e Isabelly (Camisão, Turma 1 - M)
+
+  Este front foi montado pela professora a partir da ideia do grupo (o
+  README deles): "Para pessoas que querem conhecer as naturezas do céu".
+  As fotos de bem-te-vi foram coletadas pela Isabelly. As missões do back-end
+  são as do grupo (grupos/camisao-t1m-isabelly/missoes.js).
+-->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detetives de Penas 🕵️🪶</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--ceu:#2f8fd8;--ceu2:#7cc4f5;--amarelo:#f6c90e;--marrom:#7a4b23;--fundo:#f3f9ff;--cartao:#ffffff;--texto:#16324a;--suave:#5a7186;--linha:#d8e7f4}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:Nunito,system-ui,sans-serif;color:var(--texto);background:linear-gradient(180deg,#d9efff 0,var(--fundo) 340px) var(--fundo)}
+.app{max-width:1100px;margin:auto;padding:18px 16px 60px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.marca{display:flex;align-items:center;gap:12px}
+.logo{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;font-size:30px;background:linear-gradient(135deg,var(--amarelo),#ffe680);box-shadow:0 8px 20px #f6c90e55}
+h1{font-family:"Baloo 2",sans-serif;font-size:clamp(28px,5vw,40px);line-height:1;margin:0;color:var(--ceu)}
+h1 span{color:var(--marrom)}
+.lema{margin:4px 0 0;color:var(--suave);font-weight:600}
+nav{display:flex;gap:8px;flex-wrap:wrap}
+nav button{border:0;border-radius:999px;padding:10px 16px;font:800 15px Nunito,sans-serif;background:#fff;color:var(--texto);box-shadow:0 2px 0 var(--linha);cursor:pointer}
+nav button.ativo{background:var(--ceu);color:#fff}
+.tela{display:none;margin-top:20px}.tela.ativa{display:block}
+.heroi{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:stretch}
+.cartao{background:var(--cartao);border:1px solid var(--linha);border-radius:24px;padding:22px;box-shadow:0 14px 34px -24px #16324a66}
+.heroi h2{font-family:"Baloo 2",sans-serif;font-size:clamp(26px,4vw,38px);line-height:1.05;margin:6px 0 10px}
+.etiqueta{display:inline-block;background:#fff6cc;color:var(--marrom);font-weight:800;font-size:13px;padding:6px 12px;border-radius:999px}
+.foto-heroi{border-radius:24px;min-height:300px;background:url("fotos/bemtevi-8.jpg") center/cover;position:relative;overflow:hidden}
+.balao{position:absolute;left:14px;right:14px;bottom:14px;background:#fffffff0;border-radius:16px;padding:12px 14px;font-weight:700}
+.botao{border:0;border-radius:16px;padding:13px 18px;font:800 16px Nunito,sans-serif;cursor:pointer}
+.principal{background:linear-gradient(100deg,var(--ceu),#56aef0);color:#fff;box-shadow:0 10px 20px -10px var(--ceu)}
+.secundario{background:#fff6cc;color:var(--marrom)}
+.botao:disabled{opacity:.5;cursor:not-allowed}
+.acoes{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+input[type=file]{display:none}
+.previa{margin-top:16px;border:2px dashed var(--ceu2);border-radius:20px;min-height:220px;display:grid;place-items:center;text-align:center;color:var(--suave);overflow:hidden;background:#f7fbff}
+.previa img{max-width:100%;max-height:360px;display:block}
+.status{min-height:24px;margin:12px 0 0;font-weight:700;color:var(--ceu)}
+.grade{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.foto{margin:0;background:#fff;border:1px solid var(--linha);border-radius:18px;overflow:hidden}
+.foto img{width:100%;height:170px;object-fit:cover;display:block}
+.foto figcaption{padding:10px 12px;font-weight:700;font-size:14px}
+.album{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.item{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid var(--linha);border-radius:18px;padding:10px}
+.item img{width:64px;height:64px;border-radius:14px;object-fit:cover}
+.item small{color:var(--suave)}
+.vazio{color:var(--suave);text-align:center;padding:30px;border:2px dashed var(--linha);border-radius:18px}
+footer{margin-top:30px;text-align:center;color:var(--suave);font-size:13px}
+@media(max-width:820px){.heroi{grid-template-columns:1fr}.grade{grid-template-columns:repeat(2,1fr)}.album{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="marca">
+      <div class="logo">🕵️</div>
+      <div><h1>Detetives <span>de Penas</span></h1><p class="lema">Para quem quer conhecer as naturezas do céu 🪶</p></div>
+    </div>
+    <nav>
+      <button class="ativo" data-tela="inicio">🏠 Início</button>
+      <button data-tela="investigar">🔎 Investigar</button>
+      <button data-tela="explorar">🐦 Explorar</button>
+      <button data-tela="album">📖 Álbum</button>
+    </nav>
+  </header>
+
+  <section id="inicio" class="tela ativa">
+    <div class="heroi">
+      <div class="cartao">
+        <span class="etiqueta">🌤️ AVES DO BRASIL</span>
+        <h2>Toda pena guarda uma pista.</h2>
+        <p>Tire uma foto de uma ave e os Detetives de Penas descobrem quem ela é, onde vive e muitas curiosidades.</p>
+        <div class="acoes"><button class="botao principal" data-ir="investigar">🔎 Começar a investigação</button><button class="botao secundario" data-ir="explorar">🐦 Ver o bem-te-vi</button></div>
+      </div>
+      <div class="foto-heroi"><div class="balao">🕵️ "Bem-te-vi! Será que você consegue achar um?"</div></div>
+    </div>
+  </section>
+
+  <section id="investigar" class="tela">
+    <div class="cartao">
+      <h2 style="font-family:'Baloo 2',sans-serif;margin:0">🔎 Investigar uma ave</h2>
+      <p style="color:var(--suave);margin:6px 0 0">Use a câmera ou escolha uma foto. Quanto mais perto e nítida, melhor!</p>
+      <div class="acoes">
+        <button class="botao principal" id="btnCamera">📸 Tirar foto</button>
+        <button class="botao secundario" id="btnGaleria">🖼️ Escolher da galeria</button>
+      </div>
+      <input id="arquivoCamera" type="file" accept="image/*" capture="environment">
+      <input id="arquivoGaleria" type="file" accept="image/*">
+      <div class="previa" id="previa"><div>🪶<br>A foto aparece aqui</div></div>
+      <div class="acoes"><button class="botao principal" id="btnInvestigar" disabled>🕵️ Investigar</button></div>
+      <p class="status" id="status"></p>
+    </div>
+  </section>
+
+  <section id="explorar" class="tela">
+    <div class="cartao">
+      <h2 style="font-family:'Baloo 2',sans-serif;margin:0 0 4px">🐦 O bem-te-vi</h2>
+      <p style="color:var(--suave);margin:0 0 14px">Fotos coletadas pela Isabelly. O bem-te-vi (<em>Pitangus sulphuratus</em>) canta o próprio nome: "bem-te-vi!"</p>
+      <div class="grade">
+        <figure class="foto"><img src="fotos/bemtevi-1.jpg" alt="Bem-te-vi pousado num galho"><figcaption>Pousado no galho</figcaption></figure>
+        <figure class="foto"><img src="fotos/bemtevi-2.jpg" alt="Bem-te-vi abrindo as asas"><figcaption>Abrindo as asas</figcaption></figure>
+        <figure class="foto"><img src="fotos/bemtevi-3.jpg" alt="Dois bem-te-vis no galho"><figcaption>Em dupla</figcaption></figure>
+        <figure class="foto"><img src="fotos/bemtevi-4.jpg" alt="Bem-te-vi num mourão"><figcaption>Vigiando do mourão</figcaption></figure>
+        <figure class="foto"><img src="fotos/bemtevi-5.jpg" alt="Filhotes de bem-te-vi no ninho"><figcaption>Filhotes no ninho</figcaption></figure>
+        <figure class="foto"><img src="fotos/bemtevi-6.jpg" alt="Bem-te-vi com alimento no bico"><figcaption>Hora de comer</figcaption></figure>
+        <figure class="foto"><img src="fotos/bemtevi-7.jpg" alt="Bem-te-vi-rajado"><figcaption>Bem-te-vi-rajado (um parente!)</figcaption></figure>
+        <figure class="foto"><img src="fotos/bemtevi-8.jpg" alt="Bem-te-vi perto de flores vermelhas"><figcaption>Perto das flores</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="album" class="tela">
+    <div class="cartao">
+      <h2 style="font-family:'Baloo 2',sans-serif;margin:0 0 12px">📖 Meu álbum de detetive</h2>
+      <div id="listaAlbum" class="album"></div>
+    </div>
+  </section>
+
+  <footer>Detetives de Penas • Hyan, Thales, Sophia e Isabelly • A IA pode errar: observe as aves de longe e com respeito 💛</footer>
+</div>
+
+<script>
+/* Navegação entre as telas */
+function irPara(id){
+  document.querySelectorAll(".tela").forEach(t => t.classList.toggle("ativa", t.id === id));
+  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("ativo", b.dataset.tela === id));
+  if (id === "album") desenharAlbum();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+document.querySelectorAll("[data-tela]").forEach(b => b.onclick = () => irPara(b.dataset.tela));
+document.querySelectorAll("[data-ir]").forEach(b => b.onclick = () => irPara(b.dataset.ir));
+
+/* Escolher a foto */
+let fotoEscolhida = null, miniatura = "", ultimaAve = null;
+const $ = id => document.getElementById(id);
+$("btnCamera").onclick = () => $("arquivoCamera").click();
+$("btnGaleria").onclick = () => $("arquivoGaleria").click();
+[$("arquivoCamera"), $("arquivoGaleria")].forEach(inp => inp.addEventListener("change", () => {
+  const f = inp.files && inp.files[0];
+  if (!f) return;
+  fotoEscolhida = f;
+  const url = URL.createObjectURL(f);
+  $("previa").innerHTML = `<img src="${url}" alt="Foto escolhida">`;
+  $("btnInvestigar").disabled = false;
+  $("status").textContent = "Foto pronta! Agora é só investigar. 🕵️";
+}));
+
+/* Foto reduzida (para enviar e para o álbum) */
+function reduzir(arquivo, lado){
+  return new Promise(res => {
+    const img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, lado / Math.max(img.width, img.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      res(c.toDataURL("image/jpeg", .85));
+    };
+    img.onerror = () => res("");
+    img.src = URL.createObjectURL(arquivo);
+  });
+}
+
+/* Investigar: manda a foto para o back-end do grupo (/api/identificar).
+   A ficha aparece no pop-up (comum/ficha.js). */
+$("btnInvestigar").onclick = async () => {
+  if (!fotoEscolhida) return;
+  $("btnInvestigar").disabled = true;
+  try {
+    const foto = await reduzir(fotoEscolhida, 1600);
+    miniatura = await reduzir(fotoEscolhida, 300);
+    const resposta = await fetch("/api/identificar", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ modelo: "gemini-3.6-flash", mime: "image/jpeg", imagem: foto.split(",")[1] })
+    });
+    const dados = await resposta.json().catch(() => ({}));
+    const texto = dados && dados.candidates && dados.candidates[0].content.parts[0].text;
+    ultimaAve = texto ? JSON.parse(texto) : null;
+    $("status").textContent = ultimaAve && ultimaAve.identificado ? "🎉 Caso resolvido!" : "🕵️ Vamos tentar outra pista!";
+  } catch (e) {
+    $("status").textContent = "Ops! Não consegui falar com o servidor.";
+  } finally {
+    $("btnInvestigar").disabled = false;
+  }
+};
+
+/* Álbum (fica guardado neste aparelho) */
+function lerAlbum(){ try { return JSON.parse(localStorage.getItem("detetivesDePenas") || "[]"); } catch (e) { return []; } }
+function salvarNoAlbum(){
+  if (!ultimaAve || !ultimaAve.identificado) return;
+  const lista = lerAlbum();
+  lista.unshift({ nome: ultimaAve.nome_popular, cientifico: ultimaAve.nome_cientifico || "", foto: miniatura, data: new Date().toLocaleDateString("pt-BR") });
+  try { localStorage.setItem("detetivesDePenas", JSON.stringify(lista.slice(0, 40))); } catch (e) {}
+  irPara("album");
+}
+function desenharAlbum(){
+  const lista = lerAlbum(), caixa = $("listaAlbum");
+  caixa.innerHTML = "";
+  if (!lista.length) { caixa.innerHTML = '<div class="vazio">🪶 Seu álbum ainda está vazio. Investigue uma ave!</div>'; return; }
+  lista.forEach(a => {
+    const el = document.createElement("div"); el.className = "item";
+    const img = document.createElement("img"); img.src = a.foto; img.alt = "";
+    const txt = document.createElement("div");
+    const b = document.createElement("strong"); b.textContent = a.nome;
+    const s = document.createElement("small"); s.textContent = (a.cientifico ? a.cientifico + " • " : "") + a.data;
+    txt.append(b, document.createElement("br"), s); el.append(img, txt); caixa.appendChild(el);
+  });
+}
+</script>
+
+<style id="ajustes-tablet">
+/* Ajustes de visual para tablet (deitado e em pé) e computador.
+   O visual e as ideias são do grupo; aqui só arrumamos tamanho, espaço e alinhamento. */
+@media (min-width:700px){body>header,body>nav,body>main,body>footer,body>.app{zoom:1.12}}
+.botao{min-height:46px}
+</style>
+<!-- POKÉDEX: ficha padrão em pop-up + ligação com o back-end do grupo
+     (comum/ficha.js e comum/adaptador.js). O resto da página é do grupo. -->
+<script src="/comum/ficha.js"></script>
+<script src="/comum/adaptador.js"></script>
+<script>
+PokedexAdaptador.iniciar({
+  // botões por etapa: o de identificar só aparece depois de escolher a foto
+  etapas: { foto: ["#btnInvestigar"] },
+  icone: "🪶", fauna: true,
+  cor: "#2f8fd8", cor2: "#f6c90e",
+  escuro: () => false,
+  claro: { fundo: "#f7fbff", texto: "#16324a", suave: "#5a7186" },
+  carregando: "🕵️ Os detetives estão seguindo as pistas...",
+  salvar: () => salvarNoAlbum(),
+  novaFoto: () => document.getElementById("btnGaleria").click()
+});
+</script>
+</body>
+</html>

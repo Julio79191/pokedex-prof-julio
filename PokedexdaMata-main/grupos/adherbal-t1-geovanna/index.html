@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asas do Brasil 🧚‍♀️🐦</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #fff;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(255,105,180,.22), transparent 28%),
+      radial-gradient(circle at 85% 25%, rgba(60,180,255,.20), transparent 30%),
+      linear-gradient(145deg, #07133f, #101b5e 55%, #35105d);
+  }
+
+  button {
+    font: inherit;
+    cursor: pointer;
+    border: 0;
+  }
+
+  .stars {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: .7;
+    background-image:
+      radial-gradient(circle, #fff 1px, transparent 2px),
+      radial-gradient(circle, #ffb6df 1px, transparent 2px);
+    background-size: 75px 75px, 110px 110px;
+    background-position: 10px 20px, 35px 55px;
+  }
+
+  .page {
+    width: min(1180px, 94%);
+    margin: 28px auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .screen {
+    display: none;
+    min-height: 680px;
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: 32px;
+    overflow: hidden;
+    box-shadow: 0 25px 70px rgba(0,0,0,.35);
+    background: rgba(4,15,55,.78);
+    backdrop-filter: blur(10px);
+  }
+
+  .screen.active { display: block; }
+
+  /* Tela inicial */
+  .intro {
+    min-height: 680px;
+    display: grid;
+    place-items: center;
+    padding: 55px 25px;
+    text-align: center;
+    position: relative;
+  }
+
+  .fairy {
+    font-size: 105px;
+    animation: float 3s ease-in-out infinite;
+    filter: drop-shadow(0 10px 20px rgba(255,105,180,.3));
+  }
+
+  @keyframes float {
+    0%,100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-13px) rotate(2deg); }
+  }
+
+  .logo {
+    margin: 8px 0 0;
+    font-size: clamp(48px, 8vw, 88px);
+    line-height: .9;
+    font-weight: 900;
+    color: #ff72b8;
+    text-shadow: 0 4px 0 #8b2e80, 0 0 25px rgba(255,114,184,.35);
+  }
+
+  .logo span {
+    display: block;
+    color: #bfe8ff;
+    font-size: .58em;
+    text-shadow: 0 3px 0 #275a8a;
+  }
+
+  .intro-card {
+    width: min(650px, 100%);
+    margin-top: 25px;
+    padding: 28px;
+    border-radius: 25px;
+    background: rgba(14,29,88,.9);
+    border: 1px solid rgba(255,255,255,.15);
+  }
+
+  .intro-card h2 {
+    margin: 0 0 12px;
+    color: #ff9bce;
+  }
+
+  .intro-card p {
+    line-height: 1.65;
+    color: #edf3ff;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 22px 0;
+  }
+
+  .step {
+    padding: 15px 10px;
+    border-radius: 17px;
+    background: linear-gradient(135deg, rgba(43,75,161,.75), rgba(135,39,125,.65));
+  }
+
+  .step b { display:block; margin-bottom: 6px; }
+  .step small { color: #dce8ff; }
+
+  .primary {
+    padding: 15px 30px;
+    border-radius: 999px;
+    color: #fff;
+    font-weight: 800;
+    background: linear-gradient(90deg, #ef4fa4, #7c63f6);
+    box-shadow: 0 8px 25px rgba(239,79,164,.3);
+  }
+
+  .primary:hover { transform: translateY(-2px); }
+
+  /* App */
+  .app {
+    padding: 25px;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 22px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+  }
+
+  .brand .mini-fairy {
+    font-size: 50px;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .brand h1 {
+    margin: 0;
+    color: #ff77bb;
+    font-size: clamp(32px, 5vw, 54px);
+  }
+
+  .brand h1 span {
+    color: #bde9ff;
+    font-size: .58em;
+    display: block;
+  }
+
+  .points {
+    padding: 13px 18px;
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 18px;
+    background: rgba(18,39,100,.8);
+    text-align: center;
+  }
+
+  .points strong { color: #ffd45a; font-size: 25px; }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 20px;
+  }
+
+  aside, .card {
+    background: rgba(12,28,82,.88);
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 22px;
+  }
+
+  aside { padding: 12px; }
+
+  .menu button {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 8px;
+    border-radius: 14px;
+    color: #fff;
+    text-align: left;
+    background: transparent;
+  }
+
+  .menu button:hover, .menu button.active {
+    background: linear-gradient(90deg, #ef4fa4, #695de7);
+  }
+
+  .content {
+    display: grid;
+    grid-template-columns: 1.2fr .8fr;
+    gap: 18px;
+  }
+
+  .card { padding: 20px; }
+  .card h2, .card h3 { margin-top: 0; }
+  .pink { color: #ff86c3; }
+  .blue { color: #8bdcff; }
+
+  .camera {
+    min-height: 260px;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    border: 2px dashed #8d78ff;
+    border-radius: 18px;
+    background: rgba(67,47,130,.25);
+  }
+
+  .camera-icon { font-size: 75px; }
+
+  .photo-input { display: none; }
+
+  .result {
+    display: none;
+    margin-top: 15px;
+    padding: 16px;
+    border-radius: 18px;
+    background: rgba(255,157,205,.12);
+  }
+
+  .result.visible { display: block; }
+
+  .bird-photo {
+    width: 100%;
+    max-height: 290px;
+    object-fit: cover;
+    border-radius: 15px;
+    display: none;
+    margin-bottom: 14px;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #ff4fa6;
+    font-weight: 800;
+    font-size: 13px;
+  }
+
+  .map {
+    height: 220px;
+    display: grid;
+    place-items: center;
+    font-size: 110px;
+    border-radius: 17px;
+    background: linear-gradient(135deg, #79b9df, #7ecf8a);
+    color: #176b55;
+  }
+
+  .album {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .bird {
+    padding: 12px 5px;
+    border-radius: 13px;
+    background: #172d72;
+    text-align: center;
+  }
+
+  .bird span { font-size: 38px; display:block; }
+  .bird small { font-size: 11px; }
+
+  .warning {
+    grid-column: 1 / -1;
+    margin-top: 4px;
+    padding: 15px 18px;
+    border-radius: 17px;
+    background: linear-gradient(90deg, rgba(255,180,45,.18), rgba(255,77,153,.18));
+    border: 1px solid rgba(255,205,80,.3);
+    color: #fff1bf;
+    text-align: center;
+    font-weight: 700;
+  }
+
+  .rare {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    background: rgba(2,5,30,.78);
+    place-items: center;
+    padding: 20px;
+  }
+
+  .rare.show { display: grid; }
+
+  .rare-box {
+    width: min(480px, 100%);
+    text-align: center;
+    padding: 35px;
+    border-radius: 28px;
+    background: linear-gradient(145deg, #21115d, #681b65);
+    border: 2px solid #ff7cc3;
+    box-shadow: 0 0 50px rgba(255,90,180,.35);
+    animation: pop .45s ease;
+  }
+
+  @keyframes pop {
+    from { transform: scale(.75); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .rare-box .bird-big { font-size: 100px; }
+
+  .loading {
+    display: none;
+    margin-top: 15px;
+    color: #aeeaff;
+    text-align: center;
+  }
+
+  .error {
+    display: none;
+    margin-top: 15px;
+    padding: 14px;
+    border-radius: 15px;
+    background: rgba(255,80,100,.18);
+    border: 1px solid rgba(255,130,140,.35);
+  }
+
+  @media (max-width: 850px) {
+    .layout, .content { grid-template-columns: 1fr; }
+    aside { order: 2; }
+    .steps { grid-template-columns: 1fr; }
+    header { align-items: flex-start; }
+  }
+
+  @media (max-width: 520px) {
+    .page { width: 96%; margin: 10px auto; }
+    .screen { border-radius: 20px; }
+    .app, .intro { padding: 18px; }
+    .album { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+
+<body>
+<div class="stars"></div>
+
+<main class="page">
+
+  <!-- TELA INICIAL -->
+  <section id="introScreen" class="screen active">
+    <div class="intro">
+      <div>
+        <div class="fairy" aria-hidden="true">🧚‍♀️</div>
+        <div class="logo">Asas <span>do Brasil</span></div>
+
+        <div class="intro-card">
+          <h2>🐦 Bem-vindo ao Asas do Brasil!</h2>
+          <p>
+            Este projeto foi criado para ajudar a conhecer melhor as
+            <strong>aves do Brasil</strong>. Tire uma foto de uma ave e deixe
+            a nossa fadinha da natureza ajudar a descobrir qual é ela. 🌳✨
+          </p>
+
+          <div class="steps">
+            <div class="step">
+              <b>📸 1. Tire uma foto</b>
+              <small>Fotografe uma ave.</small>
+            </div>
+            <div class="step">
+              <b>🔍 2. Descubra</b>
+              <small>O app analisa a foto.</small>
+            </div>
+            <div class="step">
+              <b>🏆 3. Aprenda</b>
+              <small>Veja curiosidades e ganhe pontos.</small>
+            </div>
+          </div>
+
+          <button class="primary" id="startBtn">✨ Começar a explorar</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TELA PRINCIPAL -->
+  <section id="appScreen" class="screen">
+    <div class="app">
+      <header>
+        <div class="brand">
+          <div class="mini-fairy">🧚‍♀️</div>
+          <h1>Asas <span>do Brasil</span></h1>
+        </div>
+        <div class="points">⭐ Seus pontos<br><strong id="points">0</strong></div>
+      </header>
+
+      <div class="layout">
+        <aside>
+          <nav class="menu">
+            <button class="active">🏠 Início</button>
+            <button>📚 Álbum</button>
+            <button>🏆 Conquistas</button>
+            <button>🥇 Ranking</button>
+            <button>ℹ️ Sobre</button>
+          </nav>
+        </aside>
+
+        <div class="content">
+          <div class="card">
+            <h2 class="pink">🧚‍♀️ Vamos descobrir!</h2>
+            <p>Tire uma foto de uma ave para saber qual é.</p>
+
+            <div class="camera">
+              <div>
+                <div class="camera-icon">📷</div>
+                <button class="primary" id="photoBtn">Escolher uma foto</button>
+                <input id="photoInput" class="photo-input" type="file" accept="image/jpeg,image/png,image/webp">
+              </div>
+            </div>
+
+            <div id="loading" class="loading">🧚‍♀️ A fadinha está olhando a foto... ✨</div>
+            <div id="error" class="error"></div>
+
+            <div id="result" class="result">
+              <img id="birdPhoto" class="bird-photo" alt="Foto da ave escolhida">
+              <span id="confidence" class="badge"></span>
+              <h2 id="birdName" class="blue"></h2>
+              <p id="curiosities"></p>
+              <button id="soundBtn" class="primary" style="display:none">🔊 Ouvir o som</button>
+            </div>
+          </div>
+
+          <div>
+            <div class="card">
+              <h3 class="blue">🗺️ Onde vive?</h3>
+              <div class="map">🇧🇷</div>
+              <p id="habitat">Descubra onde a ave pode ser encontrada no Brasil.</p>
+            </div>
+
+            <div class="card" style="margin-top:18px">
+              <h3 class="pink">📚 Álbum das aves</h3>
+              <div id="albumComum"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="pink">🏆 Conquistas</h3>
+            <p>⭐ <strong id="pontosConq">0</strong> pontos</p>
+            <p id="conqPrimeira">🥉 Primeira descoberta: ainda esperando uma ave!</p>
+            <p>✨ Encontre uma ave rara para receber uma surpresa.</p>
+          </div>
+
+          <div class="card">
+            <h3 class="blue">🔊 Som da ave</h3>
+            <p>Quando houver um som disponível, ele aparecerá aqui.</p>
+            <div style="font-size:45px;text-align:center">🎵🐦🎵</div>
+          </div>
+
+          <div class="warning">
+            ⚠️ Não toque nas aves selvagens. Observe de longe! 👀🌿
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- SURPRESA DA AVE RARA -->
+<div id="rareModal" class="rare" role="dialog" aria-modal="true">
+  <div class="rare-box">
+    <div class="bird-big">🦜</div>
+    <h2>🎉 AVE RARA DESCOBERTA! 🎉</h2>
+    <p>Parabéns! Você encontrou uma ave rara!</p>
+    <p>⭐ Você ganhou <strong>150 pontos</strong>!</p>
+    <button class="primary" id="closeRare">🩷 Que incrível!</button>
+  </div>
+</div>
+
+<script>
+  const startBtn = document.getElementById("startBtn");
+  const introScreen = document.getElementById("introScreen");
+  const appScreen = document.getElementById("appScreen");
+  const photoBtn = document.getElementById("photoBtn");
+  const photoInput = document.getElementById("photoInput");
+  const loading = document.getElementById("loading");
+  const errorBox = document.getElementById("error");
+  const result = document.getElementById("result");
+  const birdPhoto = document.getElementById("birdPhoto");
+  const birdName = document.getElementById("birdName");
+  const curiosities = document.getElementById("curiosities");
+  const confidence = document.getElementById("confidence");
+  const habitat = document.getElementById("habitat");
+  const soundBtn = document.getElementById("soundBtn");
+  const pointsEl = document.getElementById("points");
+  const rareModal = document.getElementById("rareModal");
+  const closeRare = document.getElementById("closeRare");
+
+  let points = 0;
+
+  startBtn.addEventListener("click", () => {
+    introScreen.classList.remove("active");
+    appScreen.classList.add("active");
+  });
+
+  photoBtn.addEventListener("click", () => photoInput.click());
+
+  photoInput.addEventListener("change", async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    errorBox.style.display = "none";
+    result.classList.remove("visible");
+    loading.style.display = "block";
+
+    try {
+      const base64 = await fileToBase64(file);
+
+      birdPhoto.src = URL.createObjectURL(file);
+      birdPhoto.style.display = "block";
+
+      const pedido = {
+        modelo: "gemini-3.6-flash",
+        body: {
+          contents: [{
+            parts: [
+              {
+                text:
+                  "Analise a foto e tente identificar somente aves do Brasil. " +
+                  "Não chute. Se não houver uma ave ou não houver certeza suficiente, " +
+                  "retorne identificado=false. Retorne nome, nome_cientifico, curiosidades, " +
+                  "habitat, raro e, se houver, somUrl. A confiança deve ser um número inteiro de 0 a 100."
+              },
+              {
+                inline_data: {
+                  mime_type: "image/jpeg",
+                  data: base64
+                }
+              }
+            ]
+          }],
+          generationConfig: {
+            temperature: 0.2,
+            responseMimeType: "application/json",
+            responseSchema: {
+              type: "object",
+              properties: {
+                identificado: { type: "boolean" },
+                confianca: { type: "integer" },
+                nome: { type: "string" },
+                nome_cientifico: { type: "string" },
+                curiosidades: { type: "string" },
+                habitat: { type: "string" },
+                raro: { type: "boolean" },
+                somUrl: { type: "string" }
+              },
+              required: ["identificado", "confianca"]
+            }
+          }
+        }
+      };
+
+      const response = await fetch("/api/identificar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(pedido)
+      });
+
+      if (!response.ok) throw new Error("Servidor indisponível.");
+
+      const resposta = await response.json();
+      const texto = resposta?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+      if (!texto) throw new Error("Resposta vazia.");
+
+      const dados = JSON.parse(texto);
+
+      if (dados.identificado !== true || Number(dados.confianca) < 80) {
+        mostrarMensagem("Hmm, não consegui ter certeza. 🥺 Tenta outra foto de uma ave!");
+        return;
+      }
+
+      mostrarResultado(dados);
+
+    } catch (erro) {
+      console.error(erro);
+      mostrarMensagem("Ops! 🌧️ Não consegui falar com o servidor agora. Tente novamente.");
+    } finally {
+      loading.style.display = "none";
+    }
+  });
+
+  function mostrarResultado(dados) {
+    result.classList.add("visible");
+
+    // textContent é usado de propósito: o texto da IA nunca vira HTML.
+    birdName.textContent = dados.nome || "Ave identificada";
+    confidence.textContent = "✨ " + Number(dados.confianca) + "% de confiança";
+
+    const curiosidade = dados.nome_cientifico
+      ? "Nome científico: " + dados.nome_cientifico + "\n\n" + (dados.curiosidades || "")
+      : (dados.curiosidades || "Nenhuma curiosidade disponível.");
+
+    curiosities.textContent = curiosidade;
+    habitat.textContent = dados.habitat || "Informação sobre o habitat não disponível.";
+
+    points += 50;
+    pointsEl.textContent = points;
+
+    if (dados.somUrl) {
+      soundBtn.style.display = "inline-block";
+      soundBtn.onclick = () => {
+        const audio = new Audio(dados.somUrl);
+        audio.play().catch(() => {
+          mostrarMensagem("Não consegui tocar o som desta ave agora. 🎵");
+        });
+      };
+    } else {
+      soundBtn.style.display = "none";
+    }
+
+    if (dados.raro === true) {
+      points += 150;
+      pointsEl.textContent = points;
+      setTimeout(() => rareModal.classList.add("show"), 450);
+    }
+  }
+
+  function mostrarMensagem(texto) {
+    result.classList.remove("visible");
+    errorBox.textContent = texto;
+    errorBox.style.display = "block";
+  }
+
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const valor = String(reader.result);
+        const separador = valor.indexOf(",");
+        resolve(separador >= 0 ? valor.slice(separador + 1) : valor);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  closeRare.addEventListener("click", () => rareModal.classList.remove("show"));
+
+  rareModal.addEventListener("click", (event) => {
+    if (event.target === rareModal) rareModal.classList.remove("show");
+  });
+</script>
+
+<style id="ajustes-tablet">
+/* Ajustes de visual para tablet (deitado e em pé) e computador.
+   O visual e as ideias são do grupo; aqui só arrumamos tamanho, espaço e alinhamento. */
+.intro-card{margin-left:auto;margin-right:auto}
+.content{align-items:start}
+.menu button{min-height:48px;font-size:15px}
+@media (max-width:850px){
+  aside{order:0!important}
+  .menu{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+  .menu::-webkit-scrollbar{display:none}
+  .menu button{width:auto;flex:1 0 auto;margin:0;white-space:nowrap;text-align:center}
+}
+</style>
+<!-- POKÉDEX: ficha padrão em pop-up + ligação com o back-end do grupo
+     (comum/ficha.js e comum/adaptador.js). O resto da página é do grupo. -->
+<script src="/comum/ficha.js"></script>
+<script src="/comum/adaptador.js"></script>
+<script>
+/* O menu do grupo era só enfeite: agora cada botão leva até a parte certa. */
+(function () {
+  const botoes = [...document.querySelectorAll(".menu button")];
+  const card = texto => [...document.querySelectorAll(".card h2, .card h3")].find(h => h.textContent.includes(texto));
+  const ir = el => el && el.closest(".card").scrollIntoView({ behavior: "smooth", block: "start" });
+  const acoes = [
+    () => window.scrollTo({ top: 0, behavior: "smooth" }),
+    () => ir(card("Álbum")),
+    () => ir(card("Conquistas")),
+    () => FichaPokedex.aviso({ tipo: "info", icone: "🥇", titulo: "Ranking", texto: "Você tem " + (document.getElementById("points").textContent || "0") + " pontos! Cada ave descoberta vale pontos. Será que você chega ao topo? 🧚‍♀️", acoes: [{ texto: "Bora explorar!", principal: true }] }),
+    () => FichaPokedex.aviso({ tipo: "info", icone: "🐦", titulo: "Sobre o Asas do Brasil", texto: "Um app para conhecer as aves do Brasil com a ajuda da fadinha da natureza. Feito por Geovanna, Geovana, Alberto e Daniel. 💜", acoes: [{ texto: "Fechar", principal: true }] })
+  ];
+  botoes.forEach((b, i) => b.addEventListener("click", () => {
+    botoes.forEach(x => x.classList.toggle("active", x === b));
+    if (acoes[i]) acoes[i]();
+  }));
+})();
+PokedexAdaptador.iniciar({
+  icone: "🐦", fauna: true,
+  cor: "#ef4fa4", cor2: "#7c63f6",
+  escuro: () => true,
+  noturno: { fundo: "#231c4d", texto: "#fff1fb", suave: "#e9cfe9" },
+  carregando: "🧚‍♀️ A fadinha está procurando a ave na foto...",
+  esconder: ["#result", "#error", "#loading"],
+  extras: info => [["🌳 Habitat", info.habitat], ["✨ Ave rara?", info.raro === true ? "Sim! Essa é uma ave rara de ver." : ""]],
+  acoesExtras: info => info.somUrl ? [{ texto: "🔊 Ouvir o som", fechar: false, aoClicar: () => document.getElementById("soundBtn").click() }] : [],
+  album: { el: "#albumComum", compacto: true, depois: () => document.getElementById("albumComum").closest(".card").scrollIntoView({ behavior: "smooth", block: "start" }) },
+  novaFoto: () => document.getElementById("photoBtn").click()
+});
+/* Conquistas de verdade: pontos do topo e a primeira ave salva no álbum. */
+(function () {
+  const pts = document.getElementById("points");
+  const atualizar = () => {
+    document.getElementById("pontosConq").textContent = pts.textContent || "0";
+    if (PokedexAdaptador.lerAlbum().length) document.getElementById("conqPrimeira").textContent = "🥉 Primeira descoberta: conquistada! 🎉";
+  };
+  new MutationObserver(atualizar).observe(pts, { childList: true, characterData: true, subtree: true });
+  new MutationObserver(atualizar).observe(document.getElementById("albumComum"), { childList: true });
+  atualizar();
+})();
+</script>
+</body>
+</html>

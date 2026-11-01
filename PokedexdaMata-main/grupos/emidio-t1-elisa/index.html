@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detetives da Natureza</title>
+<style>
+:root{--verde:#5f7040;--verde-claro:#9caf68;--marrom:#5a3e2b;--rosa:#f08aa8;--rosa-claro:#ffd5e1;--fundo:#171b16;--cartao:#242a20;--texto:#fff9ef;--suave:#d9d4c8;--perigo:#ffbd59;--volume:0.45}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(circle at top,#303a28 0,#171b16 55%);color:var(--texto)}
+button,input,select{font:inherit}
+.app{width:min(100%,1000px);padding:20px 16px 44px;margin:auto}
+header{text-align:center}
+.badge{display:inline-flex;align-items:center;gap:8px;background:var(--marrom);border:2px solid var(--rosa);border-radius:999px;padding:7px 14px;font-weight:800}
+h1{font-size:clamp(2rem,7vw,3.4rem);margin:12px 0 4px;color:var(--rosa-claro)}
+.sub{color:var(--suave);margin:0 0 14px}
+  .mascotes{display:flex; justify-content:center; gap:14px; margin:8px 0 20px}
+  .mascote{width:104px;height:130px;position:relative;display:inline-block;flex:0 0 auto}
+  .person-head{position:absolute;top:9px;left:31px;width:43px;height:43px;border-radius:48% 48% 44% 44%;background:#f1c6a6;border:2px solid #503927;z-index:2}
+  .person-body{position:absolute;top:53px;left:23px;width:59px;height:62px;border-radius:22px 22px 12px 12px;background:var(--rosa);border:2px solid #503927}
+  .person-eye{position:absolute;top:25px;width:5px;height:7px;background:#3b2b24;border-radius:50%;z-index:3}
+  .person-eye.one{left:43px}.person-eye.two{left:59px}
+  .person-smile{position:absolute;top:37px;left:46px;width:14px;height:7px;border-bottom:2px solid #8d4c55;border-radius:50%;z-index:3}
+  .elf .person-hair{position:absolute;top:3px;left:24px;width:58px;height:55px;border-radius:48% 48% 28% 28%;background:#70452f;z-index:1}
+  .elf .person-ear{position:absolute;top:25px;left:16px;width:22px;height:10px;background:#f1c6a6;transform:rotate(-28deg);border:2px solid #503927;border-radius:100% 0 100% 0;z-index:1}
+  .elf .person-ear.right{left:68px;transform:rotate(28deg)}
+  .human .person-hair{position:absolute;top:4px;left:31px;width:44px;height:19px;background:#49352a;border-radius:50% 50% 20% 20%;z-index:3}
+  .human .person-body{background:var(--verde)}
+  .detective-hat{position:absolute;top:0;left:24px;width:59px;height:13px;border-radius:50%;background:#72523a;border:2px solid #392b20;z-index:4}
+  .detective-hat:after{content:"";position:absolute;width:38px;height:10px;left:9px;top:-7px;border-radius:8px 8px 2px 2px;background:#72523a;border:2px solid #392b20}
+
+.home-menu{display:flex;flex-direction:column;align-items:center;gap:14px;margin:24px auto 8px;width:min(100%,360px)}
+.menu-button{width:100%;padding:16px 20px;font-size:1.05rem;letter-spacing:.7px;border-radius:18px;background:linear-gradient(135deg,#f5a0b8,#e87598);color:#fff;border:2px solid #ffd9e3;box-shadow:0 6px 0 #9f4e66;cursor:pointer;font-weight:900;transition:transform .15s,filter .15s}
+.menu-button:hover,.button:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.screen{display:none;animation:aparecer .22s ease-out}.screen.active{display:block}
+@keyframes aparecer{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.card{background:rgba(36,42,32,.96);border:2px solid #59624d;border-radius:24px;padding:clamp(16px,3vw,24px);box-shadow:0 14px 30px rgba(0,0,0,.25);margin-bottom:16px}
+.hero{text-align:center}.hero h2{margin:4px 0 8px}.hero p{color:var(--suave)}
+.button{border:0;cursor:pointer;border-radius:16px;padding:13px 18px;font-size:.98rem;font-weight:900;color:#fff;background:var(--rosa);box-shadow:0 5px 0 #a64e69;transition:transform .15s,filter .15s}
+.button:active{transform:translateY(3px);box-shadow:0 2px 0 #a64e69}
+.button.secondary{background:var(--verde);box-shadow:0 5px 0 #394728}
+.button.earth{background:var(--marrom);box-shadow:0 5px 0 #332217}
+.button:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.button-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:16px}
+.menu-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
+.menu-tile{min-height:112px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;background:#1b2119;border:2px solid #59624d;border-radius:18px;padding:16px;cursor:pointer;color:var(--texto);font-weight:900}
+.menu-tile:hover{border-color:var(--rosa);background:#283023}
+.menu-tile .tile-icon{font-size:1.8rem}
+.screen-title{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.screen-title h2{margin:0}
+.score-pill{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:8px 13px;background:#443421;border:1px solid #b28c57;font-weight:900}
+.small{font-size:.88rem;color:var(--suave)}
+.dialogue-stage{display:flex;align-items:center;justify-content:center;gap:20px;min-height:170px;padding:10px;flex-wrap:wrap}
+.dialogue-box{background:#fff5f7;color:#49382d;border:3px solid var(--rosa);border-radius:22px;padding:18px;line-height:1.55;min-height:115px}
+.dialogue-box strong{color:#8b4d62}
+.settings-list{display:grid;gap:12px}.settings-list label{display:flex;align-items:center;gap:10px;background:#1b2119;padding:12px;border-radius:12px}
+.settings-list input{accent-color:var(--rosa)}
+input[type=file]{display:none}
+.camera-video,.preview img{width:100%;max-height:360px;object-fit:contain;border-radius:18px;border:3px solid var(--marrom);margin-top:12px;background:#111}
+.preview{display:none;margin-top:16px}.preview img{object-fit:contain}
+.status{display:none;text-align:center;padding:20px}
+.loader{font-size:2.3rem;animation:pulo 1s infinite alternate}
+@keyframes pulo{to{transform:translateY(-8px)}}
+.result{display:none}.tree-name{font-size:clamp(1.6rem,5vw,2.3rem);margin:0;color:var(--rosa-claro)}
+.confidence{display:inline-block;background:var(--verde);padding:6px 10px;border-radius:12px;margin:8px 0 16px;font-weight:800}
+.section-title{font-size:1.05rem;margin:14px 0 7px;color:#cbd99e}
+.curiosity{background:#1b2119;border-left:5px solid var(--rosa);padding:12px 14px;border-radius:12px;margin:8px 0;color:var(--suave)}
+.danger{background:#3b2d19;border:2px solid var(--perigo);color:#fff1d2;padding:13px;border-radius:14px;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.item-card{background:#1b2119;border:2px solid #59624d;border-radius:16px;padding:12px;min-width:0}
+.item-card h3{margin:8px 0 5px;color:var(--rosa-claro);font-size:1rem}
+.item-card p{margin:5px 0;color:var(--suave);font-size:.9rem}
+.tree-art{height:90px;border-radius:12px;background:linear-gradient(#293727,#1b2119);display:grid;place-items:center;position:relative;overflow:hidden}
+.tree-art svg{height:82px;width:82px}
+.tree-art.locked{filter:saturate(.35);opacity:.7}
+.album-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.achievement{background:#1b2119;border:2px dashed #59624d;border-radius:16px;padding:12px;min-height:90px}
+.achievement strong{display:block;color:var(--rosa-claro)}
+.empty{color:var(--suave);text-align:center;padding:12px}
+.notice{padding:12px 14px;border-radius:14px;background:#263022;border:1px solid #687951;margin:12px 0;color:var(--texto)}
+.notice.warn{background:#3b2d19;border-color:var(--perigo)}
+.notice.error{background:#38232a;border-color:#c76b86}
+.quiz-option{display:block;width:100%;text-align:left;margin:8px 0;padding:12px;border:2px solid #59624d;border-radius:12px;background:#1b2119;color:var(--texto);cursor:pointer}
+.quiz-option:hover{border-color:var(--rosa)}.quiz-option:disabled{cursor:default;opacity:.9}
+.quiz-option.correct{border-color:#9caf68;background:#263b25}.quiz-option.wrong{border-color:#d36e83;background:#3b242a}
+.profile-layout{display:grid;grid-template-columns:minmax(130px,200px) 1fr;gap:16px;align-items:start}
+.profile-preview{background:#1b2119;border-radius:18px;padding:14px;text-align:center;border:2px solid #59624d}
+.profile-preview .mascote{margin:0 auto;transform:scale(1.1);transform-origin:top center}
+.profile-items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.item-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+hr{border:0;border-top:1px solid #59624d;margin:18px 0}
+[hidden]{display:none!important}
+@media(min-width:650px){.grid,.album-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.profile-items{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:460px){.menu-grid{grid-template-columns:1fr 1fr}.menu-tile{padding:12px 7px;font-size:.9rem}.profile-layout{grid-template-columns:1fr}.profile-preview .mascote{margin-bottom:0}.app{padding:14px 10px 30px}.card{border-radius:18px}}
+</style>
+</head>
+<body>
+<main class="app">
+<header id="cabecalho">
+  <div class="badge">Aventura na floresta</div>
+  <h1>Detetives da Natureza</h1>
+  <p class="sub">Explore árvores brasileiras, aprenda e complete sua coleção.</p>
+  <div class="mascotes" aria-label="Os dois detetives">
+      <div class="mascote elf" role="img" aria-label="Detetive elfo"><span class="person-hair"></span><span class="person-ear"></span><span class="person-ear right"></span><span class="person-head"></span><span class="person-eye one"></span><span class="person-eye two"></span><span class="person-smile"></span><span class="person-body"></span></div>
+      <div class="mascote human" role="img" aria-label="Detetive humano"><span class="detective-hat"></span><span class="person-hair"></span><span class="person-head"></span><span class="person-eye one"></span><span class="person-eye two"></span><span class="person-smile"></span><span class="person-body"></span></div>
+  </div>
+</header>
+
+<section class="card hero screen active" id="inicio">
+  <h2>Bem-vindo à aventura!</h2><p>Prepare sua lupa e descubra os segredos das árvores brasileiras.</p>
+  <div class="home-menu"><button class="menu-button" id="btnIniciar">INICIAR</button><button class="menu-button" id="btnConfiguracao">CONFIGURAÇÃO</button></div>
+</section>
+
+<section class="card screen" id="dialogo">
+  <h2>Uma nova missão!</h2>
+  <div class="dialogue-stage">
+      <div class="mascote elf" role="img" aria-label="Detetive elfo"><span class="person-hair"></span><span class="person-ear"></span><span class="person-ear right"></span><span class="person-head"></span><span class="person-eye one"></span><span class="person-eye two"></span><span class="person-smile"></span><span class="person-body"></span></div>
+      <div class="mascote human" role="img" aria-label="Detetive humano"><span class="detective-hat"></span><span class="person-hair"></span><span class="person-head"></span><span class="person-eye one"></span><span class="person-eye two"></span><span class="person-smile"></span><span class="person-body"></span></div>
+  </div>
+  <div class="dialogue-box"><strong id="nomeFalante">Detetive elfo</strong><p id="textoDialogo" style="margin:8px 0 0"></p></div>
+  <div class="button-row"><button class="button" id="continuarDialogo">CONTINUAR</button></div>
+</section>
+
+<section class="card screen" id="configuracao">
+  <h2>Configurações da aventura</h2><p>Ajuste o som e as animações do seu jeito.</p>
+  <div class="settings-list">
+    <label for="volume"><span>Volume</span><input id="volume" type="range" min="0" max="100" value="45" style="flex:1"><strong id="volumeTexto">45%</strong></label>
+    <label><input type="checkbox" id="somAtivo" checked> Ativar sons</label>
+    <label><input type="checkbox" id="animacaoOpcional" checked> Usar animações suaves</label>
+  </div>
+  <div class="button-row"><button class="button secondary" id="voltarConfig">VOLTAR</button><button class="button earth" id="sairConfig">SAIR PARA O INÍCIO</button></div>
+</section>
+
+<section class="card screen" id="menuJogo">
+  <div class="screen-title"><h2>Menu da aventura</h2><span class="score-pill">Pontos: <b id="pontosMenu">0</b> 🌟</span></div>
+  <p>Escolha o próximo passo da sua investigação.</p>
+  <div class="menu-grid">
+    <button class="menu-tile" id="irExplorar"><span class="tile-icon">🔎</span>EXPLORAR</button>
+    <button class="menu-tile" id="irLoja"><span class="tile-icon">🎁</span>LOJA</button>
+    <button class="menu-tile" id="irAlbum"><span class="tile-icon">📚</span>ÁLBUM</button>
+    <button class="menu-tile" id="irPersonagem"><span class="tile-icon">🧢</span>PERSONAGEM</button>
+  </div>
+  <div class="notice" id="resumoProgresso">Suas descobertas e seus pontos ficam salvos neste dispositivo.</div>
+  <div class="button-row"><button class="button secondary" id="menuConfiguracao">CONFIGURAÇÃO</button><button class="button earth" id="menuInicio">TELA INICIAL</button></div>
+</section>
+
+<section class="card screen" id="telaFoto">
+  <div class="screen-title"><h2>Explorar uma árvore</h2><span class="score-pill">Pontos: <b class="pontosAtual">0</b></span></div>
+  <p>Escolha uma foto clara que mostre a árvore, suas folhas, flores ou frutos.</p>
+  <div class="button-row"><button class="button" id="abrirCamera">TIRAR FOTO</button><button class="button secondary" id="abrirArquivos">GALERIA</button></div>
+  <input id="foto" type="file" accept="image/*" hidden>
+  <video id="cameraVideo" class="camera-video" autoplay playsinline></video>
+  <div class="button-row" id="cameraAcoes" style="display:none"><button class="button" id="capturarFoto">CAPTURAR FOTO</button><button class="button secondary" id="fecharCamera">FECHAR CÂMERA</button></div>
+  <p class="small" id="cameraAviso" role="status"></p>
+  <div class="preview" id="preview"><img id="fotoPreview" alt="Prévia da foto selecionada"><div class="button-row"><button class="button" id="investigar">ANALISAR ÁRVORE</button><button class="button secondary" id="trocarFoto">ESCOLHER OUTRA</button></div></div>
+  <div class="button-row"><button class="button earth" id="voltarMenuFoto">VOLTAR AO MENU</button></div>
+</section>
+
+<section class="card status" id="carregando"><div class="loader">🌿</div><h2>Os detetives estão procurando pistas...</h2><p>Aguarde um pouquinho. Não vamos adivinhar!</p></section>
+<section class="card status" id="incerteza"><h2>Não conseguimos ter certeza</h2><p>A foto pode estar desfocada ou não mostrar uma árvore com clareza. Tente uma foto mais nítida e com boa luz.</p><div class="button-row"><button class="button" id="tentarNovamente">ESCOLHER OUTRA FOTO</button><button class="button secondary" id="incertezaMenu">VOLTAR AO MENU</button></div></section>
+<section class="card status" id="naoValida"><h2>Essa árvore não entrou na coleção</h2><p id="naoValidaTexto">A imagem não foi confirmada como uma espécie de árvore nativa ou endêmica do Brasil. Nenhum ponto foi concedido.</p><div class="button-row"><button class="button" id="escolherOutraNaoValida">ESCOLHER OUTRA</button><button class="button secondary" id="naoValidaMenu">VOLTAR AO MENU</button></div></section>
+<section class="card status" id="erro"><h2>Ops! A pista se perdeu pelo caminho.</h2><p>Não foi possível conversar com o serviço de identificação. Confira a conexão e tente novamente.</p><div class="button-row"><button class="button" id="tentarErro">TENTAR DE NOVO</button><button class="button secondary" id="erroMenu">VOLTAR AO MENU</button></div></section>
+
+<section class="card screen" id="resultado">
+  <div class="screen-title"><div><p class="small" style="margin:0">Árvore confirmada</p><h2 class="tree-name" id="nomeArvore"></h2><p id="nomeCientifico" class="small"></p></div><span class="confidence" id="confianca"></span></div>
+  <div id="estadoDescoberta" class="notice"></div>
+  <p id="descricaoArvore"></p>
+  <div id="detalhesArvore"></div><div id="curiosidadesBox"></div><div id="perigoBox"></div>
+  <div class="button-row"><button class="button" id="fazerQuiz">FAZER QUIZ</button><button class="button secondary" id="resultadoAlbum">VER ÁLBUM</button><button class="button earth" id="resultadoMenu">VOLTAR AO MENU</button></div>
+</section>
+
+<section class="card screen" id="quiz">
+  <div class="screen-title"><h2>Quiz da árvore</h2><span class="score-pill">Pontos: <b class="pontosAtual">0</b></span></div>
+  <div id="quizConteudo"></div>
+  <div class="button-row"><button class="button secondary" id="quizMenu" hidden>VOLTAR AO MENU</button><button class="button earth" id="quizVoltarResultado">VOLTAR À ÁRVORE</button></div>
+</section>
+
+<section class="card screen" id="loja">
+  <div class="screen-title"><h2>Loja de figurinhas</h2><span class="score-pill">Pontos: <b class="pontosAtual">0</b></span></div>
+  <p>Compre figurinhas com os pontos que conquistou. Cada uma pode ser comprada só uma vez.</p>
+  <div id="lojaMensagem" aria-live="polite"></div><div id="lojaItens" class="grid"></div>
+  <div class="button-row"><button class="button secondary" id="lojaAlbum">VER ÁLBUM</button><button class="button earth" id="lojaMenu">VOLTAR AO MENU</button></div>
+</section>
+
+<section class="card screen" id="albumTela">
+  <div class="screen-title"><h2>Meu álbum</h2><span class="score-pill">Pontos: <b class="pontosAtual">0</b></span></div>
+  <p>As árvores confirmadas e as figurinhas compradas aparecem separadas.</p>
+  <h3 class="section-title">Árvores descobertas</h3><div id="albumDescobertas" class="album-grid"></div>
+  <hr><h3 class="section-title">Figurinhas compradas</h3><div id="albumFigurinhas" class="album-grid"></div>
+  <div id="detalheFigurinha" class="notice" hidden></div>
+  <div class="button-row"><button class="button earth" id="albumMenu">VOLTAR AO MENU</button></div>
+</section>
+
+<section class="card screen" id="personagem">
+  <div class="screen-title"><h2>Personalize o detetive</h2><span class="score-pill">Pontos: <b class="pontosAtual">0</b></span></div>
+  <p>Compre itens com seus pontos e equipe apenas os que já possui.</p>
+  <div class="profile-layout">
+    <div class="profile-preview"><div id="personagemPreview">
+      <div class="mascote elf" role="img" aria-label="Detetive elfo"><span class="person-hair"></span><span class="person-ear"></span><span class="person-ear right"></span><span class="person-head"></span><span class="person-eye one"></span><span class="person-eye two"></span><span class="person-smile"></span><span class="person-body"></span></div>
+    </div><p id="itensEquipados" class="small"></p></div>
+    <div><h3 class="section-title">Itens disponíveis</h3><div id="itensPersonagem" class="profile-items"></div></div>
+  </div>
+  <div class="button-row"><button class="button earth" id="personagemMenu">VOLTAR AO MENU</button></div>
+</section>
+</main>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const screenIds = ['inicio','dialogo','configuracao','menuJogo','telaFoto','carregando','incerteza','naoValida','erro','resultado','quiz','loja','albumTela','personagem'];
+const screens = Object.fromEntries(screenIds.map(id => [id,$(id)]));
+const STORE_KEY = 'detetivesNaturezaSaveV2';
+const REWARD_DISCOVERY = 10, REWARD_QUIZ_ANSWER = 5;
+const falas = [
+  ['Detetive elfo','A floresta brasileira guarda árvores incríveis. Vamos descobrir suas histórias!'],
+  ['Detetive humano','Tire uma foto nítida de uma árvore. A inteligência artificial vai ajudar a procurar pistas.'],
+  ['Detetive elfo','Quando não tivermos certeza, não vamos chutar. Uma nova foto pode ajudar!'],
+  ['Detetive humano','Cada nova espécie confirmada vale 10 pontos. Depois, você pode fazer um quiz e completar seu álbum!']
+];
+let passoDialogo = 0, fotoBase64 = '', fotoDataUrl = '', cameraStream = null, arvoreAtual = null, quizIndice = 0, quizAcertos = 0, quizJaRespondeu = false, quizPerguntaRespondida = false, requisicaoEmAndamento = false, audioContext = null;
+
+const catalogo = [
+  {id:'ipê-amarelo',nome:'Ipê-amarelo',preco:15,descricao:'Flores amarelas marcantes.',tipo:'árvore'},
+  {id:'pau-brasil',nome:'Pau-brasil',preco:20,descricao:'Árvore ligada à história do país.',tipo:'árvore'},
+  {id:'jabuticabeira',nome:'Jabuticabeira',preco:15,descricao:'Frutos escuros que crescem no tronco.',tipo:'árvore'},
+  {id:'araucaria',nome:'Araucária',preco:20,descricao:'Árvore característica do Sul.',tipo:'árvore'},
+  {id:'castanheira',nome:'Castanheira-do-brasil',preco:25,descricao:'Importante árvore amazônica.',tipo:'árvore'},
+  {id:'jequitiba',nome:'Jequitibá',preco:25,descricao:'Pode alcançar grande porte.',tipo:'árvore'}
+];
+const itensCosmeticos = [
+  {id:'chapeu',nome:'Chapéu de detetive',preco:10,categoria:'Chapéu'},
+  {id:'capa',nome:'Capa de explorador',preco:15,categoria:'Roupa'},
+  {id:'lupa',nome:'Lupa aventureira',preco:8,categoria:'Acessório'},
+  {id:'coroa-folhas',nome:'Coroa de folhas',preco:12,categoria:'Natureza'},
+  {id:'mochila',nome:'Mochila de campo',preco:18,categoria:'Acessório'},
+  {id:'botas',nome:'Botas de trilha',preco:14,categoria:'Roupa'}
+];
+function estadoInicial(){return {pontos:0,descobertas:{},figurinhas:[],itensComprados:[],equipados:[],quizzesConcluidos:{},config:{volume:45,som:true,animacao:true}}}
+function carregarEstado(){
+  try{const s=JSON.parse(localStorage.getItem(STORE_KEY)||'null');if(!s||typeof s!=='object')return estadoInicial();const base=estadoInicial();return {...base,...s,descobertas:s.descobertas&&typeof s.descobertas==='object'?s.descobertas:{},figurinhas:Array.isArray(s.figurinhas)?s.figurinhas:[],itensComprados:Array.isArray(s.itensComprados)?s.itensComprados:[],equipados:Array.isArray(s.equipados)?s.equipados:[],quizzesConcluidos:s.quizzesConcluidos&&typeof s.quizzesConcluidos==='object'?s.quizzesConcluidos:{},config:{...base.config,...(s.config||{})}}}catch(e){return estadoInicial()}
+}
+let estado = carregarEstado();
+function salvarEstado(){try{localStorage.setItem(STORE_KEY,JSON.stringify(estado));return true}catch(e){mostrarAvisoGlobal('Não foi possível salvar o progresso neste navegador. Verifique as configurações de armazenamento.','warn');return false}}
+function mostrarAvisoGlobal(mensagem,tipo=''){const el=$('resumoProgresso');if(el){el.textContent=mensagem;el.className='notice '+tipo}}
+function textoSeguro(v){return v===null||v===undefined?'':String(v)}
+function chaveNome(nome,cientifico=''){const base=textoSeguro(cientifico).trim()||textoSeguro(nome).trim();return base.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\b(sp|spp)\.?\b/g,'').replace(/[^a-z0-9]+/g,' ').trim()}
+function mostrarTela(id){pararCamera();screenIds.forEach(k=>{screens[k].classList.toggle('active',k===id);screens[k].style.display=k===id?'block':'none'});atualizarPontos();if(id==='loja')renderLoja();if(id==='albumTela')renderAlbum();if(id==='personagem')renderPersonagem();if(id==='menuJogo')renderMenu()}
+function atualizarPontos(){$('pontosMenu').textContent=estado.pontos;document.querySelectorAll('.pontosAtual').forEach(e=>e.textContent=estado.pontos)}
+function renderMenu(){atualizarPontos();const n=Object.keys(estado.descobertas).length;$('resumoProgresso').textContent=`Você já descobriu ${n} ${n===1?'espécie':'espécies'} e tem ${estado.pontos} pontos. Seu progresso fica salvo neste dispositivo.`}
+function tocarSom(freq=620){if(!estado.config.som||Number(estado.config.volume)<=0)return;try{const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;audioContext=audioContext||new Ctx();if(audioContext.state==='suspended')audioContext.resume();const osc=audioContext.createOscillator(),gain=audioContext.createGain();osc.type='sine';osc.frequency.value=freq;gain.gain.setValueAtTime(Math.max(.001,Number(estado.config.volume)/100*.06),audioContext.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+.16);osc.connect(gain);gain.connect(audioContext.destination);osc.start();osc.stop(audioContext.currentTime+.17)}catch(e){}}
+function pararCamera(){if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null}const v=$('cameraVideo');if(v){v.srcObject=null;v.style.display='none'}$('cameraAcoes').style.display='none'}
+function limparFoto(){fotoBase64='';fotoDataUrl='';$('foto').value='';$('preview').style.display='none';$('fotoPreview').removeAttribute('src');$('cameraAviso').textContent='';}
+function abrirExploracao(){limparFoto();mostrarTela('telaFoto')}
+function criarArvoreSvg(){return '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M43 85 L43 55 L57 55 L57 85 Z" fill="#8b6040"/><path d="M50 8 L19 48 Q14 58 28 58 L18 68 Q14 78 32 78 L68 78 Q86 78 82 68 L72 58 Q86 58 81 48 Z" fill="#6f8d49" stroke="#b2c98a" stroke-width="2"/><circle cx="36" cy="42" r="5" fill="#9caf68"/><circle cx="62" cy="54" r="5" fill="#9caf68"/></svg>'}
+function cartaoArvore(item,mode='discoveries'){
+ const d=document.createElement('article');d.className='achievement';const strong=document.createElement('strong');strong.textContent=item.nome||'Árvore descoberta';const p=document.createElement('p');p.className='small';p.textContent=mode==='discoveries'?'Espécie confirmada · descoberta':`Figurinha comprada · ${item.preco||0} pontos`;const b=document.createElement('button');b.className='button secondary';b.style.marginTop='8px';b.textContent='VER DETALHES';b.addEventListener('click',()=>{const detail=$('detalheFigurinha');detail.hidden=false;detail.textContent=[item.nome,item.nomeCientifico,item.descricao,...(item.curiosidades||[])].filter(Boolean).join(' — ')||'Ainda não há curiosidades salvas para esta figurinha.'});d.append(strong,p,b);return d;
+}
+function atualizarDialogo(){const f=falas[passoDialogo];$('nomeFalante').textContent=f[0];$('textoDialogo').textContent=f[1];$('continuarDialogo').textContent=passoDialogo===falas.length-1?'IR AO MENU':'CONTINUAR'}
+$('btnIniciar').addEventListener('click',()=>{passoDialogo=0;atualizarDialogo();mostrarTela('dialogo');tocarSom()});
+$('continuarDialogo').addEventListener('click',()=>{if(passoDialogo<falas.length-1){passoDialogo++;atualizarDialogo();tocarSom()}else{mostrarTela('menuJogo');tocarSom(740)}});
+$('btnConfiguracao').addEventListener('click',()=>{mostrarTela('configuracao')});
+$('voltarConfig').addEventListener('click',()=>mostrarTela('inicio'));$('sairConfig').addEventListener('click',()=>mostrarTela('inicio'));
+$('menuConfiguracao').addEventListener('click',()=>mostrarTela('configuracao'));$('menuInicio').addEventListener('click',()=>mostrarTela('inicio'));
+$('irExplorar').addEventListener('click',abrirExploracao);$('irLoja').addEventListener('click',()=>mostrarTela('loja'));$('irAlbum').addEventListener('click',()=>mostrarTela('albumTela'));$('irPersonagem').addEventListener('click',()=>mostrarTela('personagem'));
+$('voltarMenuFoto').addEventListener('click',()=>mostrarTela('menuJogo'));$('tentarNovamente').addEventListener('click',()=>{limparFoto();mostrarTela('telaFoto')});$('escolherOutraNaoValida').addEventListener('click',()=>{limparFoto();mostrarTela('telaFoto')});$('tentarErro').addEventListener('click',()=>mostrarTela('telaFoto'));$('incertezaMenu').addEventListener('click',()=>mostrarTela('menuJogo'));$('naoValidaMenu').addEventListener('click',()=>mostrarTela('menuJogo'));$('erroMenu').addEventListener('click',()=>mostrarTela('menuJogo'));
+$('resultadoMenu').addEventListener('click',()=>mostrarTela('menuJogo'));$('resultadoAlbum').addEventListener('click',()=>mostrarTela('albumTela'));$('fazerQuiz').addEventListener('click',iniciarQuiz);$('quizMenu').addEventListener('click',()=>mostrarTela('menuJogo'));$('quizVoltarResultado').addEventListener('click',()=>mostrarTela('resultado'));$('lojaAlbum').addEventListener('click',()=>mostrarTela('albumTela'));$('lojaMenu').addEventListener('click',()=>mostrarTela('menuJogo'));$('albumMenu').addEventListener('click',()=>mostrarTela('menuJogo'));$('personagemMenu').addEventListener('click',()=>mostrarTela('menuJogo'));
+
+$('volume').value=estado.config.volume;$('volumeTexto').textContent=estado.config.volume+'%';$('somAtivo').checked=!!estado.config.som;$('animacaoOpcional').checked=!!estado.config.animacao;
+$('volume').addEventListener('input',e=>{estado.config.volume=Number(e.target.value);$('volumeTexto').textContent=estado.config.volume+'%';salvarEstado()});
+$('somAtivo').addEventListener('change',e=>{estado.config.som=e.target.checked;salvarEstado();if(e.target.checked)tocarSom()});
+$('animacaoOpcional').addEventListener('change',e=>{estado.config.animacao=e.target.checked;document.querySelectorAll('.screen').forEach(el=>el.style.animation=estado.config.animacao?'aparecer .22s ease-out':'none');salvarEstado()});
+
+$('abrirArquivos').addEventListener('click',()=>{$('foto').removeAttribute('capture');$('foto').click()});
+$('trocarFoto').addEventListener('click',()=>{$('foto').click()});
+$('abrirCamera').addEventListener('click',async()=>{
+ $('cameraAviso').textContent='';$('foto').removeAttribute('capture');
+ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){$('cameraAviso').textContent='A câmera não está disponível neste navegador. Use GALERIA para escolher uma foto.';return}
+ try{cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});$('cameraVideo').srcObject=cameraStream;$('cameraVideo').style.display='block';$('cameraAcoes').style.display='flex';$('preview').style.display='none'}catch(e){$('cameraAviso').textContent='Não conseguimos abrir a câmera. Confira a permissão ou escolha uma imagem na GALERIA.'}
+});
+$('fecharCamera').addEventListener('click',pararCamera);
+$('capturarFoto').addEventListener('click',()=>{const v=$('cameraVideo');if(!v.videoWidth){$('cameraAviso').textContent='A câmera ainda está abrindo. Tente novamente em um instante.';return}const canvas=document.createElement('canvas');canvas.width=v.videoWidth;canvas.height=v.videoHeight;canvas.getContext('2d').drawImage(v,0,0);fotoDataUrl=canvas.toDataURL('image/jpeg',.9);fotoBase64=fotoDataUrl.split(',')[1]||'';$('fotoPreview').src=fotoDataUrl;$('preview').style.display='block';pararCamera()});
+$('foto').addEventListener('change',()=>{const file=$('foto').files&&$('foto').files[0];if(!file)return;if(!file.type.startsWith('image/')){$('cameraAviso').textContent='Escolha um arquivo de imagem válido.';return}if(file.size>20*1024*1024){$('cameraAviso').textContent='Essa imagem é muito grande. Escolha uma menor que 20 MB.';return}const reader=new FileReader();reader.onload=()=>{const img=new Image();img.onload=()=>{const scale=Math.min(1,1600/Math.max(img.width,img.height));const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);fotoDataUrl=canvas.toDataURL('image/jpeg',.88);fotoBase64=fotoDataUrl.split(',')[1]||'';$('fotoPreview').src=fotoDataUrl;$('preview').style.display='block';$('cameraAviso').textContent='';};img.onerror=()=>{$('cameraAviso').textContent='Não foi possível abrir essa imagem. Tente outra.'};img.src=String(reader.result)};reader.onerror=()=>{$('cameraAviso').textContent='Falha ao ler a imagem. Tente novamente.'};reader.readAsDataURL(file)});
+
+function schemaIA(){return {type:'object',properties:{
+ identificado:{type:'boolean'},confianca:{type:'integer'},ehArvore:{type:'boolean'},nome:{type:'string'},nomeCientifico:{type:'string'},
+ origem:{type:'string',enum:['nativa','endemica','introduzida','incerta']},descricao:{type:'string'},regiao:{type:'string'},importancia:{type:'string'},frutosFloresSementes:{type:'string'},
+ curiosidades:{type:'array',items:{type:'string'}},perigo:{type:'string'},
+ quiz:{type:'array',items:{type:'object',properties:{pergunta:{type:'string'},alternativas:{type:'array',items:{type:'string'}},respostaCorreta:{type:'integer'},explicacao:{type:'string'}},required:['pergunta','alternativas','respostaCorreta','explicacao']}}
+ },required:['identificado','confianca','ehArvore','nome','origem']}}
+$('investigar').addEventListener('click',async()=>{
+ if(!fotoBase64||requisicaoEmAndamento)return;requisicaoEmAndamento=true;pararCamera();mostrarTela('carregando');
+ const pedido={modelo:'gemini-3.6-flash',body:{contents:[{parts:[
+ {text:'Você é um identificador cuidadoso de árvores. Analise a imagem e responda SOMENTE JSON no formato solicitado. Identifique apenas se a imagem mostra uma árvore com confiança alta. Para validar para a coleção, a espécie deve ser nativa do Brasil ou endêmica do Brasil; se for introduzida, não é válida para a coleção. Não confunda “ocorre no Brasil” com “nativa do Brasil”. Se não for possível confirmar que é árvore, nome e origem, use identificado=false, ehArvore=false ou origem=incerta e confiança abaixo de 80. Nunca invente fatos, riscos, curiosidades, região ou quiz. Responda em português brasileiro. Inclua nome popular, nome científico se conhecido, descrição educativa, região, importância ecológica, informação de flores/frutos/sementes se conhecida, 2 a 4 curiosidades, perigo somente se houver risco conhecido confiável. Crie até 3 perguntas de quiz de múltipla escolha baseadas somente nos fatos que você informou, com 3 ou 4 alternativas e índice da resposta correta começando em zero. Se não tiver certeza de uma pergunta, não a inclua.'},
+ {inline_data:{mime_type:'image/jpeg',data:fotoBase64}}
+ ]}],generationConfig:{temperature:.2,responseMimeType:'application/json',responseSchema:schemaIA()}}};
+ try{
+  const res=await fetch('/api/identificar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(pedido)});
+  if(!res.ok)throw new Error('HTTP '+res.status);
+  const envelope=await res.json();const raw=envelope?.candidates?.[0]?.content?.parts?.[0]?.text;if(!raw)throw new Error('Resposta vazia');
+  const data=JSON.parse(raw);const confidence=Number(data.confianca);
+  if(data.identificado!==true||!Number.isFinite(confidence)||confidence<80){
+    $('carregando').style.display='none';$('incerteza').style.display='block';return;
+  }
+  if(data.ehArvore!==true){
+    $('carregando').style.display='none';$('naoValidaTexto').textContent='A imagem não foi confirmada como uma árvore. Nenhum ponto foi concedido e nada foi adicionado ao álbum.';$('naoValida').style.display='block';return;
+  }
+  if(!textoSeguro(data.nome).trim()){$('carregando').style.display='none';$('incerteza').style.display='block';return;}
+  const origem=textoSeguro(data.origem).toLowerCase();
+  if(!['nativa','endemica'].includes(origem)){
+    $('carregando').style.display='none';$('naoValidaTexto').textContent=origem==='introduzida'?'A espécie parece ser introduzida, e não nativa do Brasil. Por isso não entra nesta coleção e não concede pontos.':'Não foi possível confirmar com segurança se essa espécie é nativa ou endêmica do Brasil. Nenhum ponto foi concedido.';
+    $('naoValida').style.display='block';return;
+  }
+  const nomeKey=chaveNome(data.nome), cientificoKey=chaveNome(data.nomeCientifico);
+  const chaveCalculada=cientificoKey||nomeKey;
+  const registroExistente=Object.entries(estado.descobertas).find(([key,item])=>key===chaveCalculada||key===nomeKey||key===cientificoKey||(nomeKey&&item.nomeKey===nomeKey)||(cientificoKey&&item.cientificoKey===cientificoKey));
+  arvoreAtual={...data,confianca:confidence,chave:registroExistente?registroExistente[0]:chaveCalculada};
+  const jaExiste=!!registroExistente;
+  $('nomeArvore').textContent=textoSeguro(data.nome);$('nomeCientifico').textContent=textoSeguro(data.nomeCientifico);
+  $('confianca').textContent='Confiança: '+confidence+'%';
+  $('descricaoArvore').textContent=textoSeguro(data.descricao)||'A identificação foi confirmada, mas não há uma descrição adicional disponível.';
+  const detalhes=$('detalhesArvore');detalhes.replaceChildren();
+  [['Onde ocorre',data.regiao],['Importância ecológica',data.importancia],['Flores, frutos e sementes',data.frutosFloresSementes]].forEach(([titulo,valor])=>{if(textoSeguro(valor).trim()){const h=document.createElement('h3');h.className='section-title';h.textContent=titulo;const p=document.createElement('p');p.className='curiosity';p.textContent=textoSeguro(valor);detalhes.append(h,p)}});
+  const cb=$('curiosidadesBox');cb.replaceChildren();if(Array.isArray(data.curiosidades)&&data.curiosidades.length){const h=document.createElement('h3');h.className='section-title';h.textContent='Curiosidades';cb.append(h);data.curiosidades.slice(0,4).forEach(c=>{const p=document.createElement('p');p.className='curiosity';p.textContent=textoSeguro(c);cb.append(p)})}
+  const pb=$('perigoBox');pb.replaceChildren();if(textoSeguro(data.perigo).trim()){const h=document.createElement('h3');h.className='section-title';h.textContent='Aviso de segurança';const d=document.createElement('div');d.className='danger';d.textContent=textoSeguro(data.perigo);pb.append(h,d)}
+  if(!jaExiste){estado.descobertas[arvoreAtual.chave]={chave:arvoreAtual.chave,nomeKey,cientificoKey,nome:data.nome,nomeCientifico:textoSeguro(data.nomeCientifico),origem,descricao:textoSeguro(data.descricao),regiao:textoSeguro(data.regiao),importancia:textoSeguro(data.importancia),frutosFloresSementes:textoSeguro(data.frutosFloresSementes),curiosidades:Array.isArray(data.curiosidades)?data.curiosidades.slice(0,4).map(textoSeguro):[],perigo:textoSeguro(data.perigo),dataDescoberta:new Date().toISOString()};estado.pontos+=REWARD_DISCOVERY;$('estadoDescoberta').textContent=`Nova descoberta! Você ganhou ${REWARD_DISCOVERY} pontos. A espécie foi salva no álbum.`;$('estadoDescoberta').className='notice';tocarSom(800);salvarEstado()}
+  else{$('estadoDescoberta').textContent='Essa espécie já estava no seu álbum. Você não ganhou pontos novamente.';$('estadoDescoberta').className='notice warn'}
+  const q=Array.isArray(data.quiz)?data.quiz.filter(x=>x&&typeof x.pergunta==='string'&&Array.isArray(x.alternativas)&&x.alternativas.length>=3&&x.alternativas.length<=4&&Number.isInteger(x.respostaCorreta)&&x.respostaCorreta>=0&&x.respostaCorreta<x.alternativas.length&&typeof x.explicacao==='string').slice(0,3):[];
+  arvoreAtual.quiz=q;mostrarTela('resultado');$('fazerQuiz').disabled=!q.length;$('fazerQuiz').textContent=q.length?'FAZER QUIZ':'QUIZ INDISPONÍVEL';if(!q.length){const msg=document.createElement('p');msg.className='small';msg.textContent='A IA não forneceu perguntas confiáveis para esta árvore, então não vamos inventá-las.';$('curiosidadesBox').append(msg)}
+ }catch(err){console.error(err);$('carregando').style.display='none';$('erro').style.display='block'}finally{requisicaoEmAndamento=false}
+});
+
+function iniciarQuiz(){
+ if(!arvoreAtual||!Array.isArray(arvoreAtual.quiz)||!arvoreAtual.quiz.length)return;
+ quizIndice=0;quizAcertos=0;quizPerguntaRespondida=false;quizJaRespondeu=!!estado.quizzesConcluidos[arvoreAtual.chave];$('quizMenu').hidden=true;mostrarTela('quiz');renderPerguntaQuiz();
+}
+function renderPerguntaQuiz(){
+ const root=$('quizConteudo');root.replaceChildren();const questions=arvoreAtual.quiz;
+ if(quizIndice>=questions.length){
+  const h=document.createElement('h3');h.textContent='Quiz concluído!';const p=document.createElement('p');p.textContent=`Você acertou ${quizAcertos} de ${questions.length} perguntas.`;const note=document.createElement('div');note.className='notice';const earned=quizJaRespondeu?0:quizAcertos*REWARD_QUIZ_ANSWER;
+  if(quizJaRespondeu)note.textContent='Você já recebeu a recompensa deste quiz antes. Pode jogar de novo para aprender, mas sem ganhar pontos repetidos.';
+  else{estado.pontos+=earned;estado.quizzesConcluidos[arvoreAtual.chave]=true;salvarEstado();note.textContent=`Você ganhou ${earned} pontos extras (${REWARD_QUIZ_ANSWER} por resposta correta).`;tocarSom(780)}
+  root.append(h,p,note);$('quizMenu').hidden=false;atualizarPontos();return;
+ }
+ const q=questions[quizIndice];const h=document.createElement('h3');h.textContent=`Pergunta ${quizIndice+1} de ${questions.length}`;const p=document.createElement('p');p.textContent=q.pergunta;root.append(h,p);
+ q.alternativas.forEach((alt,index)=>{const b=document.createElement('button');b.className='quiz-option';b.textContent=textoSeguro(alt);b.addEventListener('click',()=>responderQuiz(index,q,b));root.append(b)});
+ const feedback=document.createElement('div');feedback.id='quizFeedback';root.append(feedback);
+}
+function responderQuiz(index,q,btn){
+ if(quizPerguntaRespondida)return;quizPerguntaRespondida=true;const correto=index===q.respostaCorreta;if(correto)quizAcertos++;
+ document.querySelectorAll('.quiz-option').forEach((b,i)=>{b.disabled=true;if(i===q.respostaCorreta)b.classList.add('correct');else if(i===index)b.classList.add('wrong')});
+ const fb=$('quizFeedback');fb.className='notice'+(correto?'':' warn');fb.textContent=(correto?'Correto! ':'Quase! ')+textoSeguro(q.explicacao);
+ const next=document.createElement('button');next.className='button';next.style.marginTop='12px';next.textContent=quizIndice===arvoreAtual.quiz.length-1?'VER RESULTADO':'PRÓXIMA PERGUNTA';next.addEventListener('click',()=>{quizIndice++;quizPerguntaRespondida=false;renderPerguntaQuiz()});fb.append(next);if(correto)tocarSom(740);
+}
+function renderAlbum(){const discovered=$('albumDescobertas'),stickers=$('albumFigurinhas');discovered.replaceChildren();stickers.replaceChildren();$('detalheFigurinha').hidden=true;const ds=Object.values(estado.descobertas);
+ if(!ds.length){const p=document.createElement('p');p.className='empty';p.textContent='Nenhuma árvore confirmada ainda. Explore para começar!';discovered.append(p)}else ds.forEach(item=>discovered.append(cartaoArvore(item)));
+ const emptySlots=Math.max(0,6-ds.length);for(let i=0;i<emptySlots;i++){const d=document.createElement('div');d.className='achievement';d.innerHTML='<strong>Espaço a descobrir</strong><p class="small">Uma nova árvore pode preencher este lugar.</p>';discovered.append(d)}
+ if(!estado.figurinhas.length){const p=document.createElement('p');p.className='empty';p.textContent='Ainda não comprou figurinhas. Visite a loja!';stickers.append(p)}else estado.figurinhas.forEach(id=>{const item=catalogo.find(x=>x.id===id);if(item)stickers.append(cartaoArvore(item,'stickers'))});
+ const emptyStickers=Math.max(0,6-estado.figurinhas.length);for(let i=0;i<emptyStickers;i++){const d=document.createElement('div');d.className='achievement';d.innerHTML='<strong>Figurinha bloqueada</strong><p class="small">Compre na loja para completar esta coleção.</p>';stickers.append(d)}
+}
+function renderLoja(){
+ atualizarPontos();const root=$('lojaItens');root.replaceChildren();
+ catalogo.forEach(item=>{const card=document.createElement('article');card.className='item-card';const art=document.createElement('div');art.className='tree-art';art.innerHTML=criarArvoreSvg();const h=document.createElement('h3');h.textContent=item.nome;const p=document.createElement('p');p.textContent=item.descricao;const price=document.createElement('p');price.textContent=`Preço: ${item.preco} pontos`;const b=document.createElement('button');b.className='button';const bought=estado.figurinhas.includes(item.id);b.textContent=bought?'JÁ ADQUIRIDA':'COMPRAR';b.disabled=bought;b.addEventListener('click',()=>comprarFigurinha(item.id));card.append(art,h,p,price,b);root.append(card)});
+}
+function comprarFigurinha(id){
+ const item=catalogo.find(x=>x.id===id);if(!item)return;
+ if(estado.figurinhas.includes(id)){$('lojaMensagem').className='notice';$('lojaMensagem').textContent='Você já tem essa figurinha!';return}
+ if(estado.pontos<item.preco){$('lojaMensagem').className='notice warn';$('lojaMensagem').textContent='Você ainda não tem pontos suficientes para essa compra.';tocarSom(220);return}
+ estado.pontos-=item.preco;estado.figurinhas.push(id);salvarEstado();$('lojaMensagem').className='notice';$('lojaMensagem').textContent=`Compra realizada! A figurinha ${item.nome} foi adicionada ao álbum.`;tocarSom(740);renderLoja();atualizarPontos();
+}
+function renderPersonagem(){
+ const root=$('itensPersonagem');root.replaceChildren();const preview=$('personagemPreview');preview.replaceChildren();
+ const chapeu=document.createElement('div');chapeu.className='mascote human';chapeu.setAttribute('role','img');chapeu.setAttribute('aria-label','Seu detetive personalizado');
+ chapeu.innerHTML='<span class="person-hair"></span><span class="person-head"></span><span class="person-eye one"></span><span class="person-eye two"></span><span class="person-smile"></span><span class="person-body"></span>';
+ if(estado.equipados.includes('chapeu')){const hat=document.createElement('span');hat.className='detective-hat';chapeu.append(hat)}
+ if(estado.equipados.includes('coroa-folhas')){const crown=document.createElement('span');crown.style.cssText='position:absolute;top:0;left:28px;width:48px;height:14px;border-radius:50%;background:#8aaa58;border:2px solid #d4e6a4;z-index:5';chapeu.append(crown)}
+ if(estado.equipados.includes('capa')){const cape=document.createElement('span');cape.style.cssText='position:absolute;top:58px;left:17px;width:72px;height:63px;background:#8b5d43;border:2px solid #392b20;border-radius:12px;z-index:0';chapeu.append(cape)}
+ if(estado.equipados.includes('lupa')){const lupa=document.createElement('span');lupa.textContent='';lupa.style.cssText='position:absolute;top:75px;right:5px;width:22px;height:22px;border:4px solid #e4c17a;border-radius:50%;z-index:5';const cabo=document.createElement('span');cabo.style.cssText='position:absolute;top:95px;right:1px;width:5px;height:18px;background:#e4c17a;transform:rotate(-35deg);z-index:5;border-radius:4px';chapeu.append(lupa,cabo)}
+ if(estado.equipados.includes('mochila')){const bag=document.createElement('span');bag.style.cssText='position:absolute;top:68px;left:10px;width:17px;height:38px;background:#8d6841;border:2px solid #392b20;border-radius:7px;z-index:1';chapeu.append(bag)}
+ if(estado.equipados.includes('botas')){const boots=document.createElement('span');boots.style.cssText='position:absolute;top:112px;left:27px;width:25px;height:14px;background:#5b3b29;border-radius:5px;box-shadow:28px 0 #5b3b29;z-index:5';chapeu.append(boots)}
+ preview.append(chapeu);$('itensEquipados').textContent='Equipados: '+(estado.equipados.map(id=>itensCosmeticos.find(i=>i.id===id)?.nome).filter(Boolean).join(', ')||'nenhum item');
+ itensCosmeticos.forEach(item=>{const card=document.createElement('article');card.className='item-card';const h=document.createElement('h3');h.textContent=item.nome;const p=document.createElement('p');p.textContent=`${item.categoria} · ${item.preco} pontos`;const owned=estado.itensComprados.includes(item.id),equipped=estado.equipados.includes(item.id);const b=document.createElement('button');b.className='button'+(owned?' secondary':'');b.textContent=owned?(equipped?'EQUIPADO':'EQUIPAR'):'COMPRAR';b.addEventListener('click',()=>{if(!owned){if(estado.pontos<item.preco){alert('Você ainda não tem pontos suficientes.');return}estado.pontos-=item.preco;estado.itensComprados.push(item.id);estado.equipados.push(item.id)}else if(equipped){estado.equipados=estado.equipados.filter(x=>x!==item.id)}else{estado.equipados.push(item.id)}salvarEstado();tocarSom(680);renderPersonagem();atualizarPontos()});card.append(h,p,b);root.append(card)});
+}
+renderLoja();renderAlbum();renderPersonagem();atualizarPontos();mostrarTela('inicio');
+</script>
+
+<style id="ajustes-tablet">
+/* Ajustes de visual para tablet (deitado e em pé) e computador.
+   O visual e as ideias são do grupo; aqui só arrumamos tamanho, espaço e alinhamento. */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;800;900&display=swap');
+/* o app todo um pouco maior no tablet (as letras eram miúdas) */
+@media (min-width:700px){main.app{zoom:1.15}}
+.button,.menu-button{min-height:44px}
+/* Floresta encantada dos detetives: árvores, vaga-lumes e varal de folhas */
+body{font-family:'Nunito',system-ui,sans-serif;background-color:#1f3d26;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='180' viewBox='0 0 600 180'%3E%3Cg fill='%2316351f'%3E%3Cpath d='M0 180V120q40-30 80 0t80-10 90 10 100-20 90 15 80-10 80 15v80z'/%3E%3Ccircle cx='60' cy='95' r='38'/%3E%3Ccircle cx='95' cy='80' r='30'/%3E%3Crect x='70' y='110' width='12' height='50'/%3E%3Ccircle cx='300' cy='85' r='44'/%3E%3Ccircle cx='340' cy='100' r='30'/%3E%3Crect x='305' y='110' width='14' height='50'/%3E%3Cpath d='M500 160l-40 0 40-110 40 110z'/%3E%3Cpath d='M200 165l-28 0 28-80 28 80z'/%3E%3C/g%3E%3Cg fill='%23ffd5e1'%3E%3Ccircle cx='90' cy='70' r='4'/%3E%3Ccircle cx='320' cy='72' r='4'/%3E%3Ccircle cx='50' cy='100' r='3'/%3E%3Ccircle cx='345' cy='96' r='3'/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cg fill='%23f6e58d'%3E%3Ccircle cx='30' cy='40' r='2.5' opacity='.7'/%3E%3Ccircle cx='150' cy='70' r='2' opacity='.5'/%3E%3Ccircle cx='90' cy='160' r='2.5' opacity='.6'/%3E%3Ccircle cx='200' cy='190' r='1.8' opacity='.5'/%3E%3C/g%3E%3Cg fill='%239caf68' opacity='.18'%3E%3Cpath d='M110 20c18-8 34 0 34 0s-10 16-30 14c-4 0-6-6-4-14z'/%3E%3Cpath d='M20 130c14 6 20 22 20 22s-18 2-26-12c-2-4 0-8 6-10z'/%3E%3C/g%3E%3C/svg%3E"),radial-gradient(ellipse at top,#4d7a3e 0,#2a4f2f 40%,#1a3220 100%);
+  background-repeat:repeat-x,repeat,no-repeat;background-position:bottom center,0 0,0 0;background-size:600px 180px,220px 220px,100% 100%;background-attachment:fixed,scroll,fixed}
+h1,h2,h3,.tree-name,.badge,.menu-button,.menu-tile,.button{font-family:'Fredoka','Nunito',sans-serif}
+header#cabecalho{position:relative;padding-top:38px}
+header#cabecalho::before{content:"";position:absolute;top:0;left:-16px;right:-16px;height:34px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='34'%3E%3Cpath d='M0 8q30 16 60 0t60 0' stroke='%236b8f3e' stroke-width='3' fill='none'/%3E%3Cpath d='M18 13c-6 8-2 18-2 18s9-6 7-15z' fill='%237fae4b'/%3E%3Cpath d='M48 10c4 9 14 12 14 12s0-11-9-14z' fill='%239caf68'/%3E%3Cpath d='M80 12c-6 8-2 18-2 18s9-6 7-15z' fill='%237fae4b'/%3E%3Ccircle cx='104' cy='12' r='5' fill='%23f08aa8'/%3E%3Ccircle cx='104' cy='12' r='2' fill='%23ffd5e1'/%3E%3C/svg%3E") repeat-x;background-size:120px 34px}
+h1{color:#ffe1ea;text-shadow:0 4px 0 #a64e69,0 10px 26px #0006;letter-spacing:.5px}
+.sub{color:#eef4dc;font-weight:700}
+.badge{background:#f08aa8;color:#fff;border-color:#ffd5e1;box-shadow:0 4px 0 #a64e69}
+.mascote{animation:balanca 3.2s ease-in-out infinite}
+.mascotes .mascote:nth-child(2){animation-delay:-1.6s}
+@keyframes balanca{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-6px) rotate(2deg)}}
+.card{background:linear-gradient(180deg,rgba(43,66,40,.94),rgba(30,48,30,.96));border:3px solid #9caf68;border-radius:28px;box-shadow:0 8px 0 #14261a,0 18px 36px #0005}
+.card h2{color:#ffe1ea}
+.menu-tile{background:linear-gradient(180deg,#fff5f7,#ffe1ea);color:#5a3e2b;border:3px solid #f08aa8;box-shadow:0 6px 0 #c7718b}
+.menu-tile:nth-child(2n){background:linear-gradient(180deg,#f3f8e4,#dfeec0);border-color:#9caf68;box-shadow:0 6px 0 #6b8f3e}
+.menu-tile:hover{background:#fff;border-color:#f08aa8}
+.menu-tile .tile-icon{font-size:2.4rem}
+.settings-list label{background:#1b2a1c;border:2px solid #4c6b3b}
+.score-pill{background:#f6c445;color:#4a3000;border-color:#e0a21a}
+@media (prefers-reduced-motion:reduce){.mascote{animation:none}}
+</style>
+<!-- POKÉDEX: ficha padrão em pop-up + ligação com o back-end do grupo
+     (comum/ficha.js e comum/adaptador.js). O resto da página é do grupo. -->
+<script src="/comum/ficha.js"></script>
+<script src="/comum/adaptador.js"></script>
+<script>
+PokedexAdaptador.iniciar({
+  icone: "🌳", fauna: false,
+  cor: "#f08aa8", cor2: "#9caf68",
+  escuro: () => true,
+  noturno: { fundo: "#242a20", texto: "#fff9ef", suave: "#d9cfbf" },
+  carregando: "🕵️ Os detetives estão investigando a árvore...",
+  esconder: ["#resultado", "#incerteza", "#naoValida", "#erro", "#carregando"],
+  // Regra do grupo: só árvores NATIVAS do Brasil entram na coleção. A ficha avisa.
+  extras: info => [["📖 Coleção dos detetives", info.ehArvore === true && ["nativa", "endemica"].includes(String(info.origem || "").toLowerCase())
+    ? "✅ Árvore brasileira! Ela entrou na sua coleção."
+    : info.ehArvore !== true ? "🔎 Não deu para confirmar que é uma árvore, então ela não entra na coleção."
+    : "🌎 Essa espécie não é nativa do Brasil, então não entra na coleção dos detetives (que é só de árvores brasileiras)."]],
+  acoesExtras: () => [
+    { texto: "🧠 Fazer o quiz", principal: true, aoClicar: () => document.getElementById("fazerQuiz").click() },
+    { texto: "📖 Ver álbum", aoClicar: () => document.getElementById("resultadoAlbum").click() }
+  ],
+  novaFoto: () => document.getElementById("trocarFoto").click()
+});
+</script>
+</body>
+</html>

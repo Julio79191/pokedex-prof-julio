@@ -1,0 +1,1840 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Florestal 🌿</title>
+
+  <style>
+    /* =========================================================
+       FLORESTAL — ESTILO BASE
+       ========================================================= */
+
+    :root {
+      --verde-musgo: #3f5f43;
+      --verde-escuro: #102016;
+      --verde-fundo: #07130c;
+      --ciano: #26d9d1;
+      --ciano-claro: #a4fffa;
+      --branco: #f3fff9;
+      --texto-suave: #bfd0c5;
+      --cartao: rgba(19, 42, 27, .92);
+      --perigo: #ff8177;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--branco);
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(38,217,209,.12), transparent 27%),
+        radial-gradient(circle at 85% 35%, rgba(91,132,89,.18), transparent 30%),
+        linear-gradient(145deg, #06100a, #102419 52%, #06100a);
+      overflow-x: hidden;
+    }
+
+    /* =========================================================
+       NOVO: CAMADA DAS FOLHAS
+       Fica atrás de toda a interface e não recebe cliques.
+       ========================================================= */
+    #folhas-container {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .folha-caindo {
+      position: absolute;
+      top: -60px;
+      left: 0;
+      font-size: 22px;
+      opacity: .65;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,.25));
+      animation-name: cair-folha;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+
+    @keyframes cair-folha {
+      0% {
+        transform: translate3d(0, -60px, 0) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: .65;
+      }
+      50% {
+        transform: translate3d(70px, 55vh, 0) rotate(180deg);
+      }
+      100% {
+        transform: translate3d(-60px, 115vh, 0) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Tudo que é interface fica acima das folhas. */
+    .interface {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      padding-bottom: 105px;
+    }
+
+    header {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 18px 18px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .marca {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .simbolo-medicina {
+      margin-left: auto;
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #159c98;
+      background: #f3fff9;
+      border: 3px solid var(--ciano-claro);
+      font-size: 25px;
+      box-shadow: 0 8px 22px rgba(0,0,0,.25);
+    }
+
+    .mensagem-mascote {
+      max-width: 520px;
+      margin: 0 0 22px;
+      padding: 15px 20px;
+      border-radius: 18px;
+      background: rgba(19,42,27,.92);
+      border: 1px solid rgba(164,255,250,.25);
+      color: var(--ciano-claro);
+      line-height: 1.5;
+      box-shadow: 0 10px 30px rgba(0,0,0,.2);
+    }
+
+    .acoes-foto {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .acoes-foto .escolher-foto { margin: 0; }
+    @media (max-width: 430px) {
+      .acoes-foto { grid-template-columns: 1fr; }
+    }
+
+    .simbolo-medicina {
+      margin-left: auto;
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #159c98;
+      background: #f3fff9;
+      border: 3px solid var(--ciano-claro);
+      font-size: 25px;
+      box-shadow: 0 8px 22px rgba(0,0,0,.25);
+    }
+
+    .mensagem-mascote {
+      max-width: 520px;
+      margin: 0 0 22px;
+      padding: 15px 20px;
+      border-radius: 18px;
+      background: rgba(19,42,27,.92);
+      border: 1px solid rgba(164,255,250,.25);
+      color: var(--ciano-claro);
+      line-height: 1.5;
+      box-shadow: 0 10px 30px rgba(0,0,0,.2);
+    }
+
+    .acoes-foto {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .acoes-foto .escolher-foto { margin: 0; }
+    @media (max-width: 430px) {
+      .acoes-foto { grid-template-columns: 1fr; }
+    }
+
+    .marca-icone {
+      width: 52px;
+      height: 52px;
+      border-radius: 17px;
+      display: grid;
+      place-items: center;
+      font-size: 29px;
+      background: linear-gradient(145deg, var(--verde-musgo), #23492c);
+      box-shadow: 0 10px 25px rgba(0,0,0,.3);
+    }
+
+    .marca h1 {
+      margin: 0;
+      font-size: 21px;
+    }
+
+    .marca small {
+      color: var(--ciano-claro);
+    }
+
+    .conteudo {
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .tela {
+      display: none;
+      padding: 20px;
+      animation: aparecer .25s ease;
+    }
+
+    .tela.ativa {
+      display: block;
+    }
+
+    @keyframes aparecer {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero {
+      min-height: 600px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .mascote {
+      width: 180px;
+      height: 180px;
+      border-radius: 52px;
+      display: grid;
+      place-items: center;
+      font-size: 100px;
+      position: relative;
+      background: linear-gradient(145deg, #638563, #23482d);
+      border: 3px solid rgba(38,217,209,.35);
+      box-shadow: 0 20px 55px rgba(0,0,0,.4);
+      margin-bottom: 25px;
+    }
+
+    .mascote::after {
+      content: "⚕";
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      width: 47px;
+      height: 47px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #159c98;
+      background: white;
+      border: 4px solid #d8fffc;
+      font-weight: bold;
+      font-size: 24px;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: clamp(29px, 6vw, 48px);
+    }
+
+    h2 span {
+      color: var(--ciano);
+    }
+
+    .texto-intro {
+      max-width: 620px;
+      color: var(--texto-suave);
+      line-height: 1.6;
+      font-size: 17px;
+      margin: 0 0 25px;
+    }
+
+    .titulo {
+      font-size: 30px;
+      margin-bottom: 8px;
+    }
+
+    .subtitulo {
+      color: var(--texto-suave);
+      line-height: 1.5;
+      margin: 0 0 25px;
+    }
+
+    button,
+    label {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .botao-principal {
+      border-radius: 17px;
+      padding: 16px 27px;
+      color: #06201d;
+      background: linear-gradient(135deg, var(--ciano), #159e9a);
+      font-weight: bold;
+      font-size: 17px;
+      box-shadow: 0 10px 28px rgba(38,217,209,.15);
+      transition: transform .18s ease, filter .18s ease;
+    }
+
+    .botao-principal:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.08);
+    }
+
+    .botao-secundario {
+      border-radius: 15px;
+      padding: 13px 20px;
+      color: white;
+      background: var(--verde-musgo);
+      font-weight: bold;
+    }
+
+    button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .botao-perigo {
+      border-radius: 15px;
+      padding: 12px 18px;
+      color: white;
+      background: rgba(255,129,119,.15);
+      border: 1px solid rgba(255,129,119,.35);
+    }
+
+    .painel {
+      max-width: 700px;
+      margin: 20px auto;
+      padding: 22px;
+      border-radius: 25px;
+      background: var(--cartao);
+      border: 1px solid rgba(164,255,250,.12);
+      box-shadow: 0 15px 45px rgba(0,0,0,.25);
+    }
+
+    .foto-preview {
+      width: 100%;
+      min-height: 240px;
+      border-radius: 20px;
+      border: 2px dashed rgba(164,255,250,.2);
+      background: rgba(0,0,0,.18);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      color: var(--texto-suave);
+      margin-bottom: 18px;
+    }
+
+    .foto-preview img {
+      display: none;
+      max-width: 100%;
+      max-height: 420px;
+      object-fit: contain;
+    }
+
+    .foto-preview.tem-foto img {
+      display: block;
+    }
+
+    .foto-preview.tem-foto .placeholder {
+      display: none;
+    }
+
+    .placeholder {
+      text-align: center;
+      padding: 25px;
+    }
+
+    .placeholder strong {
+      display: block;
+      font-size: 50px;
+      margin-bottom: 10px;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .escolher-foto {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      padding: 15px;
+      border-radius: 16px;
+      background: var(--verde-musgo);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #botaoIdentificar {
+      display: none;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .carregando {
+      display: none;
+      text-align: center;
+      color: var(--ciano-claro);
+      padding: 15px;
+    }
+
+    .carregando.mostrar {
+      display: block;
+    }
+
+    .folha-girando {
+      display: inline-block;
+      font-size: 36px;
+      animation: girar 1.1s linear infinite;
+    }
+
+    @keyframes girar {
+      to { transform: rotate(360deg); }
+    }
+
+    .resultado {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .resultado.mostrar {
+      display: block;
+    }
+
+    .resultado-card {
+      padding: 20px;
+      border-radius: 20px;
+      background: rgba(5,17,10,.7);
+      border: 1px solid rgba(38,217,209,.18);
+    }
+
+    .resultado-card h3 {
+      color: var(--ciano-claro);
+      margin-top: 0;
+      font-size: 24px;
+    }
+
+    .resultado-item {
+      color: var(--texto-suave);
+      line-height: 1.55;
+      margin: 12px 0;
+    }
+
+    .resultado-item strong {
+      color: white;
+    }
+
+    .aviso {
+      display: flex;
+      gap: 11px;
+      align-items: flex-start;
+      margin-top: 17px;
+      padding: 14px;
+      border-radius: 16px;
+      color: #ffd8d4;
+      background: rgba(255,129,119,.1);
+      border: 1px solid rgba(255,129,119,.3);
+      line-height: 1.45;
+    }
+
+    .plantas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+      gap: 18px;
+    }
+
+    .planta-card {
+      overflow: hidden;
+      border-radius: 22px;
+      background: var(--cartao);
+      border: 1px solid rgba(164,255,250,.12);
+    }
+
+    .planta-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      background: #102519;
+    }
+
+    .planta-conteudo {
+      padding: 17px;
+    }
+
+    .planta-conteudo h3 {
+      margin: 0 0 10px;
+      color: var(--ciano-claro);
+    }
+
+    .planta-conteudo p {
+      color: var(--texto-suave);
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .vazio {
+      padding: 55px 20px;
+      text-align: center;
+      color: var(--texto-suave);
+      border-radius: 22px;
+      border: 1px dashed rgba(164,255,250,.17);
+      background: rgba(19,42,27,.65);
+      grid-column: 1 / -1;
+    }
+
+    .vazio .icone {
+      font-size: 58px;
+      margin-bottom: 12px;
+    }
+
+    /* =========================================================
+       NOVO: CONFIGURAÇÕES
+       ========================================================= */
+
+    .config-lista {
+      display: grid;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .config-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 17px;
+      border-radius: 18px;
+      background: rgba(5,17,10,.48);
+      border: 1px solid rgba(164,255,250,.1);
+    }
+
+    .config-item strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .config-item small {
+      color: var(--texto-suave);
+    }
+
+    .switch {
+      position: relative;
+      width: 54px;
+      height: 30px;
+      flex: 0 0 auto;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      cursor: pointer;
+      border-radius: 30px;
+      background: #34443a;
+      transition: .2s;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      left: 4px;
+      top: 4px;
+      border-radius: 50%;
+      background: white;
+      transition: .2s;
+    }
+
+    .switch input:checked + .slider {
+      background: var(--ciano);
+    }
+
+    .switch input:checked + .slider::before {
+      transform: translateX(24px);
+    }
+
+    /* =========================================================
+       NOVO: MINIGAME
+       Só é aberto pelo JavaScript após identificação bem-sucedida.
+       ========================================================= */
+
+    #minigame-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(2,8,5,.78);
+      backdrop-filter: blur(7px);
+    }
+
+    #minigame-modal.aberto {
+      display: flex;
+    }
+
+    .minigame {
+      width: min(620px, 100%);
+      max-height: 92vh;
+      overflow: auto;
+      border-radius: 28px;
+      padding: 22px;
+      background: linear-gradient(145deg, #173c23, #0c2014);
+      border: 1px solid rgba(164,255,250,.18);
+      box-shadow: 0 25px 80px rgba(0,0,0,.55);
+      text-align: center;
+    }
+
+    .minigame h3 {
+      margin-top: 0;
+      font-size: 27px;
+    }
+
+    .minigame p {
+      color: var(--texto-suave);
+      line-height: 1.5;
+    }
+
+    .jogo-area {
+      position: relative;
+      height: 280px;
+      margin: 15px 0;
+      overflow: hidden;
+      border-radius: 20px;
+      border: 1px solid rgba(164,255,250,.13);
+      background:
+        radial-gradient(circle at 50% 30%, rgba(38,217,209,.1), transparent 30%),
+        linear-gradient(#0c2818, #07130c);
+    }
+
+    .item-jogo {
+      position: absolute;
+      border: 0;
+      background: transparent;
+      font-size: 34px;
+      cursor: pointer;
+      transition: transform .12s ease;
+    }
+
+    .item-jogo:hover {
+      transform: scale(1.15);
+    }
+
+    .pontuacao {
+      color: var(--ciano-claro);
+      font-weight: bold;
+      margin: 8px;
+    }
+
+    .minigame-acoes {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* =========================================================
+       NOVO: BARRA DE NAVEGAÇÃO
+       ========================================================= */
+
+    .navegacao {
+      position: fixed;
+      z-index: 10;
+      left: 50%;
+      bottom: 14px;
+      transform: translateX(-50%);
+      width: min(95%, 720px);
+      padding: 8px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+      border-radius: 23px;
+      background: rgba(8,22,13,.94);
+      border: 1px solid rgba(164,255,250,.13);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 12px 45px rgba(0,0,0,.45);
+    }
+
+    .nav-btn {
+      padding: 9px 5px;
+      border-radius: 16px;
+      color: var(--texto-suave);
+      background: transparent;
+      font-size: 11px;
+    }
+
+    .nav-btn .icone {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 3px;
+    }
+
+    .nav-btn.ativo {
+      color: var(--ciano-claro);
+      background: rgba(38,217,209,.11);
+    }
+
+    @media (max-width: 600px) {
+      .hero {
+        min-height: 550px;
+      }
+
+      .mascote {
+        width: 150px;
+        height: 150px;
+        font-size: 83px;
+      }
+
+      .mascote::after {
+        width: 42px;
+        height: 42px;
+        font-size: 21px;
+      }
+
+      .tela {
+        padding: 15px;
+      }
+
+      .config-item {
+        padding: 14px;
+      }
+
+      .jogo-area {
+        height: 250px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .folha-caindo,
+      .folha-girando {
+        animation-duration: 4s;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================================================
+       NOVO: FOLHAS CAINDO
+       ========================================================= -->
+  <div id="folhas-container" aria-hidden="true"></div>
+
+  <div class="interface">
+
+    <header>
+      <div class="marca">
+        <div class="marca-icone">🌿</div>
+        <div>
+          <h1>Florestal</h1>
+          <small>Descubra a natureza</small>
+        </div>
+      </div>
+      <div class="simbolo-medicina" aria-label="Símbolo da medicina" title="Símbolo da medicina">⚕</div>
+    </header>
+
+    <div class="conteudo">
+
+      <!-- =====================================================
+           INÍCIO
+           ===================================================== -->
+      <main id="inicio" class="tela ativa">
+        <section class="hero">
+
+          <div class="mascote">🌱</div>
+
+          <div class="mensagem-mascote">Olá! Eu sou o Florestal. Vamos começar?</div>
+
+          <h2>Descubra a <span>natureza</span> 🌿</h2>
+
+          <p class="texto-intro">
+            Vamos explorar juntos as plantas, conhecer suas características
+            e aprender sobre seus usos tradicionais com cuidado e curiosidade.
+          </p>
+
+          <button class="botao-principal" onclick="iniciarFluxoDescoberta()">
+            Vamos começar!
+          </button>
+
+        </section>
+      </main>
+
+      <!-- =====================================================
+           DESCOBRIR
+           IMPORTANTE: a API existente permanece /api/identificar.
+           ===================================================== -->
+      <main id="descobrir" class="tela">
+
+        <h2 class="titulo">🌿 Descubra uma planta</h2>
+
+        <p class="subtitulo">
+          Quando estiver pronto, use a câmera ou escolha uma foto de uma planta.
+        </p>
+
+        <!-- NOVO: botão que inicia o fluxo correto: minigame → câmera -->
+        <section id="inicioDescoberta" class="painel" style="text-align:center;">
+          <div style="font-size:52px;">🌳🎮</div>
+          <h3 style="margin:8px 0 10px;">Prepare-se para explorar!</h3>
+          <p class="subtitulo" style="margin-bottom:18px;">
+            Primeiro você joga um minigame. Depois poderá usar a câmera para descobrir a planta.
+          </p>
+          <button class="botao-principal" onclick="iniciarFluxoDescoberta()">
+            🎮 Começar aventura
+          </button>
+        </section>
+
+        <section id="painelCamera" class="painel" style="display:none;">
+
+          <div id="fotoPreview" class="foto-preview">
+            <div class="placeholder">
+              <strong>📷</strong>
+              <div>Escolha uma foto para começar</div>
+            </div>
+            <img id="imagemPreview" alt="Foto escolhida">
+          </div>
+
+          <div class="acoes-foto">
+            <label class="escolher-foto" for="arquivoCamera">📸 Tirar foto</label>
+            <label class="escolher-foto" for="arquivoGaleria">🖼️ Escolher da galeria</label>
+          </div>
+          <input id="arquivoCamera" type="file" accept="image/*" capture="environment">
+          <input id="arquivoGaleria" type="file" accept="image/*">
+
+          <button id="botaoIdentificar" class="botao-principal">
+            🌿 Descobrir planta
+          </button>
+
+          <div id="carregando" class="carregando">
+            <div class="folha-girando">🌿</div>
+            <div>Estou olhando a planta...</div>
+          </div>
+
+          <div id="resultado" class="resultado"></div>
+
+        </section>
+      </main>
+
+      <!-- =====================================================
+           MINHAS PLANTAS
+           ===================================================== -->
+      <main id="plantas" class="tela">
+
+        <h2 class="titulo">🌿 Minhas plantas</h2>
+
+        <p class="subtitulo">
+          Veja as plantas que você já descobriu.
+        </p>
+
+        <div id="listaPlantas" class="plantas-grid"></div>
+
+      </main>
+
+      <!-- =====================================================
+           NOVO: CONFIGURAÇÕES
+           ===================================================== -->
+      <main id="configuracoes" class="tela">
+
+        <h2 class="titulo">⚙️ Configurações</h2>
+
+        <p class="subtitulo">
+          Escolha como você quer usar o Florestal.
+        </p>
+
+        <section class="painel">
+
+          <div class="config-lista">
+
+            <div class="config-item">
+              <div>
+                <strong>🍃 Folhas caindo</strong>
+                <small>Mostra folhas suaves no fundo.</small>
+              </div>
+
+              <label class="switch">
+                <input id="configFolhas" type="checkbox">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="config-item">
+              <div>
+                <strong>🎵 Música da floresta</strong>
+                <small>Som tranquilo de vento e natureza.</small>
+              </div>
+
+              <label class="switch">
+                <input id="configMusica" type="checkbox">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="config-item">
+              <div>
+                <strong>🎮 Minigame</strong>
+                <small>Jogue depois de descobrir uma planta.</small>
+              </div>
+
+              <label class="switch">
+                <input id="configMinigame" type="checkbox">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+          </div>
+
+        </section>
+
+      </main>
+
+    </div>
+
+    <!-- =======================================================
+         NOVO: NAVEGAÇÃO
+         ======================================================= -->
+    <nav class="navegacao">
+
+      <button class="nav-btn ativo" data-tela="inicio" onclick="abrirTela('inicio')">
+        <span class="icone">🏠</span>
+        Início
+      </button>
+
+      <button class="nav-btn" data-tela="descobrir" onclick="iniciarFluxoDescoberta()">
+        <span class="icone">📷</span>
+        Descobrir
+      </button>
+
+      <button class="nav-btn" data-tela="plantas" onclick="abrirTela('plantas')">
+        <span class="icone">🌿</span>
+        Minhas plantas
+      </button>
+
+      <button class="nav-btn" data-tela="configuracoes" onclick="abrirTela('configuracoes')">
+        <span class="icone">⚙️</span>
+        Configurações
+      </button>
+
+    </nav>
+  </div>
+
+  <!-- =========================================================
+       NOVO: ÁUDIO DA FLORESTA
+       O som é criado pelo navegador após uma interação do usuário.
+       Isso evita depender de um arquivo externo e respeita bloqueios
+       de autoplay dos navegadores.
+       ========================================================= -->
+  <script>
+    let audioContext = null;
+    let audioGain = null;
+    let audioTimer = null;
+    let audioRodando = false;
+
+    function iniciarSomFloresta() {
+      if (!configuracoes.musica) return;
+      if (audioRodando) return;
+
+      try {
+        audioContext = audioContext || new (window.AudioContext || window.webkitAudioContext)();
+
+        if (audioContext.state === "suspended") {
+          audioContext.resume();
+        }
+
+        audioGain = audioContext.createGain();
+        audioGain.gain.value = 0.035;
+        audioGain.connect(audioContext.destination);
+
+        // Ruído suave para representar vento.
+        const bufferSize = audioContext.sampleRate * 2;
+        const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+        const data = buffer.getChannelData(0);
+
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * 0.12;
+        }
+
+        const ruido = audioContext.createBufferSource();
+        ruido.buffer = buffer;
+        ruido.loop = true;
+
+        const filtro = audioContext.createBiquadFilter();
+        filtro.type = "lowpass";
+        filtro.frequency.value = 700;
+
+        ruido.connect(filtro);
+        filtro.connect(audioGain);
+        ruido.start();
+
+        // Pequenos sons naturais bem baixos.
+        audioTimer = setInterval(() => {
+          if (!audioContext || !audioRodando) return;
+
+          const oscilador = audioContext.createOscillator();
+          const ganho = audioContext.createGain();
+
+          oscilador.type = "sine";
+          oscilador.frequency.value = 900 + Math.random() * 500;
+
+          ganho.gain.setValueAtTime(0.0001, audioContext.currentTime);
+          ganho.gain.exponentialRampToValueAtTime(
+            0.012,
+            audioContext.currentTime + 0.05
+          );
+          ganho.gain.exponentialRampToValueAtTime(
+            0.0001,
+            audioContext.currentTime + 0.8
+          );
+
+          oscilador.connect(ganho);
+          ganho.connect(audioGain);
+
+          oscilador.start();
+          oscilador.stop(audioContext.currentTime + 0.85);
+        }, 5000);
+
+        audioRodando = true;
+
+      } catch (erro) {
+        console.warn("Não foi possível iniciar o som:", erro);
+      }
+    }
+
+    function pararSomFloresta() {
+      if (audioTimer) {
+        clearInterval(audioTimer);
+        audioTimer = null;
+      }
+
+      if (audioGain) {
+        try {
+          audioGain.gain.value = 0;
+        } catch (_) {}
+      }
+
+      audioRodando = false;
+    }
+  </script>
+
+  <!-- =========================================================
+       JAVASCRIPT PRINCIPAL
+       ========================================================= -->
+  <script>
+    /* =========================================================
+       CONFIGURAÇÕES
+       Salvas no localStorage para permanecerem depois.
+       ========================================================= */
+
+    const CONFIG_PADRAO = {
+      folhas: true,
+      musica: false,
+      minigame: true
+    };
+
+    let configuracoes = carregarConfiguracoes();
+
+    function carregarConfiguracoes() {
+      try {
+        const salvo = JSON.parse(localStorage.getItem("florestal_configuracoes"));
+        return { ...CONFIG_PADRAO, ...(salvo || {}) };
+      } catch (_) {
+        return { ...CONFIG_PADRAO };
+      }
+    }
+
+    function salvarConfiguracoes() {
+      localStorage.setItem(
+        "florestal_configuracoes",
+        JSON.stringify(configuracoes)
+      );
+    }
+
+    function aplicarConfiguracoes() {
+      document.getElementById("configFolhas").checked = configuracoes.folhas;
+      document.getElementById("configMusica").checked = configuracoes.musica;
+      document.getElementById("configMinigame").checked = configuracoes.minigame;
+
+      if (configuracoes.folhas) {
+        criarFolhas();
+      } else {
+        removerFolhas();
+      }
+
+      if (configuracoes.musica) {
+        // O navegador pode bloquear até uma interação.
+        // O listener abaixo tenta iniciar quando o usuário clicar.
+        iniciarSomFloresta();
+      } else {
+        pararSomFloresta();
+      }
+    }
+
+    /* =========================================================
+       NOVO: FOLHAS
+       Poucas folhas para manter a página leve.
+       ========================================================= */
+
+    function criarFolhas() {
+      const container = document.getElementById("folhas-container");
+
+      if (container.children.length > 0) return;
+
+      const folhas = ["🍃", "🍂", "🌿"];
+      const quantidade = window.innerWidth < 600 ? 8 : 12;
+
+      for (let i = 0; i < quantidade; i++) {
+        const folha = document.createElement("span");
+
+        folha.className = "folha-caindo";
+        folha.textContent = folhas[i % folhas.length];
+
+        folha.style.left = Math.random() * 100 + "%";
+        folha.style.fontSize = (15 + Math.random() * 13) + "px";
+        folha.style.animationDuration = (9 + Math.random() * 9) + "s";
+        folha.style.animationDelay = (-Math.random() * 12) + "s";
+
+        container.appendChild(folha);
+      }
+    }
+
+    function removerFolhas() {
+      document.getElementById("folhas-container").innerHTML = "";
+    }
+
+    /* =========================================================
+       NAVEGAÇÃO
+       ========================================================= */
+
+    function abrirTela(nome) {
+      document.querySelectorAll(".tela").forEach(tela => {
+        tela.classList.remove("ativa");
+      });
+
+      const tela = document.getElementById(nome);
+
+      if (tela) {
+        tela.classList.add("ativa");
+      }
+
+      document.querySelectorAll(".nav-btn").forEach(botao => {
+        botao.classList.toggle("ativo", botao.dataset.tela === nome);
+      });
+
+      if (nome === "plantas") {
+        mostrarPlantas();
+      }
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    /* =========================================================
+       FOTO / CÂMERA
+       A entrada continua usando input image/camera.
+       ========================================================= */
+
+    const arquivoFoto = document.getElementById("arquivoCamera");
+    const arquivoGaleria = document.getElementById("arquivoGaleria");
+    const imagemPreview = document.getElementById("imagemPreview");
+    const fotoPreview = document.getElementById("fotoPreview");
+    const botaoIdentificar = document.getElementById("botaoIdentificar");
+
+    let fotoSelecionada = null;
+    let urlPreviewAnterior = null;
+
+    function selecionarArquivoImagem(event) {
+      const arquivo = event.target.files && event.target.files[0];
+      if (!arquivo) return;
+      if (!arquivo.type || !arquivo.type.startsWith("image/")) {
+        alert("Escolha um arquivo de imagem válido.");
+        event.target.value = "";
+        return;
+      }
+      fotoSelecionada = arquivo;
+      if (urlPreviewAnterior) URL.revokeObjectURL(urlPreviewAnterior);
+      urlPreviewAnterior = URL.createObjectURL(arquivo);
+      imagemPreview.src = urlPreviewAnterior;
+      fotoPreview.classList.add("tem-foto");
+      botaoIdentificar.style.display = "block";
+      document.getElementById("resultado").classList.remove("mostrar");
+      document.getElementById("resultado").innerHTML = "";
+    }
+
+    arquivoFoto.addEventListener("change", selecionarArquivoImagem);
+    arquivoGaleria.addEventListener("change", selecionarArquivoImagem);
+
+    /* =========================================================
+       IDENTIFICAÇÃO
+       IMPORTANTE:
+       - endpoint NÃO foi alterado
+       - /api/identificar continua sendo usado
+       - o minigame só é chamado depois de sucesso
+       ========================================================= */
+
+    botaoIdentificar.addEventListener("click", identificarPlanta);
+
+    /* =========================================================
+       NOVO: FLUXO DA DESCOBERTA
+       Fluxo:
+       Florestal → Minigame → Terminou → Câmera → Identificação
+
+       Se o minigame estiver desligado nas configurações,
+       o usuário vai direto para a câmera.
+       ========================================================= */
+
+    function iniciarFluxoDescoberta() {
+      abrirTela("descobrir");
+
+      // Reinicia a etapa da câmera antes de cada nova aventura.
+      const inicio = document.getElementById("inicioDescoberta");
+      const camera = document.getElementById("painelCamera");
+
+      if (inicio) inicio.style.display = "block";
+      if (camera) camera.style.display = "none";
+
+      if (configuracoes.minigame) {
+        abrirMinigameAntesDaCamera();
+      } else {
+        liberarCamera();
+      }
+    }
+
+    function liberarCamera() {
+      const inicio = document.getElementById("inicioDescoberta");
+      const camera = document.getElementById("painelCamera");
+
+      if (inicio) inicio.style.display = "none";
+      if (camera) camera.style.display = "block";
+
+      const botaoFoto = document.querySelector('label[for="arquivoCamera"]');
+      if (botaoFoto) botaoFoto.focus({ preventScroll: true });
+    }
+
+    function abrirMinigameAntesDaCamera() {
+      const modal = document.getElementById("minigame-modal");
+      const titulo = document.getElementById("minigameTitulo");
+      const texto = document.getElementById("minigameTexto");
+      const continuar = document.getElementById("botaoContinuarJogo");
+
+      modal.classList.add("aberto");
+
+      if (titulo) titulo.textContent = "🎮 Prepare-se para a floresta!";
+      if (texto) {
+        texto.textContent =
+          "Pegue 8 folhas ou plantinhas para terminar a aventura. Depois você poderá usar a câmera.";
+      }
+
+      if (continuar) continuar.style.display = "none";
+
+      iniciarJogo(true);
+    }
+
+    function terminarMinigame() {
+      if (jogoIntervalo) {
+        clearInterval(jogoIntervalo);
+        jogoIntervalo = null;
+      }
+
+      const area = document.getElementById("jogoArea");
+      const pontos = document.getElementById("pontuacao");
+      const continuar = document.getElementById("botaoContinuarJogo");
+      const texto = document.getElementById("minigameTexto");
+
+      if (area) {
+        area.innerHTML = `
+          <div style="height:100%;display:grid;place-items:center;padding:20px;">
+            <div>
+              <div style="font-size:65px;">🌱✨</div>
+              <strong style="font-size:22px;">Aventura concluída!</strong>
+              <p style="color:#bfd0c5;">Você está pronto para descobrir uma planta.</p>
+            </div>
+          </div>
+        `;
+      }
+
+      if (pontos) pontos.textContent = "Pontos: " + pontosJogo + " 🌟";
+      if (texto) texto.textContent =
+        "Muito bem! Clique em Continuar para liberar a câmera.";
+
+      if (continuar) continuar.style.display = "inline-block";
+    }
+
+    function continuarParaCamera() {
+      fecharMinigame();
+      liberarCamera();
+    }
+
+    async function identificarPlanta() {
+      if (!fotoSelecionada) {
+        alert("Escolha uma foto primeiro. 🌱");
+        return;
+      }
+
+      const carregando = document.getElementById("carregando");
+      const resultado = document.getElementById("resultado");
+
+      carregando.classList.add("mostrar");
+      resultado.classList.remove("mostrar");
+      botaoIdentificar.disabled = true;
+
+      try {
+        const base64 = await arquivoParaBase64(fotoSelecionada);
+
+        /*
+         * ======================================================
+         * API EXISTENTE — NÃO ALTERAR O ENDPOINT
+         * ======================================================
+         */
+        const resposta = await fetch("/api/identificar", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            modelo: "gemini-3.6-flash",
+            body: {
+              contents: [
+                {
+                  parts: [
+                    {
+                      text:
+                        "Identifique a planta da imagem. " +
+                        "Informe o nome da planta, usos tradicionais, " +
+                        "onde ela é encontrada e possíveis perigos. " +
+                        "Se não houver certeza, diga que a identificação não é segura."
+                    },
+                    {
+                      inline_data: {
+                        mime_type: fotoSelecionada.type,
+                        data: base64.split(",")[1]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          })
+        });
+
+        if (!resposta.ok) {
+          throw new Error("Servidor respondeu com " + resposta.status);
+        }
+
+        const dados = await resposta.json();
+
+        mostrarResultado(dados);
+
+      } catch (erro) {
+        console.error(erro);
+
+        resultado.innerHTML = `
+          <div class="resultado-card">
+            <h3>🌿 Não consegui identificar</h3>
+            <p class="resultado-item">
+              Não consegui conversar com o sistema de identificação agora.
+              Verifique o servidor e tente novamente.
+            </p>
+
+            <div class="aviso">
+              <div>⚠️</div>
+              <div>
+                <strong>Atenção:</strong><br>
+                Não use uma planta como remédio apenas pela aparência.
+              </div>
+            </div>
+          </div>
+        `;
+
+        resultado.classList.add("mostrar");
+      } finally {
+        carregando.classList.remove("mostrar");
+        botaoIdentificar.disabled = false;
+      }
+    }
+
+    function arquivoParaBase64(arquivo) {
+      return new Promise((resolve, reject) => {
+        const leitor = new FileReader();
+
+        leitor.onload = () => resolve(leitor.result);
+        leitor.onerror = () => reject(new Error("Não foi possível ler a imagem."));
+
+        leitor.readAsDataURL(arquivo);
+      });
+    }
+
+    /* =========================================================
+       RESULTADO DA IDENTIFICAÇÃO
+       ========================================================= */
+
+     function mostrarResultado(dados) {
+       const resultado = document.getElementById("resultado");
+       let texto = "";
+
+       if (typeof dados === "string") {
+         texto = dados;
+       } else if (dados && typeof dados.text === "string") {
+         texto = dados.text;
+       } else if (dados && typeof dados.resposta === "string") {
+         texto = dados.resposta;
+       } else if (dados && typeof dados.resultado === "string") {
+         texto = dados.resultado;
+       } else if (dados && dados.candidates && dados.candidates[0] &&
+                  dados.candidates[0].content) {
+         const partes = dados.candidates[0].content.parts || [];
+         texto = partes.map(parte => parte.text || "").join("\\n");
+       }
+
+       texto = String(texto || "").trim();
+       const normalizado = texto.toLocaleLowerCase("pt-BR");
+
+       if (!texto) {
+         mostrarAvisoIdentificacao("Ops! Não consegui analisar a foto agora. Verifique sua conexão e tente novamente.");
+         return;
+       }
+       if (normalizado.includes("sem_planta") ||
+           normalizado.includes("não há planta") ||
+           normalizado.includes("nao ha planta") ||
+           normalizado.includes("nenhuma planta")) {
+         mostrarAvisoIdentificacao("Não consegui identificar uma planta nesta imagem. Tente tirar outra foto com a planta mais visível!");
+         return;
+       }
+       if (normalizado.includes("identificação incerta") ||
+           normalizado.includes("identificacao incerta") ||
+           normalizado.includes("inconclusiva") ||
+           normalizado.includes("não consigo identificar com segurança") ||
+           normalizado.includes("nao consigo identificar com seguranca")) {
+         mostrarAvisoIdentificacao("Não consegui identificar esta planta com segurança. Tente tirar outra foto com mais iluminação e nitidez!");
+         return;
+       }
+       if (normalizado.includes("não confirmada como medicinal") ||
+           normalizado.includes("nao confirmada como medicinal") ||
+           normalizado.includes("não é medicinal") ||
+           normalizado.includes("nao e medicinal")) {
+         mostrarAvisoIdentificacao("Esta planta não foi identificada como uma planta medicinal. Vamos tentar descobrir outra?");
+         return;
+       }
+
+       const nome = encontrarInformacao(texto, ["Nome comum", "Nome da planta", "Nome"]) ||
+         "Identificação sugerida (confirme com um especialista)";
+       const uso = encontrarInformacao(texto, ["Usos tradicionais", "Uso tradicional", "Uso medicinal", "Usos"]) ||
+         "Não foi possível confirmar um uso medicinal tradicional com segurança.";
+       const local = encontrarInformacao(texto, ["Onde é encontrada", "Onde encontrada", "Local"]) ||
+         "Informação não encontrada.";
+       const descricao = texto;
+
+       resultado.innerHTML = `
+         <div class="resultado-card">
+           <h3>🌱 ${escaparHTML(nome)}</h3>
+           <div class="resultado-item"><strong>💊 Uso tradicional:</strong><br>${escaparHTML(uso)}</div>
+           <div class="resultado-item"><strong>🗺️ Onde pode ser encontrada:</strong><br>${escaparHTML(local)}</div>
+           <div class="resultado-item"><strong>📖 Características e observações:</strong><br>${escaparHTML(descricao)}</div>
+           <div class="aviso">
+             <div>⚠️</div>
+             <div><strong>Importante:</strong><br>
+               A identificação por foto pode conter erros. Algumas plantas são tóxicas.
+               Não ingira, prepare nem aplique uma planta com base nesta identificação.
+               Para qualquer uso medicinal, procure orientação de um profissional qualificado.
+             </div>
+           </div>
+           <button class="botao-principal" style="width:100%;margin-top:17px" onclick="salvarPlanta()">
+             🌿 Salvar em Minhas plantas
+           </button>
+         </div>`;
+
+       resultado.classList.add("mostrar");
+       window.ultimoResultado = {
+         nome, uso, local, descricao, foto: imagemPreview.src
+       };
+     }
+
+     function mostrarAvisoIdentificacao(mensagem) {
+       const resultado = document.getElementById("resultado");
+       window.ultimoResultado = null;
+       resultado.innerHTML = `
+         <div class="resultado-card">
+           <h3>🌿 Vamos tentar novamente</h3>
+           <p class="resultado-item">${escaparHTML(mensagem)}</p>
+           <div class="aviso"><div>⚠️</div><div>
+             A identificação por foto pode falhar. Não use plantas desconhecidas como remédio.
+           </div></div>
+         </div>`;
+       resultado.classList.add("mostrar");
+     }
+
+    function encontrarInformacao(texto, palavras) {
+      const linhas = texto.split("\n");
+
+      for (const linha of linhas) {
+        const minuscula = linha.toLowerCase();
+
+        for (const palavra of palavras) {
+          if (minuscula.includes(palavra.toLowerCase())) {
+            const partes = linha.split(":");
+
+            if (partes.length > 1) {
+              return partes.slice(1).join(":").trim();
+            }
+          }
+        }
+      }
+
+      return "";
+    }
+
+    /* =========================================================
+       MINHAS PLANTAS
+       ========================================================= */
+
+    function salvarPlanta() {
+      if (!window.ultimoResultado) return;
+
+      const plantas = JSON.parse(
+        localStorage.getItem("florestal_plantas") || "[]"
+      );
+
+      plantas.unshift({
+        id: Date.now(),
+        ...window.ultimoResultado
+      });
+
+      localStorage.setItem("florestal_plantas", JSON.stringify(plantas));
+
+      alert("Planta salva! 🌿💙");
+
+      mostrarPlantas();
+      abrirTela("plantas");
+    }
+
+    function mostrarPlantas() {
+      const lista = document.getElementById("listaPlantas");
+
+      const plantas = JSON.parse(
+        localStorage.getItem("florestal_plantas") || "[]"
+      );
+
+      if (!plantas.length) {
+        lista.innerHTML = `
+          <div class="vazio">
+            <div class="icone">🌱</div>
+            <h3>Nenhuma planta ainda</h3>
+            <p>Descubra uma planta para começar sua coleção.</p>
+          </div>
+        `;
+        return;
+      }
+
+      lista.innerHTML = plantas.map(planta => `
+        <article class="planta-card">
+          <img src="${planta.foto}" alt="${escaparHTML(planta.nome)}">
+
+          <div class="planta-conteudo">
+            <h3>🌿 ${escaparHTML(planta.nome)}</h3>
+
+            <p>
+              <strong>💊 Usos:</strong><br>
+              ${escaparHTML(planta.uso)}
+            </p>
+
+            <p>
+              <strong>🗺️ Onde:</strong><br>
+              ${escaparHTML(planta.local)}
+            </p>
+
+            <p>
+              <strong>📖 Sobre:</strong><br>
+              ${escaparHTML(planta.descricao)}
+            </p>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    /* =========================================================
+       NOVO: MINIGAME
+       Jogo simples de pegar folhas.
+       ========================================================= */
+
+    let jogoIntervalo = null;
+    let pontosJogo = 0;
+    let jogoPreIdentificacao = false;
+    let itensJogo = 0;
+    const META_JOGO = 8;
+
+    /* =========================================================
+       NOVO: MINIGAME ANTES DA CÂMERA
+       ========================================================= */
+
+    function abrirMinigame() {
+      // Mantido como função de compatibilidade.
+      // O novo fluxo usa abrirMinigameAntesDaCamera().
+      if (!configuracoes.minigame) {
+        liberarCamera();
+        return;
+      }
+
+      abrirMinigameAntesDaCamera();
+    }
+
+    function fecharMinigame() {
+      document.getElementById("minigame-modal").classList.remove("aberto");
+
+      if (jogoIntervalo) {
+        clearInterval(jogoIntervalo);
+        jogoIntervalo = null;
+      }
+    }
+
+    function iniciarJogo(preIdentificacao = false) {
+      const area = document.getElementById("jogoArea");
+      const pontos = document.getElementById("pontuacao");
+      const continuar = document.getElementById("botaoContinuarJogo");
+
+      if (!area) return;
+
+      jogoPreIdentificacao = preIdentificacao;
+      pontosJogo = 0;
+      itensJogo = 0;
+
+      area.innerHTML = "";
+      if (pontos) pontos.textContent = "Pontos: 0 / " + META_JOGO;
+      if (continuar) continuar.style.display = "none";
+
+      if (jogoIntervalo) clearInterval(jogoIntervalo);
+
+      criarItemJogo();
+
+      jogoIntervalo = setInterval(() => {
+        if (itensJogo < META_JOGO) {
+          criarItemJogo();
+        }
+      }, 950);
+    }
+
+    function criarItemJogo() {
+      const area = document.getElementById("jogoArea");
+
+      if (!area || itensJogo >= META_JOGO) return;
+
+      const item = document.createElement("button");
+
+      item.className = "item-jogo";
+      item.textContent = Math.random() > .35 ? "🍃" : "🌱";
+      item.setAttribute("aria-label", "Pegar elemento da floresta");
+
+      item.style.left = (5 + Math.random() * 85) + "%";
+      item.style.top = (5 + Math.random() * 78) + "%";
+
+      item.onclick = () => {
+        if (!item.isConnected) return;
+
+        pontosJogo++;
+        itensJogo++;
+
+        const pontos = document.getElementById("pontuacao");
+        if (pontos) {
+          pontos.textContent = "Pontos: " + pontosJogo + " / " + META_JOGO;
+        }
+
+        item.remove();
+
+        if (itensJogo >= META_JOGO) {
+          terminarMinigame();
+        }
+      };
+
+      area.appendChild(item);
+
+      // O item some sozinho para manter o jogo leve.
+      setTimeout(() => {
+        if (item.isConnected) item.remove();
+      }, 2400);
+    }
+
+    /* =========================================================
+       CONFIGURAÇÕES — EVENTOS
+       ========================================================= */
+
+    document.getElementById("configFolhas").addEventListener("change", function() {
+      configuracoes.folhas = this.checked;
+      salvarConfiguracoes();
+
+      if (configuracoes.folhas) {
+        criarFolhas();
+      } else {
+        removerFolhas();
+      }
+    });
+
+    document.getElementById("configMusica").addEventListener("change", function() {
+      configuracoes.musica = this.checked;
+      salvarConfiguracoes();
+
+      if (configuracoes.musica) {
+        iniciarSomFloresta();
+      } else {
+        pararSomFloresta();
+      }
+    });
+
+    document.getElementById("configMinigame").addEventListener("change", function() {
+      configuracoes.minigame = this.checked;
+      salvarConfiguracoes();
+
+      // Se desligar, fecha o jogo e deixa a identificação disponível.
+      if (!configuracoes.minigame) {
+        fecharMinigame();
+        liberarCamera();
+      }
+    });
+
+    /* =========================================================
+       PRIMEIRA INTERAÇÃO
+       Necessária para o áudio funcionar em navegadores que
+       bloqueiam autoplay.
+       ========================================================= */
+
+    document.addEventListener("pointerdown", function iniciarAudioDepoisDoClique() {
+      if (configuracoes.musica) {
+        iniciarSomFloresta();
+      }
+    }, { once: false });
+
+    /* =========================================================
+       UTILIDADE
+       ========================================================= */
+
+    function escaparHTML(texto) {
+      return String(texto || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    /* =========================================================
+       INICIALIZAÇÃO
+       ========================================================= */
+
+    aplicarConfiguracoes();
+    mostrarPlantas();
+  </script>
+
+  <!-- =========================================================
+       NOVO: JANELA DO MINIGAME
+       Ela fica escondida até uma identificação bem-sucedida.
+       ========================================================= -->
+  <div id="minigame-modal" role="dialog" aria-modal="true" aria-label="Minigame do Florestal">
+
+    <section class="minigame">
+
+      <h3 id="minigameTitulo">🎮 Prepare-se para a floresta!</h3>
+
+      <p id="minigameTexto">
+        Pegue 8 folhas ou plantinhas para terminar a aventura.
+      </p>
+
+      <div id="pontuacao" class="pontuacao">
+        Pontos: 0 / 8
+      </div>
+
+      <div id="jogoArea" class="jogo-area"></div>
+
+      <div class="minigame-acoes">
+
+        <button class="botao-principal" onclick="iniciarJogo(jogoPreIdentificacao)">
+          🔄 Jogar novamente
+        </button>
+
+        <!-- NOVO: só aparece quando o minigame termina. -->
+        <button
+          id="botaoContinuarJogo"
+          class="botao-principal"
+          style="display:none;"
+          onclick="continuarParaCamera()">
+          📷 Continuar para a câmera
+        </button>
+
+        <button class="botao-secundario" onclick="fecharMinigame(); liberarCamera();">
+          🌳 Fechar e continuar
+        </button>
+
+      </div>
+
+    </section>
+
+  </div>
+
+
+<style id="ajustes-tablet">
+/* Ajustes de visual para tablet (deitado e em pé) e computador.
+   O visual e as ideias são do grupo; aqui só arrumamos tamanho, espaço e alinhamento. */
+.nav-btn{font-size:13.5px;min-height:60px}
+body{font-size:16.5px}
+.escolher-foto,.botao-principal{min-height:48px}
+main.tela{padding-bottom:110px}
+</style>
+<!-- POKÉDEX: ficha padrão em pop-up + ligação com o back-end do grupo
+     (comum/ficha.js e comum/adaptador.js). O resto da página é do grupo. -->
+<script src="/comum/ficha.js"></script>
+<script src="/comum/adaptador.js"></script>
+<script>
+PokedexAdaptador.iniciar({
+  icone: "🌿", fauna: false,
+  cor: "#26d9d1", cor2: "#a4fffa",
+  escuro: () => true,
+  noturno: { fundo: "#102016", texto: "#f3fff9", suave: "#bfd0c5" },
+  carregando: "🌿 Estou olhando a planta...",
+  esconder: ["#resultado", "#carregando"],
+  instrucaoExtra: "No campo texto_front, escreva uma linha para cada item, assim: 'Nome comum: ...', 'Usos tradicionais: ...', 'Onde é encontrada: ...', 'Possíveis perigos: ...'.",
+  alerta: () => "As informações são educativas. Nunca use uma planta como remédio sem orientação de um profissional de saúde.",
+  salvar: () => salvarPlanta()
+});
+</script>
+</body>
+</html>

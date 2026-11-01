@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jardim do Leafeon — Pokédex da Mata</title>
+<style>
+:root{--verde:#4f8f5b;--verde2:#9bcf8b;--bege:#f1dfb8;--escuro:#101a12;--painel:#1b291d;--vermelho:#e53935}
+*{box-sizing:border-box} body{margin:0;background:linear-gradient(145deg,#09110b,#17251a);color:#fff;font-family:Arial,sans-serif;min-height:100vh;padding:24px}
+.app{max-width:900px;margin:auto}.top{display:flex;align-items:center;gap:18px;margin-bottom:20px}.logo{width:72px;height:72px;border-radius:20px;background:var(--bege);padding:7px;object-fit:contain}.top h1{margin:0;font-size:38px}.top p{margin:5px 0;color:#c9d7c8}.tag{margin-left:auto;background:var(--verde);padding:9px 14px;border-radius:20px;font-weight:bold}
+.card{background:rgba(27,41,29,.96);border:1px solid #49644d;border-radius:24px;padding:22px;box-shadow:0 15px 45px #0008}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.tag{display:none}}
+.preview{height:330px;border:2px dashed #7c9d78;border-radius:20px;background:#0e170f;display:flex;align-items:center;justify-content:center;overflow:hidden}.preview img{width:100%;height:100%;object-fit:cover;display:none}.empty{text-align:center;color:#b9c7b9;font-size:16px}.empty div{font-size:58px;margin-bottom:10px}
+h2{margin-top:0}.text{color:#bdc9bd;line-height:1.5}button{border:0;border-radius:14px;padding:14px 18px;font-size:16px;font-weight:bold;cursor:pointer;margin-top:9px}.primary{background:var(--verde2);color:#102013}.secondary{background:#8d6a43;color:white}button:disabled{opacity:.5;cursor:not-allowed}input{display:none}
+.status{min-height:25px;margin-top:12px;color:#d4dfd1}.loading{display:none}.result{display:none;margin-top:20px;background:#122016;border-radius:20px;padding:20px;border:1px solid #526d55}.dex{display:flex;justify-content:space-between;color:var(--bege);font-weight:bold}.name{font-size:36px;margin:15px 0 5px;color:var(--verde2)}.type{display:inline-block;background:#345638;padding:7px 12px;border-radius:15px}.infos{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}.info{background:#0c160e;padding:15px;border-radius:14px}.label{color:#9db09d;font-size:12px;text-transform:uppercase}.value{margin-top:5px;font-weight:bold;line-height:1.4}.curios{background:#203623;padding:17px;border-radius:15px;border-left:5px solid var(--verde2)}.curios h3{margin-top:0}.curios li{margin:7px 0;line-height:1.4}.danger{display:none;background:#4b1414;border:2px solid var(--vermelho);padding:16px;border-radius:15px;margin-top:16px}.danger strong{font-size:20px;color:#ff9b98}.message{display:none;text-align:center;margin-top:20px;padding:25px;background:#0d170f;border-radius:18px}.message .big{font-size:50px}
+footer{text-align:center;color:#819181;margin-top:14px;font-size:12px}
+
+.library-button{width:100%;background:#2f5134;color:#e8f3e6;border:1px solid #66856a;margin-top:10px}
+.library-button:hover{transform:translateY(-2px);background:#3a6240}
+.library-screen{display:none;margin-top:20px;background:rgba(27,41,29,.98);border:1px solid #49644d;border-radius:24px;padding:22px;box-shadow:0 15px 45px #0008}
+.library-header{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px}
+.library-header h2{margin:0;color:var(--verde2)}
+.back-library{margin-top:0;background:#8d6a43;color:white;white-space:nowrap}
+.library-intro{color:#bdc9bd;line-height:1.5;margin-top:0}
+.library-category{margin-top:22px;padding:17px;border-radius:18px;background:#122016;border:1px solid #3f5c43}
+.library-category h3{margin:0 0 14px;color:var(--bege);font-size:22px}
+.animal-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.animal-card{background:#0c160e;border-radius:16px;padding:12px;border:1px solid #2f4933;overflow:hidden}
+.animal-card img{width:100%;height:150px;object-fit:cover;border-radius:12px;display:block;margin-bottom:10px}
+.animal-card h4{margin:0 0 6px;color:var(--verde2);font-size:20px}
+.animal-card p{margin:4px 0;color:#c6d2c5;font-size:13px;line-height:1.35}
+.empty-library{color:#8fa18f;font-style:italic;margin:0}
+.library-count{display:inline-block;background:#345638;padding:5px 10px;border-radius:12px;font-size:12px;margin-left:7px}
+@media(max-width:700px){.library-header{align-items:flex-start;flex-direction:column}.back-library{width:100%}}
+
+/* === Tema Leafeon para a página de animais descobertos === */
+.library-screen{
+  background:
+    radial-gradient(circle at 15% 20%, rgba(145, 190, 85, .22), transparent 28%),
+    radial-gradient(circle at 85% 75%, rgba(66, 105, 45, .28), transparent 32%),
+    linear-gradient(135deg, rgba(13, 32, 19, .97), rgba(30, 54, 27, .96) 48%, rgba(10, 25, 16, .98));
+  position: relative;
+  overflow: hidden;
+}
+.library-screen::before{
+  content:"";
+  position:absolute;
+  inset:-80px;
+  pointer-events:none;
+  opacity:.18;
+  background-image:
+    radial-gradient(ellipse at 20% 30%, transparent 0 35px, rgba(157,205,93,.45) 36px 38px, transparent 39px),
+    radial-gradient(ellipse at 75% 65%, transparent 0 45px, rgba(115,165,69,.35) 46px 48px, transparent 49px);
+  background-size: 180px 180px, 240px 240px;
+  transform: rotate(-12deg);
+}
+.back-pokedex{
+  position:relative;
+  z-index:5;
+  display:block;
+  margin:0 auto 18px;
+  padding:12px 22px;
+  border:2px solid #8fbd59;
+  border-radius:14px;
+  background:linear-gradient(135deg,#263f20,#426b32);
+  color:#f2ffe6;
+  font-weight:800;
+  font-size:15px;
+  letter-spacing:.5px;
+  cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,.35), inset 0 1px rgba(255,255,255,.12);
+}
+.back-pokedex:hover{
+  transform:translateY(-2px);
+  filter:brightness(1.12);
+}
+.achievements-button{width:100%;background:linear-gradient(135deg,#6b5426,#9b7a38);color:#fff7dc;border:1px solid #c7a95c;margin-top:10px}.achievements-button:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.achievements-screen{display:none;margin-top:20px;padding:22px;border-radius:24px;border:1px solid #75602f;background:radial-gradient(circle at 15% 10%,rgba(205,174,91,.18),transparent 30%),linear-gradient(135deg,#182016,#2b2717 55%,#11180f);box-shadow:0 15px 45px #0008;position:relative;overflow:hidden}.achievements-title{color:#f1dfb8;text-align:center;margin:0 0 8px;font-size:32px}.achievements-intro{color:#c9d7c8;text-align:center;line-height:1.5;margin:0 auto 20px;max-width:650px}.achievement-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}.achievement-stat{background:#0d170f;border:1px solid #40523b;border-radius:15px;padding:13px;text-align:center}.achievement-stat b{display:block;font-size:24px;color:#f1dfb8}.achievement-stat span{font-size:12px;color:#aebcac}.mission-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}.mission-card{background:#0d170f;border:1px solid #40523b;border-radius:17px;padding:16px;position:relative;overflow:hidden}.mission-card.done{border-color:#9bcf8b;box-shadow:0 0 18px rgba(155,207,139,.12)}.mission-icon{font-size:34px;float:left;margin-right:10px}.mission-card h3{margin:2px 0 6px;color:#f1dfb8;font-size:18px}.mission-card p{margin:0;color:#b9c7b9;font-size:13px;line-height:1.4;clear:both;padding-top:8px}.mission-progress{height:9px;background:#263227;border-radius:99px;margin-top:12px;overflow:hidden}.mission-progress span{display:block;height:100%;background:linear-gradient(90deg,#6b9d5b,#c4df8c);border-radius:99px;transition:width .3s}.mission-status{margin-top:8px;font-size:12px;color:#aebcac;display:flex;justify-content:space-between;gap:8px}.mission-card.done .mission-status{color:#cfe9c2;font-weight:bold}.achievement-back{display:block;margin:0 auto 18px;background:#8d6a43;color:white}@media(max-width:700px){.achievement-summary{grid-template-columns:repeat(2,1fr)}}
+
+</style>
+
+<!-- MENU INICIAL — a tela da Pokédex abaixo não foi alterada -->
+<style>
+#menuInicial{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background:
+    radial-gradient(circle at 50% 25%, rgba(155,207,139,.16), transparent 34%),
+    linear-gradient(145deg,#071008,#17251a);
+}
+.menu-caixa{
+  width:min(560px,100%);
+  text-align:center;
+  background:rgba(27,41,29,.98);
+  border:2px solid #49644d;
+  border-radius:30px;
+  padding:34px 25px;
+  box-shadow:0 20px 65px #000b;
+}
+.menu-leafeon{
+  width:150px;
+  height:150px;
+  object-fit:contain;
+  border-radius:35px;
+  background:#f1dfb8;
+  padding:8px;
+  margin-bottom:10px;
+}
+.menu-caixa h1{
+  color:#9bcf8b;
+  font-size:clamp(32px,7vw,52px);
+  margin:5px 0;
+}
+.menu-caixa h2{
+  color:#f1dfb8;
+  margin:4px 0 12px;
+}
+.menu-caixa p{
+  color:#c9d7c8;
+  line-height:1.5;
+  margin:0 auto 22px;
+  max-width:430px;
+}
+.menu-botao{
+  width:100%;
+  max-width:360px;
+  background:#9bcf8b;
+  color:#102013;
+  border:0;
+  border-radius:16px;
+  padding:16px 20px;
+  font-size:18px;
+  font-weight:bold;
+  cursor:pointer;
+}
+.menu-botao:hover{transform:translateY(-2px)}
+.menu-botao:active{transform:translateY(0)}
+.menu-acessos{display:flex;gap:12px;width:min(460px,100%);margin:12px auto 0}
+.menu-acesso{flex:1;min-width:0;margin:0;padding:13px 10px;border-radius:14px;font-size:14px;line-height:1.25;color:#f5f7ed;border:1px solid #66856a;background:linear-gradient(135deg,#2f5134,#426b32)}
+.menu-acesso.conquistas-menu{background:linear-gradient(135deg,#6b5426,#9b7a38);border-color:#c7a95c;color:#fff7dc}
+.menu-acesso:hover{transform:translateY(-2px);filter:brightness(1.1)}
+@media(max-width:420px){.menu-acessos{gap:8px}.menu-acesso{font-size:12px;padding:12px 7px}}
+.menu-folhas{
+  margin-top:20px;
+  font-size:24px;
+  letter-spacing:7px;
+}
+</style>
+
+<div id="menuInicial">
+  <div class="menu-caixa">
+    <img class="menu-leafeon" alt="Leafeon" src="data:image/jpeg;base64,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">
+    <h1>Jardim do Leafeon</h1>
+    <h2>🌿 Pokédex da Mata 🌿</h2>
+    <p>
+      Entre na floresta e descubra os animais que vivem por lá!
+      O Rotom está esperando para começar uma nova descoberta. ⚡
+    </p>
+    <button class="menu-botao" id="entrarPokedex">⚡ ENTRAR NA POKÉDEX</button>
+    <div class="menu-acessos" aria-label="Acessos rápidos">
+      <button class="menu-acesso" id="openBiblioteca">📚 Animais já descobertos</button>
+      <button class="menu-acesso conquistas-menu" id="openConquistas">🏆 Conquistas</button>
+    </div>
+    <div class="menu-folhas">🍃 🌿 🍃</div>
+  </div>
+</div>
+
+</head>
+<body>
+<main class="app">
+<header class="top">
+<img class="logo" alt="Leafeon" src="data:image/jpeg;base64,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">
+<div><h1>Jardim do Leafeon</h1><p>Pokédex da Mata 🌿</p></div>
+<div class="tag">ENTRADA DA MATA</div>
+</header>
+
+<section class="card">
+<div class="grid">
+<div class="preview"><div class="empty" id="empty"><div>📸</div><b>Mostre um animal!</b><br>O Rotom vai tentar descobrir qual é.</div><img id="photo" alt="Foto escolhida"></div>
+<div>
+<h2>⚡ Rotom está pronto!</h2>
+<p class="text">Escolha uma foto de um animal da mata e veja uma entrada no estilo de uma Pokédex.</p>
+<label><button class="secondary" id="choose">📷 Tirar foto</button></label>
+<input id="file" type="file" accept="image/jpeg,image/png,image/webp" capture="environment">
+<button class="primary" id="go" disabled>🔎 Descobrir animal</button>
+<div class="loading" id="loading">🌿 O Rotom está pesquisando...</div>
+<div class="status" id="status"></div>
+</div>
+</div>
+
+<section class="result" id="result">
+<div class="dex"><span id="number">ENTRADA DA MATA #001</span><span id="confidence"></span></div>
+<div class="name" id="name"></div><span class="type" id="type">TIPO: MATA</span>
+<div class="infos">
+<div class="info"><div class="label">🌳 Onde vive</div><div class="value" id="habitat"></div></div>
+<div class="info"><div class="label">📊 Tamanho e peso</div><div class="value" id="size"></div></div>
+</div>
+<div class="curios"><h3>⭐ Curiosidades</h3><ul id="curiosities"></ul></div>
+<div class="info" style="margin-top:14px"><div class="label">🍃 Entrada da Pokédex</div><div class="value" id="description"></div></div>
+<div class="danger" id="danger"><strong>⚠️ PERIGO!</strong><div id="warning"></div></div>
+<button class="secondary" id="new">📸 Nova descoberta</button>
+</section>
+
+<section class="library-screen" id="biblioteca">
+      <button id="voltarPokedex" class="back-pokedex">← VOLTAR PARA A POKÉDEX</button>
+<div class="library-header"><h2>📚 Animais já descobertos</h2></div>
+<p class="library-intro">Aqui ficam todos os animais que o Rotom já identificou, organizados na categoria Terrestre.</p>
+<div class="library-category"><h3>🌳 Terrestre <span class="library-count" id="countTerrestrial">0</span></h3><div class="animal-list" id="listTerrestrial"><p class="empty-library">Nenhum animal descoberto ainda.</p></div></div>
+<div class="library-category"><h3>⚠️ Perigosos da área terrestre <span class="library-count" id="countDangerousTerrestrial">0</span></h3><p class="library-intro">Animais terrestres identificados como perigosos ou venenosos. Observe sempre de longe e não toque.</p><div class="animal-list" id="listDangerousTerrestrial"><p class="empty-library">Nenhum animal terrestre perigoso descoberto ainda.</p></div></div>
+</section>
+
+<section class="achievements-screen" id="conquistas">
+<button id="voltarPokedexConquistas" class="back-pokedex achievement-back">← VOLTAR PARA A POKÉDEX</button>
+<h2 class="achievements-title">🏆 Conquistas e Missões</h2>
+<p class="achievements-intro">Complete missões descobrindo animais. As metas da categoria Terrestre aumentam em sequência: 5, 10, 20, 40, 80 e 100 animais.</p>
+<div class="achievement-summary"><div class="achievement-stat"><b id="achTotal">0</b><span>Animais descobertos</span></div><div class="achievement-stat"><b id="achTerrestrial">0</b><span>Animais terrestres</span></div><div class="achievement-stat"><b id="achUnlocked">0</b><span>Missões concluídas</span></div><div class="achievement-stat"><b id="achNext">5</b><span>Próxima meta</span></div></div>
+<div class="mission-list" id="missionList"></div>
+</section>
+
+<section class="message" id="message"><div class="big" id="messageIcon">🔎</div><h2 id="messageTitle"></h2><p id="messageText"></p><button class="primary" id="retry">Tentar outra foto</button></section>
+</section>
+<footer>Explore a mata com cuidado e observe os animais de longe. 🌿</footer>
+</main>
+
+<script>
+const file=document.getElementById("file"),photo=document.getElementById("photo"),empty=document.getElementById("empty"),go=document.getElementById("go"),loading=document.getElementById("loading"),status=document.getElementById("status"),result=document.getElementById("result"),message=document.getElementById("message");
+let selected=null,count=0;
+
+document.getElementById("choose").onclick=()=>file.click();
+file.onchange=()=>{
+ selected=file.files?.[0]; if(!selected)return;
+ photo.src=URL.createObjectURL(selected);photo.style.display="block";empty.style.display="none";go.disabled=false;
+ result.style.display="none";message.style.display="none";status.textContent="Foto pronta! ⚡";
+};
+
+function base64(f){return new Promise((res,rej)=>{let r=new FileReader();r.onload=()=>{let s=String(r.result),i=s.indexOf(",");i<0?rej():res(s.slice(i+1))};r.onerror=rej;r.readAsDataURL(f)})}
+function text(el,v){document.getElementById(el).textContent=(v==null?"":String(v))}
+function fail(title,msg){text("messageTitle",title);text("messageText",msg);message.style.display="block";result.style.display="none"}
+
+go.onclick=async()=>{
+ if(!selected)return;go.disabled=true;loading.style.display="block";status.textContent="";
+ try{
+  const data=await base64(selected);
+  const pedido={
+   modelo:"gemini-3.6-flash",
+   body:{contents:[{parts:[
+    {text:"Você é o Rotom de uma Pokédex da Mata. Analise a foto e tente identificar SOMENTE animais terrestres. Não identifique animais aquáticos ou aéreos como categoria; esta Pokédex aceita apenas animais terrestres. Não chute. Só considere identificado se houver um animal claramente visível e confiança de pelo menos 80. Responda em JSON. Crie uma entrada divertida inspirada em uma Pokédex, mas sobre animais reais da mata. Informe nome, habitat, tamanho e peso, 2 a 4 curiosidades simples, uma descrição em estilo de entrada de Pokédex, se é perigoso, se é venenoso e um aviso curto se houver perigo. Se não houver animal ou não tiver certeza, identificado deve ser false."},
+    {inline_data:{mime_type:"image/jpeg",data:data}}
+   ]}],
+   generationConfig:{temperature:.2,responseMimeType:"application/json",responseSchema:{
+    type:"object",properties:{
+     identificado:{type:"boolean"},confianca:{type:"integer"},nome:{type:"string"},habitat:{type:"string"},tamanho_peso:{type:"string"},curiosidades:{type:"array",items:{type:"string"}},descricao:{type:"string"},perigoso:{type:"boolean"},venenoso:{type:"boolean"},aviso:{type:"string"}
+    },required:["identificado","confianca"]
+   }}
+  }};
+  const r=await fetch("/api/identificar",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(pedido)});
+  if(!r.ok)throw new Error("servidor");
+  const raw=await r.json(),str=raw?.candidates?.[0]?.content?.parts?.[0]?.text;
+  if(typeof str!=="string")throw new Error("resposta");
+  const d=JSON.parse(str);
+  if(d.identificado!==true||Number(d.confianca)<80){
+   fail("Hmm... o Rotom não teve certeza!","Tente outra foto com o animal bem visível. O Jardim do Leafeon não chuta! 🐾");
+   return;
+  }
+  count++;text("number","ENTRADA DA MATA #"+String(count).padStart(3,"0"));salvarDescoberta(d,data);text("confidence","Confiança: "+Number(d.confianca)+"%");
+  text("name",d.nome||"Animal da Mata");text("type","TIPO: "+(d.tipo||"MATA"));text("habitat",d.habitat||"Não informado");text("size",d.tamanho_peso||"Não informado");text("description",d.descricao||"Uma nova descoberta da mata!");
+  const ul=document.getElementById("curiosities");ul.replaceChildren();
+  (Array.isArray(d.curiosidades)?d.curiosidades:[]).slice(0,4).forEach(x=>{let li=document.createElement("li");li.textContent=String(x);ul.appendChild(li)});
+  if(!ul.children.length){let li=document.createElement("li");li.textContent="O Rotom ainda está aprendendo sobre esse animal.";ul.appendChild(li)}
+  const perigo=d.perigoso===true||d.venenoso===true;
+  document.getElementById("danger").style.display=perigo?"block":"none";
+  text("warning",d.aviso||"Não toque nem se aproxime. Observe de longe e peça ajuda a um adulto.");
+  result.style.display="block";message.style.display="none";status.textContent="Descoberta completa! 🌿⚡";
+ }catch(e){console.error(e);fail("Ops! O Rotom se atrapalhou.","Aconteceu um probleminha. Tente novamente!");}
+ finally{loading.style.display="none";go.disabled=!selected}
+};
+
+const LIB_KEY="jardimLeafeonDescobertas";
+function normalizarCategoria(d){ return "terrestrial"; }
+function cardAnimal(item){
+ const c=document.createElement("article"); c.className="animal-card";
+ if(item.imagem){const im=document.createElement("img");im.src=item.imagem;im.alt=item.nome||"Animal descoberto";c.appendChild(im)}
+ const h=document.createElement("h4");h.textContent=item.nome||"Animal da Mata";c.appendChild(h);
+ const p=document.createElement("p");p.textContent="Categoria: Terrestre · Habitat: "+(item.habitat||"Não informado");c.appendChild(p);
+ if(item.perigoso===true||item.venenoso===true){const aviso=document.createElement("p");aviso.textContent="⚠️ Observe de longe e não toque.";c.appendChild(aviso)}
+ return c;
+}
+function renderLista(id,items,vazio){const el=document.getElementById(id);el.replaceChildren();if(!items.length){const p=document.createElement("p");p.className="empty-library";p.textContent=vazio;el.appendChild(p);return}items.forEach(x=>el.appendChild(cardAnimal(x)))}
+function renderBiblioteca(){
+ let items=[];try{items=JSON.parse(localStorage.getItem(LIB_KEY)||"[]")}catch(e){items=[]}
+ // Compatibilidade com descobertas antigas: todas passam para a única categoria existente.
+ items=items.map(x=>({...x,categoria:"terrestrial"}));
+ try{localStorage.setItem(LIB_KEY,JSON.stringify(items))}catch(e){}
+ renderLista("listTerrestrial",items,"Nenhum animal descoberto ainda.");
+ const perigosos=items.filter(x=>x.perigoso===true||x.venenoso===true);
+ renderLista("listDangerousTerrestrial",perigosos,"Nenhum animal terrestre perigoso descoberto ainda.");
+ document.getElementById("countTerrestrial").textContent=items.length;
+ document.getElementById("countDangerousTerrestrial").textContent=perigosos.length;
+}
+async function salvarDescoberta(d,data){
+ let items=[];try{items=JSON.parse(localStorage.getItem(LIB_KEY)||"[]")}catch(e){items=[]}
+ const nome=String(d.nome||"Animal da Mata");
+ items=items.filter(x=>String(x.nome||"").toLowerCase()!==nome.toLowerCase());
+ items.unshift({nome,habitat:d.habitat||"Não informado",perigoso:d.perigoso===true,venenoso:d.venenoso===true,categoria:"terrestrial",imagem:data?await reduzirParaAlbum("data:image/jpeg;base64,"+data):""});
+ localStorage.setItem(LIB_KEY,JSON.stringify(items));renderBiblioteca();renderConquistas();
+}
+function abrirBiblioteca(){
+  const card=document.querySelector(".card");
+  const biblioteca=document.getElementById("biblioteca");
+  if(!card||!biblioteca)return;
+  card.style.display="block";
+  document.querySelector(".grid").style.display="none";
+  document.getElementById("result").style.display="none";
+  document.getElementById("message").style.display="none";
+  biblioteca.style.display="block";
+  renderBiblioteca();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function fecharBiblioteca(){
+  const biblioteca=document.getElementById("biblioteca");
+  const grid=document.querySelector(".grid");
+  if(!biblioteca||!grid)return;
+  biblioteca.style.display="none";
+  grid.style.display="grid";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function getDescobertas(){try{return JSON.parse(localStorage.getItem(LIB_KEY)||"[]")}catch(e){return []}}
+function getAchievementCounts(){return {total:getDescobertas().length,terrestrial:getDescobertas().length}}
+const ACHIEVEMENT_GOALS=[5,10,20,40,80,100];
+function renderConquistas(){
+ const c=getAchievementCounts();text("achTotal",c.total);text("achTerrestrial",c.terrestrial);
+ const list=document.getElementById("missionList");if(!list)return;list.replaceChildren();let doneCount=0,next=[];
+ ACHIEVEMENT_GOALS.forEach(meta=>{const n=c.terrestrial,done=n>=meta;if(done)doneCount++;else next.push(meta-n);const card=document.createElement("article");card.className="mission-card"+(done?" done":"");const pct=Math.min(100,n/meta*100);const ultima=meta===100;card.innerHTML=`<div class="mission-icon">${done?"✅":"🌳"}</div><h3>Terrestre: ${meta} animais</h3><p>${done?(ultima?"Meta máxima concluída! Você chegou a 100 animais terrestres.":"Missão concluída! Continue para a próxima meta."):`Descubra ${meta} animais terrestres para concluir esta missão.`}</p><div class="mission-progress"><span style="width:${pct}%"></span></div><div class="mission-status"><span>${Math.min(n,meta)}/${meta}</span><span>${done?"✅ CONCLUÍDA":`Faltam ${meta-n}`}</span></div>`;list.appendChild(card)});
+ text("achUnlocked",doneCount);text("achNext",next.length?Math.min(...next):"META MÁXIMA");
+}
+function abrirConquistas(){const grid=document.querySelector(".grid"),r=document.getElementById("result"),m=document.getElementById("message"),b=document.getElementById("biblioteca"),a=document.getElementById("conquistas");if(!a)return;if(grid)grid.style.display="none";if(r)r.style.display="none";if(m)m.style.display="none";if(b)b.style.display="none";a.style.display="block";renderConquistas();window.scrollTo({top:0,behavior:"smooth"})}
+function fecharConquistas(){const grid=document.querySelector(".grid"),a=document.getElementById("conquistas");if(a)a.style.display="none";if(grid)grid.style.display="grid";window.scrollTo({top:0,behavior:"smooth"})}
+document.getElementById("retry").onclick=()=>file.click();
+document.getElementById("openBiblioteca").onclick=abrirBiblioteca;
+document.getElementById("openConquistas").onclick=abrirConquistas;
+document.getElementById("voltarPokedexConquistas").onclick=fecharConquistas;
+renderBiblioteca();
+renderConquistas();
+document.getElementById("new").onclick=()=>{file.value="";selected=null;photo.style.display="none";empty.style.display="block";go.disabled=true;result.style.display="none";message.style.display="none";status.textContent="Escolha uma nova foto para começar."};
+</script>
+
+<script>
+  // O menu apenas abre a tela que já existia.
+  // Nada da Pokédex original é modificado.
+  const menuInicial = document.getElementById("menuInicial");
+  const entrarPokedex = document.getElementById("entrarPokedex");
+
+  entrarPokedex.addEventListener("click", () => {
+    menuInicial.style.display = "none";
+  });
+  ["openBiblioteca", "openConquistas"].forEach((id) => {
+    const acesso = document.getElementById(id);
+    if (acesso) acesso.addEventListener("click", () => {
+      menuInicial.style.display = "none";
+    });
+  });
+</script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const botao = document.getElementById("voltarPokedex");
+  if (botao) botao.addEventListener("click", fecharBiblioteca);
+});
+</script>
+
+
+<style id="ajustes-tablet">
+/* Ajustes de visual para tablet (deitado e em pé) e computador.
+   O visual e as ideias são do grupo; aqui só arrumamos tamanho, espaço e alinhamento. */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;800&display=swap');
+@media (min-width:700px){main.app{zoom:1.12}}
+.atalhos-leafeon{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.atalhos-leafeon button,.card button{min-height:44px}
+/* Tema Leafeon: verde-folha, creme e os raios do Rotom */
+body,#menuInicial{font-family:'Nunito',system-ui,sans-serif;background-color:#2c5a33;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cg opacity='.2'%3E%3Cpath d='M30 70C30 40 55 22 80 20c0 30-20 52-50 50z' fill='%23bfe59a'/%3E%3Cpath d='M30 70L72 28' stroke='%232f6b3d' stroke-width='2'/%3E%3Cpath d='M140 150c-22-6-32-28-28-48 20 4 34 24 28 48z' fill='%23f1dfb8'/%3E%3Cpath d='M128 30l-10 18h9l-6 16 16-22h-9l6-12z' fill='%23f6d743'/%3E%3Ccircle cx='50' cy='140' r='4' fill='%23f6d743'/%3E%3C/g%3E%3C/svg%3E"),radial-gradient(circle at 20% 0%,#6fae5c 0,transparent 45%),radial-gradient(circle at 90% 100%,#3f7a3a 0,transparent 50%),linear-gradient(160deg,#356b3b,#1d3f24)!important;
+  background-size:180px 180px,auto,auto,auto!important}
+h1,h2,h3,h4,.menu-botao,.menu-acesso,button,.tag{font-family:'Fredoka','Nunito',sans-serif}
+.top{background:linear-gradient(135deg,#f1dfb8,#e3c98f);color:#2b4a24;border-radius:26px;padding:14px 18px;box-shadow:0 6px 0 #a88a4f,0 14px 30px #0004}
+.top h1{color:#2f6b3d}.top p{color:#6b5226;font-weight:800}
+.logo{background:#fff;border:4px solid #8fd18a}
+.tag{background:#2f6b3d;color:#f1dfb8;box-shadow:0 4px 0 #1d4226}
+.card,.library-screen{border:3px solid #8fd18a;border-radius:28px;box-shadow:0 8px 0 #14301a,0 18px 40px #0006}
+.preview{border:3px dashed #8fd18a;background:linear-gradient(180deg,#183522,#0f2216)}
+.empty b{color:#f1dfb8;font-size:19px}
+.primary,.menu-botao{background:linear-gradient(180deg,#b5e6a0,#7fc46e);color:#14301a;box-shadow:0 5px 0 #3f7a3a}
+.secondary{background:linear-gradient(180deg,#b08657,#8d6a43);box-shadow:0 5px 0 #5c4128}
+button:active:not(:disabled){transform:translateY(3px)}
+.menu-caixa{border:3px solid #8fd18a;background:linear-gradient(180deg,rgba(33,58,36,.97),rgba(20,40,24,.98));box-shadow:0 10px 0 #14301a,0 24px 60px #0008;position:relative}
+.menu-caixa::before{content:"⚡";position:absolute;top:-22px;right:26px;font-size:40px;transform:rotate(12deg);filter:drop-shadow(0 3px 3px #0006)}
+.menu-leafeon{border:5px solid #8fd18a;box-shadow:0 8px 20px #0005;animation:flutua 3.5s ease-in-out infinite}
+@keyframes flutua{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.menu-caixa h1{color:#bfe59a;text-shadow:0 4px 0 #14301a}
+@media (prefers-reduced-motion:reduce){.menu-leafeon{animation:none}}
+</style>
+<!-- POKÉDEX: ficha padrão em pop-up + ligação com o back-end do grupo
+     (comum/ficha.js e comum/adaptador.js). O resto da página é do grupo. -->
+<script src="/comum/ficha.js"></script>
+<script src="/comum/adaptador.js"></script>
+<script>
+/* A biblioteca guardava a foto em tamanho original e o navegador não tinha
+   espaço (foto de celular tem vários MB): agora guarda uma versão menor. */
+window.reduzirParaAlbum = src => new Promise(res => { const img = new Image(); img.onload = () => { const k = Math.min(1, 700 / Math.max(img.width, img.height)); const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); res(c.toDataURL("image/jpeg", .8)); }; img.onerror = () => res(src); img.src = src; });
+/* Atalhos para "Animais já descobertos" e "Conquistas" (antes só existiam no
+   menu de entrada) e o botão de galeria, que abre fotos salvas no tablet. */
+(function () {
+  const go = document.getElementById("go");
+  const caixa = document.createElement("div");
+  caixa.className = "atalhos-leafeon";
+  [["📚 Animais descobertos", () => abrirBiblioteca()], ["🏆 Conquistas", () => abrirConquistas()]].forEach(([t, f]) => {
+    const b = document.createElement("button"); b.type = "button"; b.className = "secondary"; b.textContent = t; b.onclick = f; caixa.appendChild(b);
+  });
+  go.insertAdjacentElement("afterend", caixa);
+  document.getElementById("choose").addEventListener("click", e => e.preventDefault());
+})();
+PokedexAdaptador.iniciar({
+  // botões por etapa: o de identificar só aparece depois de escolher a foto
+  etapas: { foto: ["#go"] },
+  galeria: { depoisDe: "#choose", input: "#file", classe: "secondary", texto: "🖼️ Galeria" },
+  icone: "🍃", fauna: true,
+  cor: "#4f8f5b", cor2: "#f1dfb8",
+  escuro: () => true,
+  noturno: { fundo: "#1b291d", texto: "#fbf5e6", suave: "#c9d8bf" },
+  carregando: "🌿 O Rotom está pesquisando...",
+  esconder: ["#message", "#loading"],
+  extras: info => [["📊 Tamanho e peso", info.tamanho_peso], ["🍃 Entrada da Pokédex", info.descricao]],
+  alerta: info => (info.perigoso === true || info.venenoso === true) ? (info.aviso || "Não toque nem se aproxime. Observe de longe e peça ajuda a um adulto.") : "",
+  salvar: () => abrirBiblioteca(),
+  novaFoto: () => { document.getElementById("new").click(); fecharBiblioteca(); file.click(); }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Réptisfera — Mundo dos Répteis</title>
+<style>
+:root{--bg:#06152e;--panel:#0c2142;--panel2:#102b50;--lime:#c5ff38;--green:#29b765;--white:#f7fbff;--muted:#b6c6dc;--line:#24436b}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0%,#103e68 0,transparent 32%),var(--bg);color:var(--white);font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;min-height:100vh;padding-bottom:94px}
+button,input{font:inherit}button{cursor:pointer;border:0;border-radius:15px;padding:13px 17px;font-weight:800;transition:transform .18s,filter .18s}button:hover{filter:brightness(1.07);transform:translateY(-1px)}button:focus-visible,input:focus-visible{outline:3px solid var(--lime);outline-offset:3px}
+.primary{background:var(--lime);color:#142b14}.secondary{background:#174a3c;color:white;border:1px solid #3a946a}.outline{background:transparent;border:1px solid var(--line);color:var(--white)}.danger{background:#572a36;color:#ffe2e2;border:1px solid #8b4350}
+header{max-width:1180px;margin:auto;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{display:flex;align-items:center;gap:10px;font-weight:950;letter-spacing:.06em}.brand-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:var(--lime);color:#12341c;font-size:25px}.tag{font-size:12px;color:var(--lime);letter-spacing:.14em;font-weight:900}
+main{max-width:1180px;margin:auto;padding:0 22px 26px}.view{display:none;animation:fade .25s ease}.view.active{display:block}@keyframes fade{from{opacity:.45;transform:translateY(5px)}to{opacity:1;transform:none}}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:25px;align-items:center;background:linear-gradient(130deg,#0d2b50,#0b2342 70%);border:1px solid #24466e;border-radius:30px;padding:clamp(22px,5vw,52px);overflow:hidden;box-shadow:0 18px 55px #0003}
+h1{font-size:clamp(2.1rem,5vw,4.4rem);line-height:1.02;margin:12px 0 18px;letter-spacing:-.045em}h2{font-size:clamp(1.65rem,3.5vw,2.4rem);margin:8px 0 12px}h3{margin:8px 0}.lead{color:#d7e5f7;font-size:1.06rem;line-height:1.75}.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}.hero-art{min-height:270px;display:grid;place-items:center;position:relative;background:radial-gradient(circle,#194b56 0,#102b4b 50%,transparent 72%);border-radius:24px}.snake-svg{width:min(100%,380px);filter:drop-shadow(0 15px 15px #0005)}.leaf{position:absolute;font-size:34px}.leaf.one{top:20px;left:12%}.leaf.two{right:8%;bottom:25px}.leaf.three{right:12%;top:25px;font-size:25px}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:12px 0 22px}.muted{color:var(--muted);line-height:1.6}.panel{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:0 10px 30px #0002}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.card{background:linear-gradient(155deg,#102b50,#0b1f3d);border:1px solid #29476c;border-radius:20px;padding:18px;box-shadow:0 10px 24px #0002;min-width:0}.card-top{display:flex;align-items:center;gap:12px}.animal-icon{width:62px;height:62px;border-radius:17px;background:#193c51;display:grid;place-items:center;font-size:34px;flex-shrink:0}.pill{display:inline-block;background:#173d36;color:var(--lime);border-radius:999px;padding:5px 9px;font-size:12px;font-weight:800}.card p{color:var(--muted);line-height:1.55}.card button{margin-top:8px}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.search{width:min(100%,420px);background:#091b36;border:1px solid var(--line);color:white;border-radius:14px;padding:13px 15px}.alphabet{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 20px}.alphabet button{padding:8px 11px;min-width:36px;background:#102b50;color:#d9e8fa;border:1px solid #29476c}.alphabet button.selected{background:var(--lime);color:#132d18}.empty{padding:30px;text-align:center;border:1px dashed #426080;border-radius:18px;color:var(--muted);line-height:1.6}
+.camera-layout{display:grid;grid-template-columns:1fr .8fr;gap:18px}.preview{width:100%;max-height:390px;object-fit:contain;background:#06152e;border-radius:16px;margin-top:14px;display:none}.status{display:none;margin-top:12px;padding:13px;border-radius:13px;background:#173d36;color:#e5ffe9;line-height:1.5}.tutorial{display:grid;gap:12px}.step{display:flex;gap:12px;align-items:flex-start}.step-num{flex-shrink:0;background:var(--lime);color:#18311a;font-weight:950;border-radius:10px;width:32px;height:32px;display:grid;place-items:center}.step p{margin:2px 0;color:var(--muted);line-height:1.5}.record-image{width:100%;height:145px;object-fit:cover;border-radius:13px;background:#06152e;margin-bottom:10px}.record-actions{display:flex;gap:8px;flex-wrap:wrap}.record-actions button{padding:9px 11px;font-size:13px}.bottom-nav{position:fixed;z-index:20;bottom:0;left:0;right:0;background:#06152ef2;backdrop-filter:blur(16px);border-top:1px solid #274365;padding:9px 10px calc(9px + env(safe-area-inset-bottom));display:flex;justify-content:center;gap:6px}.nav-btn{background:transparent;color:#aebfd5;border-radius:14px;padding:8px 12px;min-width:80px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px}.nav-btn .ico{font-size:21px}.nav-btn.active{background:#1b3c38;color:var(--lime)}
+dialog{width:min(92vw,600px);max-height:85vh;overflow:auto;background:#0c2142;color:white;border:1px solid #355679;border-radius:24px;padding:25px;box-shadow:0 25px 80px #0009}dialog::backdrop{background:#020917c9}.detail-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.footnote{font-size:12px;color:#91a7c2;margin-top:20px;line-height:1.5}
+@media(max-width:800px){.hero{grid-template-columns:1fr}.hero-art{min-height:220px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.camera-layout{grid-template-columns:1fr}}
+@media(max-width:540px){header{padding:14px 15px}main{padding:0 14px 25px}.hero{padding:24px 18px;border-radius:23px}.hero-art{min-height:190px}.grid{grid-template-columns:1fr}.nav-btn{min-width:0;flex:1;padding:7px 2px;font-size:10px}.nav-btn .ico{font-size:19px}.bottom-nav{gap:2px}.hero-actions button{width:100%}.panel{padding:16px}}
+</style>
+</head>
+<body>
+<header><div class="brand"><span class="brand-icon">🐍</span><span>RÉPTISFERA<br><span class="tag">EXPLORE • APRENDA • PRESERVE</span></span></div><span class="pill">Projeto educativo</span></header>
+<main>
+<section class="view active" id="inicio">
+ <div class="hero"><div><div class="tag">🌿 SUA AVENTURA NA NATUREZA COMEÇA AQUI</div>
+ <h1>DESCUBRA O MARAVILHOSO MUNDO DOS RÉPTEIS</h1>
+ <p class="lead">Bem-vindo ao maravilhoso mundo dos répteis! Este projeto foi criado para ajudar você a conhecer diferentes espécies de cobras e outros répteis, aprender sobre suas características e descobrir a importância desses animais para o equilíbrio da natureza. Explore nosso álbum, batalhe no Card Game com os répteis que você descobrir e aprenda como funciona a identificação de animais por fotografias.</p>
+ <div class="hero-actions"><button class="primary" onclick="navigate('camera')">INICIAR 📷</button><button class="secondary" onclick="navigate('cardgame')">CARD GAME 🃏</button></div></div>
+ <div class="hero-art" aria-label="Ilustração de cobra simpática"><span class="leaf one">🌿</span><span class="leaf two">🍃</span><span class="leaf three">✨</span>
+ <svg class="snake-svg" viewBox="0 0 400 300" role="img" aria-label="Cobra verde simpática sorrindo"><ellipse cx="205" cy="263" rx="125" ry="17" fill="#020d20" opacity=".35"/><path d="M75 226 C35 190 63 145 113 157 C165 170 128 222 184 224 C242 227 210 157 259 148 C302 140 329 174 306 198" fill="none" stroke="#267e42" stroke-width="56" stroke-linecap="round"/><path d="M75 218 C43 186 67 155 112 168 C151 179 132 211 183 211 C231 211 214 150 259 160 C291 166 312 181 299 195" fill="none" stroke="#baff35" stroke-width="43" stroke-linecap="round"/><path d="M255 165 C236 126 254 80 291 64 C326 48 365 71 366 104 C367 137 341 164 306 167 Z" fill="#baff35" stroke="#267e42" stroke-width="6"/><ellipse cx="304" cy="101" rx="12" ry="16" fill="#fff"/><ellipse cx="344" cy="100" rx="12" ry="16" fill="#fff"/><ellipse cx="308" cy="104" rx="6" ry="10" fill="#122b30"/><ellipse cx="341" cy="104" rx="6" ry="10" fill="#122b30"/><circle cx="310" cy="100" r="2.5" fill="#fff"/><circle cx="343" cy="100" r="2.5" fill="#fff"/><path d="M305 133 Q326 151 347 130" fill="none" stroke="#174b2d" stroke-width="5" stroke-linecap="round"/><path d="M347 136 L363 141 L369 136" fill="none" stroke="#ff7393" stroke-width="5" stroke-linecap="round"/><circle cx="290" cy="124" r="5" fill="#f78b94" opacity=".8"/><circle cx="354" cy="121" r="5" fill="#f78b94" opacity=".8"/></svg></div></div>
+ <div class="grid" style="margin-top:18px">
+ <article class="card"><div class="card-top"><div class="animal-icon">📷</div><div><h3>Explore por foto</h3><span class="pill">Câmera</span></div></div><p>Escolha uma imagem para guardar no seu álbum. Depois é só tocar em 🔎 Identificar réptil e a IA descobre qual é!</p><button class="outline" onclick="navigate('camera')">Abrir câmera</button></article>
+ <article class="card"><div class="card-top"><div class="animal-icon">🃏</div><div><h3>Aprenda jogando</h3><span class="pill">Card Game</span></div></div><p>Cada réptil que você identifica vira uma carta! Monte seu deck e batalhe contra a máquina no fácil, médio ou difícil.</p><button class="outline" onclick="navigate('cardgame')">Jogar ⚔️</button></article>
+ <article class="card"><div class="card-top"><div class="animal-icon">📚</div><div><h3>Guarde descobertas</h3><span class="pill">Álbum</span></div></div><p>Salve as fotos que você escolheu e volte para vê-las depois neste navegador.</p><button class="outline" onclick="navigate('album')">Abrir álbum</button></article></div>
+</section>
+<section class="view" id="camera"><div class="section-head"><div><div class="tag">CAPTURE UMA DESCOBERTA</div><h2>📷 Câmera</h2><p class="muted">Tire uma foto ou escolha uma imagem salva no aparelho.</p></div></div>
+ <div class="camera-layout"><div class="panel"><h3>Vamos explorar?</h3><p class="muted">Escolha uma opção. A câmera pode pedir sua permissão e talvez precise de HTTPS ou localhost para funcionar.</p>
+ <div class="controls"><button class="primary" id="takePhoto">📷 TIRAR FOTO</button><button class="secondary" id="choosePhoto">🖼️ ESCOLHER DA GALERIA</button></div>
+ <input id="cameraInput" type="file" accept="image/*" capture="environment" hidden><input id="galleryInput" type="file" accept="image/*" hidden>
+ <img id="photoPreview" class="preview" alt="Prévia da imagem selecionada"><div id="photoStatus" class="status" role="status"></div>
+ <div class="controls" id="photoActions" style="display:none"><button class="outline" id="changePhoto">🔄 Trocar imagem</button><button class="primary" id="identificarReptil">🔎 Identificar réptil</button><button class="outline" id="savePhoto">💾 Salvar no álbum</button></div>
+ <p class="footnote">🔒 As fotos salvas ficam neste navegador. A foto é analisada pela IA do projeto.</p></div>
+ <aside class="panel"><h3>🧭 COMO USAR</h3><div class="tutorial">
+ <div class="step"><span class="step-num">1</span><p>Escolha tirar uma foto ou selecionar uma imagem da galeria.</p></div><div class="step"><span class="step-num">2</span><p>Se tirar uma foto, permita o acesso à câmera quando o aparelho solicitar.</p></div><div class="step"><span class="step-num">3</span><p>Se escolher a galeria, selecione uma imagem armazenada no aparelho.</p></div><div class="step"><span class="step-num">4</span><p>Toque em 🔎 Identificar réptil: a IA mostra a ficha completa do réptil!</p></div><div class="step"><span class="step-num">5</span><p>Salve no álbum: o réptil vira uma carta para o seu deck no Card Game! 🃏</p></div></div></aside></div>
+</section>
+<section class="view" id="cardgame"><div class="section-head"><div><div class="tag">COLECIONE CONHECIMENTO</div><h2>🃏 CARD GAME</h2><p class="muted">Monte seu deck com os répteis que você identificou e batalhe contra a máquina!</p></div><span class="pill" id="cardCount">0 cartas</span></div>
+ <div class="cg-abas"><button type="button" class="cg-aba on" data-aba="batalha">⚔️ Batalha</button><button type="button" class="cg-aba" data-aba="colecao">📖 Coleção</button></div>
+ <div id="cgBatalha"></div>
+ <div class="panel" id="cgColecao" hidden><div class="controls"><input id="searchSpecies" class="search" type="search" placeholder="🔎 Buscar pelo nome da cobra..."><button id="clearFilters" class="outline">Limpar filtros</button></div><p class="muted">Navegue por letras dentro desta coleção:</p><div class="alphabet" id="alphabet"></div><div class="grid" id="speciesGrid"></div><div class="empty" id="noSpecies" style="display:none">Nenhuma carta encontrada. Tente outra busca ou letra.</div><p class="footnote">Coleção introdutória. Nomes comuns podem variar por região; confira dados científicos em fontes especializadas.</p></div>
+</section>
+<section class="view" id="album"><div class="section-head"><div><div class="tag">SUAS MEMÓRIAS DA NATUREZA</div><h2>📚 ÁLBUM</h2><p class="muted">As fotos que você salvar aparecerão aqui.</p></div><span class="pill" id="albumCount">0 registros</span></div><div id="albumGrid" class="grid"></div><div id="albumEmpty" class="empty">🌱 Seu álbum ainda está vazio.<br>Vá até Câmera, escolha uma foto e toque em “Salvar no álbum”.</div><p class="footnote">Os registros ficam neste navegador e podem ser perdidos se os dados do site forem apagados ou se você trocar de aparelho/navegador.</p></section>
+<section class="view" id="historico"><div class="section-head"><div><div class="tag">SEU CAMINHO DE EXPLORAÇÃO</div><h2>🕘 HISTÓRICO</h2><p class="muted">Veja as imagens e atividades registradas.</p></div><button id="clearHistory" class="danger">🗑️ Limpar histórico</button></div><div id="historyGrid" class="grid"></div><div id="historyEmpty" class="empty">🧭 Nenhuma atividade por enquanto. Suas fotos salvas aparecerão aqui.</div><p class="footnote">O histórico fica neste navegador. Não há resultados de identificação automática nesta versão.</p></section>
+</main>
+<nav class="bottom-nav" aria-label="Navegação principal"><button class="nav-btn active" data-view="inicio"><span class="ico">🏠</span>INÍCIO</button><button class="nav-btn" data-view="camera"><span class="ico">📷</span>CÂMERA</button><button class="nav-btn" data-view="album"><span class="ico">📚</span>ÁLBUM</button><button class="nav-btn" data-view="cardgame"><span class="ico">🃏</span>CARD GAME</button><button class="nav-btn" data-view="historico"><span class="ico">🕘</span>HISTÓRICO</button></nav>
+<dialog id="detailDialog"><div id="detailContent"></div><div class="detail-actions"><button class="primary" id="closeDetail">Fechar</button></div></dialog>
+<script>
+/* Navegação entre as cinco telas sem recarregar a página. */
+const views=[...document.querySelectorAll('.view')];
+function navigate(id){views.forEach(v=>v.classList.toggle('active',v.id===id));document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.view===id));window.scrollTo({top:0,behavior:'smooth'});if(id==='album')renderAlbum();if(id==='historico')renderHistory();}
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.view)));
+
+/* Cartas educativas: não há geração automática de identificação. */
+const species=[
+{name:'Anaconda-verde',scientific:'Eunectes murinus',emoji:'🐍',habitat:'Rios, pântanos e áreas alagadas da América do Sul.',food:'Peixes, aves e mamíferos, conforme o tamanho.',traits:'Serpente sem veneno, semiaquática e de grande porte.',fact:'É uma excelente nadadora.'},
+{name:'Boa-constritora',scientific:'Boa constrictor',emoji:'🐍',habitat:'Florestas, savanas e outros ambientes das Américas.',food:'Pequenos e médios vertebrados.',traits:'Mata a presa por constrição; não é peçonhenta.',fact:'Consegue subir em árvores, especialmente quando jovem.'},
+{name:'Cobra-coral-verdadeira',scientific:'Micrurus spp.',emoji:'🌈',habitat:'Vários ambientes das Américas, dependendo da espécie.',food:'Principalmente outros répteis e pequenos animais.',traits:'Possui veneno potente; padrões de cores variam entre espécies.',fact:'Não toque nem tente identificar corais pela cor: procure um especialista.'},
+{name:'Jararaca',scientific:'Bothrops spp.',emoji:'🐍',habitat:'Diferentes ambientes do Brasil, inclusive áreas de mata.',food:'Pequenos vertebrados.',traits:'Serpente peçonhenta; o padrão varia conforme a espécie.',fact:'Tem papel ecológico importante no controle de pequenos animais.'},
+{name:'Mamba-negra',scientific:'Dendroaspis polylepis',emoji:'🐍',habitat:'Regiões de savana e áreas rochosas da África subsaariana.',food:'Principalmente pequenos mamíferos e aves.',traits:'Serpente africana muito peçonhenta; não é nativa do Brasil.',fact:'Seu nome se refere à coloração escura do interior da boca.'},
+{name:'Naja',scientific:'Naja spp.',emoji:'🐍',habitat:'África e partes da Ásia, conforme a espécie.',food:'Roedores, aves e outros animais pequenos.',traits:'Algumas espécies expandem o pescoço formando um capuz; são peçonhentas.',fact:'O capuz é uma exibição defensiva.'},
+{name:'Píton-real',scientific:'Python regius',emoji:'🐍',habitat:'Pastagens e áreas de mata da África ocidental e central.',food:'Pequenos mamíferos e aves.',traits:'Não peçonhenta; costuma enrolar o corpo quando assustada.',fact:'Também é conhecida como píton-bola.'},
+{name:'Sucuri-verde',scientific:'Eunectes murinus',emoji:'🐍',habitat:'Ambientes aquáticos e alagados da América do Sul.',food:'Peixes, aves e mamíferos.',traits:'Serpente constritora sem veneno, adaptada à água.',fact:'Seus olhos e narinas ficam posicionados no alto da cabeça.'},
+{name:'Taipan-do-interior',scientific:'Oxyuranus microlepidotus',emoji:'🐍',habitat:'Regiões áridas do interior da Austrália.',food:'Principalmente pequenos mamíferos.',traits:'Serpente extremamente peçonhenta; deve ser observada apenas à distância.',fact:'Vive em regiões secas e costuma evitar contato com pessoas.'},
+{name:'Urutu-cruzeiro',scientific:'Bothrops alternatus',emoji:'🐍',habitat:'Campos e áreas abertas de partes da América do Sul.',food:'Pequenos vertebrados.',traits:'Serpente peçonhenta; não deve ser manipulada.',fact:'A identificação deve ser feita por especialista.'},
+{name:'Víbora-do-gabão',scientific:'Bitis gabonica',emoji:'🐍',habitat:'Florestas e bosques da África subsaariana.',food:'Pequenos mamíferos e aves.',traits:'Víbora peçonhenta com camuflagem de folhas no chão.',fact:'Seu padrão ajuda a se misturar com o ambiente.'}
+];
+const alphabetEl=document.getElementById('alphabet'),grid=document.getElementById('speciesGrid'),search=document.getElementById('searchSpecies');let selectedLetter='TODAS';
+['TODAS',...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].forEach(letter=>{const b=document.createElement('button');b.textContent=letter;b.classList.toggle('selected',letter===selectedLetter);b.addEventListener('click',()=>{selectedLetter=letter;renderSpecies()});alphabetEl.appendChild(b)});
+function normalize(s){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase()}
+function renderSpecies(){alphabetEl.querySelectorAll('button').forEach(b=>b.classList.toggle('selected',b.textContent===selectedLetter));const term=search.value.trim().toLocaleLowerCase('pt-BR');const filtered=species.filter(s=>(selectedLetter==='TODAS'||normalize(s.name).startsWith(selectedLetter))&&s.name.toLocaleLowerCase('pt-BR').includes(term));grid.replaceChildren();document.getElementById('cardCount').textContent=filtered.length+' cartas';filtered.forEach(s=>{const card=document.createElement('article');card.className='card';const top=document.createElement('div');top.className='card-top';const icon=document.createElement('div');icon.className='animal-icon';icon.textContent=s.emoji;const namebox=document.createElement('div');const h=document.createElement('h3');h.textContent=s.name;const sci=document.createElement('div');sci.className='muted';sci.style.fontSize='12px';sci.textContent=s.scientific;namebox.append(h,sci);top.append(icon,namebox);const p=document.createElement('p');p.textContent=s.habitat;const pill=document.createElement('span');pill.className='pill';pill.textContent='Carta educativa';const btn=document.createElement('button');btn.className='primary';btn.textContent='VER DETALHES';btn.addEventListener('click',()=>showDetails(s));card.append(top,p,pill,document.createElement('br'),btn);grid.appendChild(card)});document.getElementById('noSpecies').style.display=filtered.length?'none':'block'}
+search.addEventListener('input',renderSpecies);document.getElementById('clearFilters').addEventListener('click',()=>{search.value='';selectedLetter='TODAS';renderSpecies()});
+function showDetails(s){const content=document.getElementById('detailContent');content.replaceChildren();const h=document.createElement('h2');h.textContent=s.emoji+' '+s.name;content.appendChild(h);const sci=document.createElement('p');sci.className='muted';sci.textContent='Nome científico: '+s.scientific;content.appendChild(sci);[['🌎 Habitat',s.habitat],['🍽️ Alimentação',s.food],['🔎 Características',s.traits],['💡 Curiosidade',s.fact]].forEach(([label,value])=>{const box=document.createElement('div');box.className='card';box.style.marginTop='10px';const title=document.createElement('b');title.style.color='var(--lime)';title.textContent=label;const p=document.createElement('p');p.textContent=value;box.append(title,p);content.appendChild(box)});document.getElementById('detailDialog').showModal()}
+document.getElementById('closeDetail').addEventListener('click',()=>document.getElementById('detailDialog').close());
+
+/* Seleção de fotos; a identificação automática ainda não está conectada. */
+const cameraInput=document.getElementById('cameraInput'),galleryInput=document.getElementById('galleryInput'),preview=document.getElementById('photoPreview'),statusBox=document.getElementById('photoStatus'),photoActions=document.getElementById('photoActions');let selectedImage=null;
+document.getElementById('takePhoto').addEventListener('click',()=>cameraInput.click());document.getElementById('choosePhoto').addEventListener('click',()=>galleryInput.click());document.getElementById('changePhoto').addEventListener('click',()=>galleryInput.click());
+cameraInput.addEventListener('change',()=>handleImage(cameraInput.files[0]));galleryInput.addEventListener('change',()=>handleImage(galleryInput.files[0]));
+function handleImage(file){if(!file)return;if(!file.type.startsWith('image/')){showPhotoStatus('Escolha um arquivo de imagem, por favor.');return}if(file.size>8*1024*1024){showPhotoStatus('Essa imagem é muito grande. Escolha uma foto de até 8 MB.');return}const reader=new FileReader();reader.onload=async()=>{const fotoMenor=await reduzirParaAlbum(reader.result);selectedImage={data:fotoMenor,name:file.name,type:file.type,date:new Date().toISOString()};preview.src=reader.result;preview.style.display='block';photoActions.style.display='flex';showPhotoStatus('Foto pronta! Agora toque em 🔎 Identificar réptil.')};reader.onerror=()=>showPhotoStatus('Não consegui abrir essa imagem. Tente escolher outra.');reader.readAsDataURL(file)}
+function showPhotoStatus(msg){statusBox.textContent=msg;statusBox.style.display='block'}
+function getRecords(){try{return JSON.parse(localStorage.getItem('reptisfera_records')||'[]')}catch(e){return []}}
+function putRecords(records){try{localStorage.setItem('reptisfera_records',JSON.stringify(records));return true}catch(e){showPhotoStatus('O navegador não conseguiu guardar esta foto. Tente uma imagem menor ou libere espaço.');return false}}
+document.getElementById('savePhoto').addEventListener('click',()=>{if(!selectedImage){showPhotoStatus('Escolha uma foto antes de salvar.');return}const records=getRecords();records.unshift({id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),...selectedImage,speciesName:'Não identificada',kind:'Foto salva'});if(putRecords(records)){showPhotoStatus('🌿 Foto salva no álbum! Ela não foi identificada automaticamente.');renderAlbum();renderHistory()}});
+function makeRecordCard(record){const card=document.createElement('article');card.className='card';const img=document.createElement('img');img.className='record-image';img.src=record.data;img.alt='Imagem salva';card.appendChild(img);const h=document.createElement('h3');h.textContent=record.speciesName||'Foto salva';card.appendChild(h);const p=document.createElement('p');p.textContent='📅 '+new Date(record.date).toLocaleString('pt-BR')+' · '+(record.kind||'Imagem selecionada');card.appendChild(p);const actions=document.createElement('div');actions.className='record-actions';const del=document.createElement('button');del.className='outline';del.textContent='Remover';del.addEventListener('click',()=>removeRecord(record.id));actions.appendChild(del);card.appendChild(actions);return card}
+function renderAlbum(){const records=getRecords(),container=document.getElementById('albumGrid');container.replaceChildren();document.getElementById('albumCount').textContent=records.length+' registros';records.forEach(r=>container.appendChild(makeRecordCard(r)));document.getElementById('albumEmpty').style.display=records.length?'none':'block'}
+function renderHistory(){const records=getRecords(),container=document.getElementById('historyGrid');container.replaceChildren();records.forEach(r=>container.appendChild(makeRecordCard(r)));document.getElementById('historyEmpty').style.display=records.length?'none':'block'}
+function removeRecord(id){if(!confirm('Quer remover esta foto do álbum e do histórico?'))return;putRecords(getRecords().filter(r=>r.id!==id));renderAlbum();renderHistory()}
+document.getElementById('clearHistory').addEventListener('click',()=>{if(!getRecords().length){alert('O histórico já está vazio.');return}if(confirm('Tem certeza de que deseja apagar todas as fotos salvas do álbum e do histórico? Essa ação não pode ser desfeita.')){localStorage.removeItem('reptisfera_records');renderHistory();renderAlbum()}});
+renderSpecies();renderAlbum();renderHistory();
+</script>
+
+<style id="ajustes-tablet">
+/* Ajustes de visual para tablet (deitado e em pé) e computador.
+   O visual e as ideias são do grupo; aqui só arrumamos tamanho, espaço e alinhamento. */
+/* cards da tela inicial sem "buraco" quando o tablet está em pé */
+#inicio .grid{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))!important}
+/* barra de baixo: letras maiores */
+.nav-btn{font-size:12.5px!important;min-height:58px}
+.nav-btn .ico{font-size:22px!important}
+main{padding-bottom:110px}
+button.primary,button.secondary,button.outline{min-height:46px}
+</style>
+<!-- POKÉDEX: ficha padrão em pop-up + ligação com o back-end do grupo
+     (comum/ficha.js e comum/adaptador.js). O resto da página é do grupo. -->
+<script src="/comum/ficha.js"></script>
+<script src="/comum/adaptador.js"></script>
+<script>
+/* Botão "Identificar réptil": manda a foto da prévia para a IA. Ao salvar
+   no álbum, a figurinha leva o nome que a IA descobriu. */
+/* O álbum guardava a foto em tamanho original e o navegador não tinha espaço
+   (foto de celular tem vários MB): agora guarda uma versão menor. */
+window.reduzirParaAlbum = src => new Promise(res => { const img = new Image(); img.onload = () => { const k = Math.min(1, 700 / Math.max(img.width, img.height)); const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); res(c.toDataURL("image/jpeg", .8)); }; img.onerror = () => res(src); img.src = src; });
+(function () {
+  let ultimo = null;
+  function reduzir(src) {
+    return new Promise(res => { const img = new Image(); img.onload = () => { const k = Math.min(1, 1600 / Math.max(img.width, img.height)); const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); res(c.toDataURL("image/jpeg", .85)); }; img.onerror = () => res(""); img.src = src; });
+  }
+  document.getElementById("identificarReptil").addEventListener("click", async () => {
+    const src = document.getElementById("photoPreview").src;
+    if (!src) return;
+    const foto = await reduzir(src);
+    try {
+      const r = await fetch("/api/identificar", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ modelo: "gemini-3.6-flash", mime: "image/jpeg", imagem: foto.split(",")[1] }) });
+      const d = await r.json(); ultimo = JSON.parse(d.candidates[0].content.parts[0].text);
+    } catch (e) { ultimo = null; }
+  });
+  window.salvarReptil = () => {
+    document.getElementById("savePhoto").click();
+    try {
+      const lista = JSON.parse(localStorage.getItem("reptisfera_records") || "[]");
+      if (lista[0] && ultimo && ultimo.identificado) { lista[0].speciesName = ultimo.nome_popular; lista[0].kind = "Identificado pela IA"; lista[0].tipoTexto = [ultimo.nome_cientifico, ultimo.habitat_descricao, [].concat(ultimo.curiosidades || []).join(" ")].join(" "); localStorage.setItem("reptisfera_records", JSON.stringify(lista)); }
+    } catch (e) {}
+    const aba = document.querySelector('[data-view="album"], [data-target="album"], [href="#album"]');
+    if (aba) aba.click();
+  };
+})();
+PokedexAdaptador.iniciar({
+  icone: "🦎", fauna: true,
+  cor: "#c5ff38", cor2: "#29b765",
+  escuro: () => true,
+  noturno: { fundo: "#0c2142", texto: "#f7fbff", suave: "#b6c6dc" },
+  carregando: "🦎 Procurando o réptil na foto...",
+  salvar: () => salvarReptil(),
+  novaFoto: () => document.getElementById("changePhoto").click()
+});
+</script>
+<style id="card-game">
+/* CARD GAME estilo Pokémon TCG: deck com os répteis identificados x máquina */
+.cg-abas{display:flex;gap:8px;margin:0 0 14px}
+.cg-aba{background:#102b50;color:#d9e8fa;border:1px solid #29476c;min-height:46px}
+.cg-aba.on{background:var(--lime);color:#132d18}
+#cardgame.em-batalha .section-head,#cardgame.em-batalha .cg-abas{display:none}
+.tcg{--tc:#3fb8ff;position:relative;width:100%;aspect-ratio:63/88;border-radius:16px;padding:8px;background:linear-gradient(160deg,#ffe58a,#d9a514 40%,#fff1b0 60%,#b8860b);box-shadow:0 10px 24px #0006;color:#14202e;display:flex;flex-direction:column;gap:5px;font-size:14px;text-align:left;line-height:1.2}
+.tcg::before{content:"";position:absolute;inset:7px;border-radius:11px;background:#dff3ff;background:linear-gradient(170deg,color-mix(in srgb,var(--tc) 45%,#fff),color-mix(in srgb,var(--tc) 18%,#fff));z-index:0}
+.tcg>*{position:relative;z-index:1;margin:0 4px}
+.tcg-top{display:flex;align-items:center;gap:6px;padding-top:4px}
+.tcg-nome{flex:1;min-width:0;font-weight:900;font-size:1.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tcg-hp{font-weight:900;color:#b3001b;font-size:1.1em;white-space:nowrap}.tcg-hp small{font-size:.6em;margin-right:1px}
+.tcg-tipo{flex:0 0 auto;width:1.8em;height:1.8em;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 0 0 2px var(--tc)}
+.tcg-img{flex:1;min-height:0;border:3px solid #e8c45a;border-radius:6px;background:radial-gradient(circle at 50% 40%,#fff9,transparent 70%),var(--tc);display:grid;place-items:center;overflow:hidden}
+.tcg-img img{width:100%;height:100%;object-fit:cover;display:block}.tcg-img span{font-size:3.6em;filter:drop-shadow(0 4px 4px #0004)}
+.tcg-faixa{font-size:.68em;font-weight:800;text-align:center;background:#fff9;border-radius:6px;padding:2px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tcg-golpe{display:flex;justify-content:space-between;align-items:center;gap:4px;font-weight:800;font-size:.88em;border-bottom:1px solid #0002;padding:2px}.tcg-golpe b{font-size:1.25em}
+.tcg-pe{font-size:.7em;font-weight:700;opacity:.85;padding-bottom:4px}
+.tcg-vida{height:9px;border-radius:9px;background:#0003;overflow:hidden;flex:0 0 auto}.tcg-vida i{display:block;height:100%;background:linear-gradient(90deg,#29b765,#9be22d);transition:width .5s}.tcg-vida i.baixa{background:linear-gradient(90deg,#e11d48,#fb923c)}
+.tcg.mini{font-size:11px;border-radius:12px;padding:6px}
+.tcg-escolha{position:relative;background:none!important;padding:0!important;border-radius:14px;min-height:0}
+.tcg-escolha.sel .tcg{box-shadow:0 0 0 4px var(--lime),0 10px 24px #0006}
+.tcg-escolha.sel::after{content:"✓";position:absolute;top:-8px;right:-8px;z-index:3;width:30px;height:30px;border-radius:50%;background:var(--lime);color:#132d18;display:grid;place-items:center;font-weight:900}
+.tcg-escolha:not(.sel) .tcg{filter:saturate(.5) brightness(.8)}
+.tcg-cab{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.tcg-cab h3{margin:0;font-size:1.4rem}
+.tcg-lista{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px;margin:12px 0 18px}
+.niveis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:10px 0 16px}
+.nivel{background:#102b50;color:#fff;border:2px solid #29476c;text-align:left;display:flex;flex-direction:column;gap:3px}
+.nivel.on{border-color:var(--lime);background:#173d36}.nivel b{font-size:1.1em}.nivel small{color:var(--muted);font-weight:600;line-height:1.35}.nivel .med{font-size:12px;color:var(--lime)}
+.tcg-comecar{width:100%;font-size:1.15rem;min-height:56px}
+#cardgame button:disabled{opacity:.42;filter:grayscale(.7);cursor:not-allowed;transform:none}
+@media (min-width:1000px) and (orientation:landscape){.tcg-montar{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start}.tcg-dir .niveis{grid-template-columns:1fr;gap:7px;margin:6px 0 10px}.tcg-dir h3{margin:0}.tcg-dir .nivel{padding:8px 12px;gap:1px}.tcg-dir .nivel small{font-size:12px}.tcg-dir .footnote{margin-top:10px}}
+.arena{display:grid;grid-template-columns:1fr minmax(230px,300px) 1fr;gap:16px;align-items:center;min-height:calc(100dvh - 200px)}
+.lado{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0}
+.lado .tcg{width:min(230px,100%)}
+.lado-tit{font-weight:900;display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center}
+.vidas{letter-spacing:1px;font-size:13px}
+.banco{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.chip{width:54px;height:54px;border-radius:14px;padding:0!important;background:#102b50;border:2px solid #29476c;display:grid;place-items:center;font-size:24px;overflow:hidden;position:relative;min-height:0!important}
+.chip img{width:100%;height:100%;object-fit:cover}.chip.ko{opacity:.3;filter:grayscale(1)}.chip.pode{border-color:var(--lime);animation:pisca 1.2s infinite}
+.chip small{position:absolute;bottom:0;left:0;right:0;font-size:10px;background:#000b;color:#fff;font-weight:800;line-height:1.4}
+.centro{display:flex;flex-direction:column;gap:10px;text-align:center}
+.centro-top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;color:var(--muted);font-weight:800}
+.centro-top button{padding:6px 10px;min-height:0!important;font-size:12px}
+.vez{font-weight:900;font-size:1.2rem;color:var(--lime)}
+.log{background:#091b36;border:1px solid var(--line);border-radius:14px;padding:10px 12px;min-height:100px;font-size:14px;line-height:1.45;text-align:left}.log p{margin:0 0 4px;color:var(--muted)}.log p:first-child{color:#fff;font-weight:800}
+.acoes{display:grid;gap:8px}.acoes button{width:100%;min-height:52px;font-size:1.02rem}
+.dica{font-size:12.5px;color:var(--muted);line-height:1.4}
+.lado.levou .tcg{animation:treme .45s}
+.fx{position:absolute;left:50%;top:30%;transform:translateX(-50%);font-size:2.6rem;font-weight:950;color:#ff4d6d;text-shadow:0 3px 0 #000;animation:sobe 1.1s forwards;z-index:5;pointer-events:none;white-space:nowrap}.fx.cura{color:#c5ff38}
+@keyframes treme{20%,60%{transform:translateX(-8px) rotate(-2deg)}40%,80%{transform:translateX(8px) rotate(2deg)}}
+@keyframes sobe{to{transform:translate(-50%,-70px);opacity:0}}
+@keyframes pisca{50%{box-shadow:0 0 0 4px #c5ff3866}}
+.tcg-fim{position:fixed;inset:0;z-index:30;background:#020917d9;display:grid;place-items:center;padding:20px}
+.tcg-fim .panel{text-align:center;max-width:440px;width:100%}.tcg-fim .big{font-size:4.5rem;line-height:1}.tcg-fim .acoes{margin-top:16px}
+@media (max-width:900px),(orientation:portrait){
+  .arena{grid-template-columns:1fr;min-height:0;gap:12px}
+  .lado.cpu{order:-1}
+  .lado{display:grid;grid-template-columns:auto auto;grid-template-areas:"t t" "c b";justify-content:center;align-items:center;column-gap:14px}
+  .lado-tit{grid-area:t}.lado .tcg{grid-area:c;width:min(210px,44vw)}.banco{grid-area:b;flex-direction:column}
+}
+@media (max-width:540px){.niveis{grid-template-columns:1fr}.lado .tcg{width:150px}.chip{width:44px;height:44px}}
+</style>
+<script>
+/* CARD GAME estilo Pokémon TCG (feito pela professora, a partir da ideia do grupo):
+   cada réptil identificado pela câmera e salvo no álbum vira uma CARTA.
+   A pessoa monta um deck de 3 a 5 cartas e batalha contra a máquina
+   (fácil, médio ou difícil). Tipos: Veneno ☠️ > Constrição 🌀 > Água 💧 > Terra 🪨 > Veneno. */
+(function () {
+  const caixa = document.getElementById("cgBatalha"), secao = document.getElementById("cardgame");
+  const esc = t => String(t == null ? "" : t).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const TIPOS = {
+    veneno: { nome: "Veneno", ico: "☠️", cor: "#b56cff", golpe: "Picada Venenosa", vence: "constricao" },
+    constricao: { nome: "Constrição", ico: "🌀", cor: "#ff8a3d", golpe: "Abraço Apertado", vence: "agua" },
+    agua: { nome: "Água", ico: "💧", cor: "#3fb8ff", golpe: "Mergulho Surpresa", vence: "terra" },
+    terra: { nome: "Terra", ico: "🪨", cor: "#d1a91f", golpe: "Rabada de Pedra", vence: "veneno" }
+  };
+  const fraqueza = t => Object.keys(TIPOS).find(k => TIPOS[k].vence === t);
+  const hash = s => { let h = 7; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; };
+  function tipoDe(nome, texto) {
+    const t = (nome + " " + (texto || "")).toLowerCase();
+    if (/pe[cç]onhent|venen|jararaca|coral|naja|mamba|taipan|cascavel|urutu|v[ií]bora|surucucu/.test(t)) return "veneno";
+    if (/constri|jib[oó]ia|\bboa\b|sucuri|anaconda|p[ií]ton/.test(t)) return "constricao";
+    if (/tartaruga|jacar[eé]|c[aá]gado|aqu[aá]tic|\brios?\b|p[aâ]ntano|alagad/.test(t)) return "agua";
+    if (/lagart|tei[uú]|jabuti|camale|iguana|calango|osga|lagartixa/.test(t)) return "terra";
+    return Object.keys(TIPOS)[hash(nome) % 4];
+  }
+  const emojiDe = n => /tartaruga|jabuti|c[aá]gado/i.test(n) ? "🐢" : /jacar|crocod/i.test(n) ? "🐊" : /lagart|tei|iguana|camale|calango|osga/i.test(n) ? "🦎" : "🐍";
+  function carta(nome, o) {
+    const h = hash(nome), tipo = o.tipo || tipoDe(nome, o.texto);
+    return { id: o.origem + ":" + nome, nome, img: o.img || "", emoji: o.emoji || emojiDe(nome), tipo, origem: o.origem,
+      hp: 70 + (h % 6) * 10, atk: 20 + ((h >>> 4) % 5) * 5 };
+  }
+  const INICIAIS = [
+    carta("Jabuti-piranga", { origem: "inicial", tipo: "terra" }),
+    carta("Jacaré-do-papo-amarelo", { origem: "inicial", tipo: "agua" }),
+    carta("Jiboia", { origem: "inicial", tipo: "constricao" })
+  ];
+  const MAQUINA = species.map(s => carta(s.name, { origem: "cpu", emoji: s.emoji === "🌈" ? "🐍" : s.emoji, texto: s.traits + " " + s.habitat }))
+    .concat(["Teiú", "Tartaruga-da-amazônia", "Camaleão", "Iguana-verde", "Jacaré-açu", "Cascavel"].map(n => carta(n, { origem: "cpu" })));
+  const NIVEIS = {
+    facil: { nome: "Fácil", ico: "🌱", qtd: 3, forca: .8, desc: "A máquina joga sem pensar muito." },
+    medio: { nome: "Médio", ico: "🔥", qtd: 4, forca: 1, desc: "A máquina toma sol quando fica fraca." },
+    dificil: { nome: "Difícil", ico: "💀", qtd: 5, forca: 1.08, desc: "A máquina usa vantagem de tipo e troca de carta!" }
+  };
+  const ler = (k, v) => { try { return JSON.parse(localStorage.getItem(k)) || v; } catch (e) { return v; } };
+  const gravar = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+
+  function minhasCartas() {
+    const vistos = new Set(), out = [];
+    getRecords().forEach(r => {
+      if (r.kind !== "Identificado pela IA" || !r.speciesName) return;
+      const k = r.speciesName.toLowerCase(); if (vistos.has(k)) return; vistos.add(k);
+      out.push(carta(r.speciesName, { origem: "foto", img: r.data, texto: r.tipoTexto }));
+    });
+    return out;
+  }
+
+  /* ---------- a carta desenhada ---------- */
+  function cartaHTML(c, o = {}) {
+    const T = TIPOS[c.tipo], F = TIPOS[fraqueza(c.tipo)], vida = o.vida;
+    const faixa = c.origem === "foto" ? "📷 Identificado por você" : c.origem === "inicial" ? "🎁 Carta inicial" : "🤖 Carta da máquina";
+    return `<div class="tcg${o.mini ? " mini" : ""}" style="--tc:${T.cor}">
+      <div class="tcg-top"><b class="tcg-nome">${esc(c.nome)}</b><span class="tcg-hp"><small>HP</small>${vida == null ? c.hp : vida}</span><span class="tcg-tipo" title="${T.nome}">${T.ico}</span></div>
+      <div class="tcg-img">${c.img ? `<img src="${esc(c.img)}" alt="">` : `<span>${c.emoji}</span>`}</div>
+      ${vida == null ? `<div class="tcg-faixa">${faixa}</div>` : `<div class="tcg-vida"><i class="${vida / c.hp < .35 ? "baixa" : ""}" style="width:${Math.max(0, vida / c.hp * 100)}%"></i></div>`}
+      <div class="tcg-golpe"><span>⚔️ ${T.golpe}</span><b>${c.atk}</b></div>
+      <div class="tcg-golpe"><span>☀️ Tomar sol${c.sol ? " (usado)" : ""}</span><b>+25</b></div>
+      <div class="tcg-pe">Tipo ${T.nome} · Fraqueza ${F.ico} ×1,5</div>
+    </div>`;
+  }
+
+  /* ---------- montar o deck ---------- */
+  let escolhidas = null, nivel = ler("reptisfera_nivel", "facil"), B = null;
+  function montar() {
+    B = null; secao.classList.remove("em-batalha");
+    const minhas = minhasCartas(), todas = minhas.length >= 3 ? minhas : minhas.concat(INICIAIS.slice(0, 3 - minhas.length));
+    if (!escolhidas || escolhidas.some(id => !todas.find(c => c.id === id))) escolhidas = todas.slice(0, 5).map(c => c.id);
+    const vit = ler("reptisfera_vitorias", {});
+    const dica = minhas.length >= 3
+      ? "Toque nas cartas para escolher de 3 a 5 para o seu deck."
+      : minhas.length
+        ? `Você tem ${minhas.length} carta${minhas.length > 1 ? "s" : ""} sua${minhas.length > 1 ? "s" : ""}! Até identificar 3 répteis, o deck é completado com cartas iniciais 🎁.`
+        : "Cada réptil que você identificar na 📷 Câmera e salvar no álbum vira uma carta sua! Por enquanto, jogue com as cartas iniciais 🎁.";
+    caixa.innerHTML = `<div class="panel tcg-montar"><div>
+      <div class="tcg-cab"><h3>🃏 Monte seu deck</h3><span class="pill">Deck: ${escolhidas.length}/5</span></div>
+      <p class="muted" style="margin:6px 0 0">${dica}</p>
+      <div class="tcg-lista">${todas.map(c => `<button type="button" class="tcg-escolha${escolhidas.includes(c.id) ? " sel" : ""}" data-id="${esc(c.id)}">${cartaHTML(c, { mini: true })}</button>`).join("")}</div>
+      </div><div class="tcg-dir"><h3>Escolha o nível</h3>
+      <div class="niveis">${Object.entries(NIVEIS).map(([k, n]) => `<button type="button" class="nivel${k === nivel ? " on" : ""}" data-nivel="${k}"><b>${n.ico} ${n.nome}</b><small>${n.desc} A máquina tem ${n.qtd} cartas.</small><span class="med">${vit[k] ? "🏅 " + vit[k] + " vitória" + (vit[k] > 1 ? "s" : "") : "Ainda sem vitórias"}</span></button>`).join("")}</div>
+      <button type="button" class="primary tcg-comecar" id="tcgComecar"${escolhidas.length < 3 ? " disabled" : ""}>⚔️ Começar batalha</button>
+      <p class="footnote">Tipos: ☠️ Veneno vence 🌀 Constrição · 🌀 Constrição vence 💧 Água · 💧 Água vence 🪨 Terra · 🪨 Terra vence ☠️ Veneno. Golpe com vantagem causa 1,5× de dano!</p>
+    </div></div>`;
+    caixa.querySelectorAll(".tcg-escolha").forEach(b => b.onclick = () => {
+      const id = b.dataset.id;
+      if (escolhidas.includes(id)) escolhidas = escolhidas.filter(x => x !== id);
+      else if (escolhidas.length < 5) escolhidas.push(id);
+      montar();
+    });
+    caixa.querySelectorAll(".nivel").forEach(b => b.onclick = () => { nivel = b.dataset.nivel; gravar("reptisfera_nivel", nivel); montar(); });
+    document.getElementById("tcgComecar").onclick = () => comecar(todas.filter(c => escolhidas.includes(c.id)));
+  }
+
+  /* ---------- a batalha ---------- */
+  const copia = (c, f = 1) => Object.assign({}, c, { hp: Math.round(c.hp * f / 5) * 5, atk: Math.round(c.atk * f), vida: Math.round(c.hp * f / 5) * 5, sol: false });
+  function comecar(deck) {
+    const N = NIVEIS[nivel], pool = MAQUINA.slice().sort(() => Math.random() - .5).filter(c => !deck.some(d => d.nome === c.nome));
+    B = { jog: deck.map(c => copia(c)), cpu: pool.slice(0, N.qtd).map(c => copia(c, N.forca)), j: 0, c: 0, vez: "jog", log: [], fx: null, escolher: false, fim: null, trocouCpu: false };
+    log(`⚔️ A batalha começou! Você chamou ${B.jog[0].nome} e a máquina chamou ${B.cpu[0].nome}.`);
+    secao.classList.add("em-batalha"); scrollTo({ top: 0 }); desenhar();
+  }
+  const log = t => { B.log.unshift(t); B.log = B.log.slice(0, 4); };
+  const vivos = l => l.map((c, i) => c.vida > 0 ? i : -1).filter(i => i >= 0);
+  function dano(at, df) { const v = TIPOS[at.tipo].vence === df.tipo; return { d: Math.round(at.atk * (v ? 1.5 : 1)) + Math.floor(Math.random() * 6), v }; }
+  function golpe(lado) {
+    const eu = lado === "jog", at = eu ? B.jog[B.j] : B.cpu[B.c], df = eu ? B.cpu[B.c] : B.jog[B.j], { d, v } = dano(at, df);
+    df.vida = Math.max(0, df.vida - d);
+    log(`${eu ? "" : "🤖 "}${at.nome} usou ${TIPOS[at.tipo].golpe}! ${v ? "É super eficaz! " : ""}−${d} de vida.`);
+    B.fx = { lado: eu ? "cpu" : "jog", txt: "−" + d };
+    if (df.vida <= 0) return nocaute(eu ? "cpu" : "jog");
+    passar(lado);
+  }
+  function sol(lado) {
+    const c = lado === "jog" ? B.jog[B.j] : B.cpu[B.c], ganho = Math.min(25, c.hp - c.vida);
+    c.vida += ganho; c.sol = true;
+    log(`☀️ ${lado === "jog" ? "" : "🤖 "}${c.nome} tomou sol e recuperou ${ganho} de vida! (répteis precisam do sol para se aquecer)`);
+    B.fx = { lado, txt: "+" + ganho, cura: true }; passar(lado);
+  }
+  function trocar(lado, i, gratis) {
+    if (lado === "jog") B.j = i; else B.c = i;
+    const c = lado === "jog" ? B.jog[i] : B.cpu[i];
+    log(`🔄 ${lado === "jog" ? "Você chamou" : "🤖 A máquina chamou"} ${c.nome}!`);
+    if (gratis) { B.escolher = false; B.vez = "jog"; desenhar(); } else passar(lado);
+  }
+  function passar(lado) {
+    if (lado === "jog") { B.vez = "cpu"; desenhar(); setTimeout(() => B && !B.fim && maquina(), 1200); }
+    else { B.vez = "jog"; desenhar(); }
+  }
+  function nocaute(quem) {
+    if (quem === "cpu") {
+      log(`💥 ${B.cpu[B.c].nome} foi nocauteado!`);
+      const v = vivos(B.cpu); if (!v.length) return fim(true);
+      B.vez = "cpu"; desenhar();
+      setTimeout(() => { if (!B) return; B.c = escolhaMaquina(v); log(`🤖 A máquina chamou ${B.cpu[B.c].nome}!`); B.fx = null; desenhar(); setTimeout(() => B && !B.fim && maquina(), 1000); }, 1100);
+    } else {
+      log(`💥 ${B.jog[B.j].nome} foi nocauteado! Escolha a próxima carta.`);
+      if (!vivos(B.jog).length) return fim(false);
+      B.escolher = true; B.vez = "jog"; desenhar();
+    }
+  }
+  function escolhaMaquina(v) {
+    if (nivel !== "dificil") return v[0];
+    const ele = B.jog[B.j], boa = v.find(i => TIPOS[B.cpu[i].tipo].vence === ele.tipo);
+    return boa != null ? boa : v.sort((a, b) => B.cpu[b].vida - B.cpu[a].vida)[0];
+  }
+  function maquina() {
+    const me = B.cpu[B.c], ele = B.jog[B.j];
+    if (nivel === "facil") { if (!me.sol && me.vida < me.hp * .5 && Math.random() < .3) return sol("cpu"); return golpe("cpu"); }
+    if (nivel === "dificil" && !B.trocouCpu && TIPOS[ele.tipo].vence === me.tipo) {
+      const i = B.cpu.findIndex((c, k) => k !== B.c && c.vida > 0 && TIPOS[c.tipo].vence === ele.tipo);
+      if (i >= 0) { B.trocouCpu = true; return trocar("cpu", i); }
+    }
+    B.trocouCpu = false;
+    if (!me.sol && me.vida < me.hp * (nivel === "dificil" ? .4 : .35)) return sol("cpu");
+    golpe("cpu");
+  }
+  function fim(venceu) {
+    B.fim = { venceu };
+    if (venceu) { const v = ler("reptisfera_vitorias", {}); v[nivel] = (v[nivel] || 0) + 1; gravar("reptisfera_vitorias", v); }
+    desenhar();
+  }
+
+  function lado(quem) {
+    const lista = quem === "jog" ? B.jog : B.cpu, at = quem === "jog" ? B.j : B.c, meu = quem === "jog";
+    const pode = meu && B.vez === "jog" && !B.fim;
+    const banco = lista.map((c, i) => i === at ? "" : `<button type="button" class="chip${c.vida <= 0 ? " ko" : pode && c.vida > 0 ? " pode" : ""}" data-i="${i}" ${meu && c.vida > 0 && pode ? "" : "disabled"} title="${esc(c.nome)}">${c.img ? `<img src="${esc(c.img)}" alt="">` : c.emoji}<small>${c.vida <= 0 ? "KO" : c.vida}</small></button>`).join("");
+    const bolinhas = lista.map(c => c.vida > 0 ? "🟢" : "⚫").join("");
+    return `<div class="lado ${quem}${B.fx && B.fx.lado === quem && !B.fx.cura ? " levou" : ""}">
+      <div class="lado-tit">${meu ? "🧑 Você" : "🤖 Máquina"} <span class="vidas">${bolinhas}</span></div>
+      ${B.escolher && meu ? `<div class="tcg" style="--tc:#555;display:grid;place-items:center;text-align:center;font-weight:900;width:min(230px,100%)"><span style="position:relative;z-index:1">💥<br>Escolha a próxima carta no banco ➜</span></div>` : cartaHTML(lista[at], { vida: lista[at].vida })}
+      <div class="banco">${banco}</div>
+      ${B.fx && B.fx.lado === quem ? `<div class="fx${B.fx.cura ? " cura" : ""}">${B.fx.txt}</div>` : ""}
+    </div>`;
+  }
+  function desenhar() {
+    if (!B) return montar();
+    const eu = B.jog[B.j], ele = B.cpu[B.c], minha = B.vez === "jog" && !B.escolher && !B.fim;
+    const prev = eu && ele ? dano(eu, ele) : { d: 0, v: false };
+    caixa.innerHTML = `<div class="arena">
+      ${lado("jog")}
+      <div class="centro">
+        <div class="centro-top"><span>⚔️ Nível ${NIVEIS[nivel].ico} ${NIVEIS[nivel].nome}</span><button type="button" class="outline" id="tcgSair">🏳️ Desistir</button></div>
+        <div class="vez">${B.fim ? "Fim de jogo!" : B.escolher ? "💥 Escolha outra carta!" : B.vez === "jog" ? "👉 Sua vez!" : "🤖 A máquina está pensando…"}</div>
+        <div class="log">${B.log.map(t => `<p>${esc(t)}</p>`).join("")}</div>
+        <div class="acoes">
+          <button type="button" class="primary" id="tcgAtacar" ${minha ? "" : "disabled"}>⚔️ ${TIPOS[eu.tipo].golpe} (${Math.round(eu.atk * (prev.v ? 1.5 : 1))}${prev.v ? " 🔥" : ""})</button>
+          <button type="button" class="secondary" id="tcgSol" ${minha && !eu.sol && eu.vida < eu.hp ? "" : "disabled"}>☀️ Tomar sol (+25)${eu.sol ? " — já usou" : ""}</button>
+        </div>
+        <div class="dica">${B.escolher ? "Toque numa carta do seu banco para chamar ela." : "Para trocar de carta, toque numa carta do seu banco (gasta a sua vez)."}</div>
+      </div>
+      ${lado("cpu")}
+    </div>
+    ${B.fim ? `<div class="tcg-fim"><div class="panel"><div class="big">${B.fim.venceu ? "🏆" : "😵"}</div><h2>${B.fim.venceu ? "Você venceu!" : "A máquina venceu dessa vez!"}</h2><p class="muted">${B.fim.venceu ? `Parabéns! Vitória no nível ${NIVEIS[nivel].nome}. Que tal tentar um nível mais difícil?` : "Dica: use a vantagem de tipo e tome sol quando a carta estiver fraca. Identifique mais répteis para ter cartas novas!"}</p><div class="acoes"><button type="button" class="primary" id="tcgDeNovo">🔁 Jogar de novo</button><button type="button" class="outline" id="tcgDeck">🃏 Mudar o deck</button></div></div></div>` : ""}`;
+    B.fx = null;
+    const on = (id, f) => { const b = document.getElementById(id); if (b) b.onclick = f; };
+    on("tcgAtacar", () => golpe("jog")); on("tcgSol", () => sol("jog"));
+    on("tcgSair", () => { if (B.fim || confirm("Quer mesmo desistir da batalha?")) montar(); });
+    on("tcgDeNovo", () => comecar(B.jog.map(c => Object.assign({}, c, { hp: c.hp, vida: c.hp })))); on("tcgDeck", montar);
+    caixa.querySelectorAll(".lado.jog .chip:not([disabled])").forEach(b => b.onclick = () => trocar("jog", +b.dataset.i, B.escolher));
+  }
+
+  /* abas Batalha / Coleção */
+  document.querySelectorAll(".cg-aba").forEach(b => b.onclick = () => {
+    document.querySelectorAll(".cg-aba").forEach(x => x.classList.toggle("on", x === b));
+    document.getElementById("cgBatalha").hidden = b.dataset.aba !== "batalha";
+    document.getElementById("cgColecao").hidden = b.dataset.aba !== "colecao";
+  });
+  const navOriginal = window.navigate;
+  window.navigate = id => { navOriginal(id); if (id === "cardgame" && !B) montar(); };
+  document.querySelectorAll("[data-view]").forEach(b => b.addEventListener("click", () => { if (b.dataset.view === "cardgame" && !B) montar(); }));
+  montar();
+})();
+</script>
+</body></html>

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pokédex da Mata | Exploradores da natureza</title>
+<style>
+:root{--forest:#174f36;--forest2:#246a43;--leaf:#5b9e62;--mint:#eaf5e8;--cream:#fffdf5;--ink:#183d2d;--muted:#62796a;--line:#d8e7d5;--gold:#f1ca69;--danger:#a52c28;--shadow:0 16px 45px #143b2c20}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--ink);background:#e8f3e6;min-height:100vh}
+button,input{font:inherit}button{cursor:pointer}
+.site-header{position:relative;color:white;background:linear-gradient(120deg,#103e2bdf,#17623edb),url('https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=2200&q=85') center 45%/cover;isolation:isolate}
+.site-header:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#0d3929b8,#0d39292b)}
+.header-inner{max-width:1440px;margin:auto;padding:22px 5vw 28px;display:flex;align-items:center;gap:26px;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:14px;color:white;text-decoration:none;min-width:250px}
+.brand-mark{width:54px;height:54px;display:grid;place-items:center;border-radius:17px;background:#f7fff0;color:var(--forest);font-size:29px;box-shadow:0 6px 20px #001c102e}
+.brand strong{display:block;font-size:clamp(22px,2.3vw,31px);letter-spacing:-.7px}
+.brand small{display:block;margin-top:4px;color:#e0f3df;font-size:13px;letter-spacing:.3px}
+.top-note{margin-left:auto;color:#e7f6e4;font-size:14px}
+.header-bird{font-size:47px;filter:drop-shadow(0 5px 4px #0004)}
+.layout{max-width:1440px;margin:0 auto;padding:26px 4vw 50px;display:grid;grid-template-columns:245px minmax(0,1fr);gap:25px;align-items:start}
+.sidebar{background:#fffdf2ed;border:1px solid #ffffffa8;border-radius:24px;padding:15px;box-shadow:var(--shadow);position:sticky;top:20px}
+.nav-title{padding:10px 12px 14px;font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#799080;font-weight:800}
+.nav-link{display:flex;align-items:center;gap:13px;width:100%;padding:13px 14px;margin:3px 0;border:0;border-radius:14px;background:transparent;color:#3d5e4b;text-align:left;font-weight:750;transition:.18s}
+.nav-link .nav-icon{width:27px;text-align:center;font-size:20px}
+.nav-link:hover{background:#edf6e9}
+.nav-link.active{background:var(--forest);color:white;box-shadow:0 7px 16px #174f362b}
+.side-tip{margin:22px 5px 4px;padding:16px;border-radius:17px;background:#e9f4df;color:#365d3e;font-size:13px;line-height:1.5}
+.side-tip strong{display:block;margin-bottom:5px;font-size:14px}
+.content{min-width:0}
+.page{display:none;animation:arrive .22s ease}
+.page.active{display:block}
+@keyframes arrive{from{opacity:.5;transform:translateY(5px)}to{opacity:1;transform:none}}
+.page-heading{display:flex;justify-content:space-between;gap:18px;align-items:end;margin:3px 0 22px}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:1.6px;color:var(--forest2);font-weight:850}
+h1{font-size:clamp(28px,3vw,42px);letter-spacing:-1.2px;margin:7px 0 8px;color:#173f2b}
+.page-heading p{margin:0;color:var(--muted);line-height:1.55;max-width:720px}
+.panel{background:var(--cream);border:1px solid #fff;border-radius:25px;padding:clamp(20px,3vw,34px);box-shadow:var(--shadow)}
+.hero{min-height:295px;position:relative;overflow:hidden;display:flex;align-items:center;background:linear-gradient(100deg,#fffdf4 0%,#f4f9e9ed 56%,#e3f0d8d9 100%),url('https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1400&q=80') center/cover}
+.hero-copy{max-width:680px;position:relative;z-index:1}
+.hero h2{font-size:clamp(31px,4vw,52px);line-height:1.07;letter-spacing:-1.6px;margin:10px 0 15px}
+.hero p{font-size:17px;line-height:1.65;color:#4f6b57;max-width:620px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:99px;background:#e2f0d8;color:#2d6941;font-size:12px;font-weight:850}
+.hero-art{position:absolute;right:5%;bottom:12px;font-size:clamp(95px,13vw,170px);filter:drop-shadow(0 10px 5px #173f2b25);opacity:.94}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+.btn{border:0;border-radius:13px;padding:13px 18px;font-weight:850;display:inline-flex;align-items:center;justify-content:center;gap:9px;transition:.18s}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:var(--forest);color:white;box-shadow:0 7px 16px #174f3625}
+.btn-light{background:#e8f3e4;color:var(--forest)}
+.btn-outline{background:white;color:var(--forest);border:1px solid var(--line)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin-top:18px}
+.stat{padding:20px;background:#fffdf5;border:1px solid white;border-radius:20px;box-shadow:var(--shadow)}
+.stat .symbol{font-size:24px}.stat strong{display:block;font-size:27px;margin:10px 0 3px}.stat span:last-child{font-size:13px;color:var(--muted)}
+.section-title{font-size:21px;margin:29px 0 13px;letter-spacing:-.4px}
+.feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.feature{padding:21px;border-radius:19px;background:#fffdf5;border:1px solid white;box-shadow:var(--shadow)}
+.feature .symbol{font-size:28px}.feature h3{margin:12px 0 7px}.feature p{margin:0;color:var(--muted);font-size:14px;line-height:1.55}
+.upload-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.8fr);gap:20px}
+.drop-area{border:2px dashed #a8cda8;border-radius:20px;padding:30px 18px;text-align:center;background:#f5faef}
+.drop-area .big-icon{font-size:55px}.drop-area h2{margin:8px 0}.drop-area p{color:var(--muted);line-height:1.55}
+.file-input{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.preview{display:none;max-width:100%;max-height:320px;object-fit:contain;margin:18px auto 0;border-radius:15px}
+.preview.show{display:block}
+.helper-card{background:#e9f4df;border-radius:19px;padding:22px;line-height:1.6;color:#42634b}
+.helper-card h3{margin-top:0;color:#214d33}
+.notice{display:none;margin-top:17px;padding:15px 17px;border-radius:14px;line-height:1.5;font-weight:650}
+.notice.show{display:block}.notice.info{background:#eaf4e4;color:#285a38}.notice.warn{background:#fff4d9;color:#76521a}.notice.error{background:#fff0ee;color:#922d27}
+.spinner{display:inline-block;width:17px;height:17px;border:3px solid #cce3c8;border-top-color:#286943;border-radius:50%;vertical-align:middle;animation:spin .8s linear infinite;margin-right:8px}@keyframes spin{to{transform:rotate(360deg)}}
+.results-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.item-card{background:#fffdf5;border:1px solid white;border-radius:19px;padding:18px;box-shadow:var(--shadow);min-width:0}
+.item-card .bird{font-size:38px}.item-card h3{margin:9px 0 5px;overflow-wrap:anywhere}.item-card p{color:var(--muted);font-size:14px;line-height:1.5}.item-meta{font-size:12px;color:#718676}
+.card-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.small-btn{border:1px solid var(--line);background:#f5faef;border-radius:10px;padding:8px 10px;color:#315e3e;font-size:13px;font-weight:800}
+.empty{padding:42px 20px;text-align:center;border:1px dashed #b8d1b5;border-radius:20px;color:var(--muted);background:#f7fbf2}
+.empty .big-icon{font-size:48px}.empty h3{color:var(--ink);margin:10px 0}
+.about-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}.about-copy p{line-height:1.75;color:#526b59}.about-list{padding-left:21px;line-height:1.9;color:#526b59}
+footer{text-align:center;color:#e9f4e7;font-size:12px;padding:0 16px 24px}
+
+.hidden,[hidden]{display:none!important}
+.welcome-screen{min-height:100vh;position:relative;display:grid;place-items:center;overflow:hidden;color:#fff;background:#173f2b url('https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=2400&q=90') center/cover no-repeat}
+.welcome-shade{position:absolute;inset:0;background:linear-gradient(90deg,#082b1fd9 0%,#0d3e29a8 48%,#082b1f45 100%),linear-gradient(0deg,#082b1f90,transparent 45%)}
+.welcome-content{position:relative;z-index:1;width:min(900px,90vw);padding:65px 0 80px;text-align:left}
+.welcome-parrot{font-size:clamp(100px,15vw,190px);line-height:1;filter:drop-shadow(0 14px 14px #00180d8c);margin-bottom:20px}
+.welcome-kicker{font-size:12px;font-weight:900;letter-spacing:3px;color:#d5f0c8}
+.welcome-content h1{font-size:clamp(42px,7vw,82px);line-height:1.02;letter-spacing:-2.5px;color:white;margin:14px 0}
+.welcome-content p{font-size:clamp(19px,2.4vw,27px);line-height:1.5;color:#f1f7e9;max-width:640px;margin:0 0 30px}
+.btn-explore{background:#f4d978;color:#21452c;padding:17px 34px;border-radius:16px;font-size:19px;box-shadow:0 10px 30px #001b0d55}
+.btn-explore span{font-size:24px}
+.welcome-bottom{position:absolute;bottom:22px;left:20px;right:20px;text-align:center;color:#eff8e9;font-size:13px;letter-spacing:.4px}
+.app-shell{min-height:100vh;background:linear-gradient(#e8f3e6e8,#e8f3e6e8),url('https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=2200&q=85') center/cover fixed}
+.site-header{background:linear-gradient(120deg,#103e2bd9,#17623ebd),url('https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=2200&q=85') center 45%/cover}
+.hero{background:linear-gradient(100deg,#fffdf4f2 0%,#f4f9e9e8 56%,#e3f0d8d4 100%),url('https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1600&q=85') center/cover}
+.camera-frame{position:relative;display:grid;place-items:center;min-height:220px;margin:18px auto;background:#183f2b;border-radius:18px;overflow:hidden;max-width:760px;aspect-ratio:16/9}
+.camera-frame video{width:100%;height:100%;max-height:480px;object-fit:cover;display:none}
+.camera-frame video.live{display:block}
+.camera-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#eff9e9;padding:18px}
+.camera-placeholder span{font-size:46px}.camera-placeholder small{color:#c6dfc8}
+.camera-actions,.confirm-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:12px 0}
+#choose-photo{margin:8px auto}
+#capture-canvas{display:none}
+@media(max-width:700px){.welcome-content{padding:45px 0 70px}.welcome-parrot{font-size:110px}.welcome-content h1{letter-spacing:-1.2px}.camera-frame{min-height:180px}}
+
+@media(max-width:1000px){.layout{grid-template-columns:205px minmax(0,1fr);padding-inline:20px;gap:17px}.feature-grid,.results-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero-art{right:2%;opacity:.45}}
+@media(max-width:700px){.header-inner{padding:18px 18px;gap:12px}.brand{min-width:0}.brand-mark{width:46px;height:46px}.top-note{display:none}.header-bird{font-size:36px}.layout{display:block;padding:15px 13px 28px}.sidebar{position:static;padding:8px;margin-bottom:18px;overflow-x:auto;white-space:nowrap;display:flex;gap:4px}.nav-title,.side-tip{display:none}.nav-link{display:inline-flex;width:auto;flex:0 0 auto;padding:11px 12px;font-size:13px}.nav-link .nav-icon{width:auto}.nav-link span:last-child{display:inline}.page-heading{align-items:start;flex-direction:column}.hero{min-height:330px}.hero-art{right:2%;bottom:0;opacity:.25}.stats{grid-template-columns:1fr 1fr}.stat:last-child{grid-column:span 2}.feature-grid,.results-grid,.upload-grid,.about-grid{grid-template-columns:1fr}.panel{padding:20px}.site-header{background-position:center}.brand strong{font-size:21px}.brand small{font-size:11px}}
+</style>
+</head>
+<body>
+<section id="welcome-screen" class="welcome-screen" aria-label="Boas-vindas">
+  <div class="welcome-shade"></div>
+  <div class="welcome-content">
+    <div class="welcome-parrot" aria-label="Arara colorida" role="img">🦜</div>
+    <div class="welcome-kicker">UM CONVITE À DESCOBERTA</div>
+    <h1>Pokédex da Mata</h1>
+    <p>Explore a natureza e descubra suas maravilhas!</p>
+    <button class="btn btn-explore" id="explore-button">Explorar <span aria-hidden="true">→</span></button>
+  </div>
+  <div class="welcome-bottom">🌿 Respeite a natureza. Descubra com curiosidade. 🌿</div>
+</section>
+<div id="app-shell" class="app-shell hidden">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="#inicio" aria-label="Pokédex da Mata - Início">
+      <span class="brand-mark">🌿</span>
+      <span><strong>Pokédex da Mata</strong><small>Pequenas descobertas, grandes aventuras</small></span>
+    </a>
+    <div class="top-note">Explore. Fotografe. Descubra. 🌱</div>
+    <div class="header-bird" aria-hidden="true">🦜</div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" aria-label="Menu principal">
+    <div class="nav-title">Explorar</div>
+    <button class="nav-link active" data-page="inicio"><span class="nav-icon">🏡</span><span>Início</span></button>
+    <button class="nav-link" data-page="foto"><span class="nav-icon">📷</span><span>Tirar Foto</span></button>
+    <button class="nav-link" data-page="historico"><span class="nav-icon">🕘</span><span>Histórico</span></button>
+    <button class="nav-link" data-page="favoritos"><span class="nav-icon">💚</span><span>Favoritos</span></button>
+    <button class="nav-link" data-page="sobre"><span class="nav-icon">🌳</span><span>Sobre</span></button>
+    <div class="side-tip"><strong>🌱 Dica de explorador</strong>Observe a natureza com carinho e mantenha uma distância segura dos animais.</div>
+  </aside>
+
+  <main class="content">
+    <section class="page active" id="page-inicio" aria-labelledby="title-inicio">
+      <div class="panel hero">
+        <div class="hero-copy">
+          <span class="hero-badge">🌿 SEU GUIA DA BIODIVERSIDADE</span>
+          <h2 id="title-inicio">A natureza está cheia de descobertas!</h2>
+          <p>Bem-vindo à Pokédex da Mata. Fotografe um animal, uma ave, uma planta ou uma fruta e descubra mais sobre o mundo natural ao seu redor.</p>
+          <div class="actions">
+            <button class="btn btn-primary" data-go="foto">📷 Começar uma descoberta</button>
+            <button class="btn btn-light" data-go="sobre">🌱 Conhecer o projeto</button>
+          </div>
+        </div>
+        <div class="hero-art" aria-hidden="true">🦜</div>
+      </div>
+      <div class="stats">
+        <div class="stat"><span class="symbol">🔎</span><strong id="stat-total">0</strong><span>Descobertas no histórico</span></div>
+        <div class="stat"><span class="symbol">💚</span><strong id="stat-fav">0</strong><span>Itens favoritos</span></div>
+        <div class="stat"><span class="symbol">🌎</span><strong>1</strong><span>Planeta para cuidar</span></div>
+      </div>
+      <h2 class="section-title">O que você pode explorar</h2>
+      <div class="feature-grid">
+        <article class="feature"><span class="symbol">🐾</span><h3>Animais e aves</h3><p>Descubra os seres vivos que aparecem nas suas fotos.</p></article>
+        <article class="feature"><span class="symbol">🌼</span><h3>Plantas e frutas</h3><p>Conheça melhor folhas, flores, árvores e frutos.</p></article>
+        <article class="feature"><span class="symbol">📚</span><h3>Aprender sempre</h3><p>Reveja descobertas e guarde as suas preferidas.</p></article>
+      </div>
+    </section>
+
+    <section class="page" id="page-foto" aria-labelledby="title-foto">
+      <div class="page-heading"><div><div class="eyebrow">Hora de investigar</div><h1 id="title-foto">Tirar Foto</h1><p>Escolha uma imagem nítida e vamos tentar descobrir o que aparece nela.</p></div></div>
+      <div class="panel">
+        <div class="upload-grid">
+          <div class="drop-area">
+            <div class="big-icon">📸</div><h2>Vamos observar a natureza</h2>
+            <p>Abra a câmera para fotografar agora ou escolha uma imagem do seu dispositivo.</p>
+            <div class="camera-frame" id="camera-frame">
+              <video id="camera-video" autoplay playsinline muted aria-label="Imagem ao vivo da câmera"></video>
+              <div id="camera-placeholder" class="camera-placeholder"><span>🌳</span><strong>A câmera aparecerá aqui</strong><small>Você precisará permitir o acesso à câmera.</small></div>
+            </div>
+            <div class="camera-actions">
+              <button class="btn btn-primary" id="start-camera">📷 Abrir câmera</button>
+              <button class="btn btn-light" id="capture-photo" disabled>● Tirar Foto</button>
+              <button class="btn btn-outline" id="retake-photo" hidden>↻ Tirar outra</button>
+            </div>
+            <div class="confirm-actions" id="confirm-actions" hidden>
+              <button class="btn btn-primary" id="confirm-photo">✓ Confirmar foto</button>
+              <button class="btn btn-light" id="discard-photo">Descartar</button>
+            </div>
+            <input class="file-input" type="file" id="photo-input" accept="image/*" capture="environment">
+            <button class="btn btn-outline" id="choose-photo">🖼️ Selecionar imagem do dispositivo</button>
+            <canvas id="capture-canvas" hidden></canvas>
+            <img class="preview" id="photo-preview" alt="Prévia da imagem selecionada">
+            <div class="actions" style="justify-content:center"><button class="btn btn-light" id="identify-btn" disabled>🔎 Identificar imagem</button></div>
+          </div>
+          <aside class="helper-card"><h3>🔬 Dicas do explorador</h3><ul><li>Prefira uma foto bem iluminada.</li><li>Deixe o ser vivo aparecer com clareza.</li><li>Não toque em animais ou plantas desconhecidos.</li><li>Se a identificação não for segura, vamos pedir outra foto em vez de adivinhar.</li></ul></aside>
+        </div>
+        <div class="notice" id="photo-notice" role="status" aria-live="polite"></div>
+        <div id="identification-result"></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-historico" aria-labelledby="title-historico">
+      <div class="page-heading"><div><div class="eyebrow">Suas aventuras</div><h1 id="title-historico">Histórico</h1><p>Aqui ficam as identificações feitas neste navegador.</p></div><button class="btn btn-outline" id="clear-history">🗑️ Limpar histórico</button></div>
+      <div id="history-list" class="results-grid"></div>
+    </section>
+
+    <section class="page" id="page-favoritos" aria-labelledby="title-favoritos">
+      <div class="page-heading"><div><div class="eyebrow">Guardados com carinho</div><h1 id="title-favoritos">Favoritos</h1><p>Os seres vivos que você marcou para rever depois.</p></div></div>
+      <div id="favorites-list" class="results-grid"></div>
+    </section>
+
+    <section class="page" id="page-sobre" aria-labelledby="title-sobre">
+      <div class="page-heading"><div><div class="eyebrow">Conheça o projeto</div><h1 id="title-sobre">Sobre a Pokédex da Mata</h1><p>Um convite para olhar de perto — e cuidar melhor — da natureza.</p></div></div>
+      <div class="about-grid">
+        <article class="panel about-copy"><span style="font-size:42px">🌳🦋🦜</span><h2>Curiosidade que vira cuidado</h2><p>A Pokédex da Mata é um projeto educativo para ajudar as pessoas a aprender sobre a biodiversidade. Ao enviar uma foto, o aplicativo tenta identificar o que aparece e pode apresentar informações para continuar explorando.</p><p>Uma identificação feita por inteligência artificial pode falhar. Por isso, o app só mostra um resultado quando a resposta indica confiança de pelo menos 80%. Quando não há certeza, ele pede para tentar novamente.</p></article>
+        <aside class="panel"><h2>Nosso combinado verde</h2><ul class="about-list"><li>Respeitar os animais e seus habitats.</li><li>Não comer plantas, frutos ou cogumelos desconhecidos.</li><li>Observar sem causar danos.</li><li>Aprender e compartilhar com responsabilidade.</li></ul><button class="btn btn-primary" data-go="foto">📷 Fazer uma descoberta</button></aside>
+      </div>
+    </section>
+  </main>
+</div>
+<footer>Feito para exploradores curiosos 🌱 · Pokédex da Mata</footer>
+</div>
+
+<script>
+(() => {
+  const welcomeScreen = document.getElementById("welcome-screen");
+  const appShell = document.getElementById("app-shell");
+  document.getElementById("explore-button").addEventListener("click", () => {
+    welcomeScreen.classList.add("hidden");
+    appShell.classList.remove("hidden");
+    if (location.hash) history.replaceState({page: location.hash.slice(1)}, "", location.hash);
+  });
+
+  const cameraVideo = document.getElementById("camera-video");
+  const cameraPlaceholder = document.getElementById("camera-placeholder");
+  const startCameraButton = document.getElementById("start-camera");
+  const captureButton = document.getElementById("capture-photo");
+  const retakeButton = document.getElementById("retake-photo");
+  const confirmActions = document.getElementById("confirm-actions");
+  const confirmPhotoButton = document.getElementById("confirm-photo");
+  const discardPhotoButton = document.getElementById("discard-photo");
+  const captureCanvas = document.getElementById("capture-canvas");
+  let cameraStream = null;
+  let capturedBlob = null;
+
+  async function stopCamera() {
+    if (cameraStream) cameraStream.getTracks().forEach(track => track.stop());
+    cameraStream = null;
+    cameraVideo.srcObject = null;
+    cameraVideo.classList.remove("live");
+    cameraPlaceholder.classList.remove("hidden");
+    captureButton.disabled = true;
+    startCameraButton.textContent = "📷 Abrir câmera";
+  }
+  async function startCamera() {
+    hideNotice();
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      showNotice("Este navegador não liberou a câmera aqui. Abra o site por HTTPS ou localhost, ou selecione uma imagem do dispositivo.", "warn");
+      return;
+    }
+    try {
+      await stopCamera();
+      cameraStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: "environment" } },
+        audio: false
+      });
+      cameraVideo.srcObject = cameraStream;
+      await cameraVideo.play();
+      cameraVideo.classList.add("live");
+      cameraPlaceholder.classList.add("hidden");
+      captureButton.disabled = false;
+      startCameraButton.textContent = "↻ Reiniciar câmera";
+      showNotice("Câmera ligada! Posicione a imagem e clique em “Tirar Foto”.", "info");
+    } catch (error) {
+      console.warn("Câmera indisponível ou permissão recusada:", error);
+      await stopCamera();
+      showNotice("Não consegui abrir a câmera. Verifique a permissão do navegador ou selecione uma imagem do dispositivo.", "warn");
+    }
+  }
+  startCameraButton.addEventListener("click", startCamera);
+  captureButton.addEventListener("click", () => {
+    if (!cameraStream || !cameraVideo.videoWidth) {
+      showNotice("A câmera ainda não está pronta. Tente abrir novamente.", "warn");
+      return;
+    }
+    captureCanvas.width = cameraVideo.videoWidth;
+    captureCanvas.height = cameraVideo.videoHeight;
+    captureCanvas.getContext("2d").drawImage(cameraVideo, 0, 0, captureCanvas.width, captureCanvas.height);
+    captureCanvas.toBlob(blob => {
+      if (!blob) { showNotice("Não consegui capturar essa foto. Tente novamente.", "error"); return; }
+      capturedBlob = blob;
+      const capturedFile = new File([blob], "foto-pokedex.jpg", {type:"image/jpeg"});
+      setSelectedImage(capturedFile);
+      identifyBtn.disabled = true;
+      confirmActions.hidden = false;
+      retakeButton.hidden = false;
+      captureButton.disabled = true;
+      showNotice("Foto capturada! Confirme para usá-la ou tire outra.", "info");
+    }, "image/jpeg", 0.92);
+  });
+  retakeButton.addEventListener("click", () => {
+    capturedBlob = null;
+    confirmActions.hidden = true;
+    retakeButton.hidden = true;
+    captureButton.disabled = !cameraStream;
+    $("identification-result").replaceChildren();
+    if (cameraStream) showNotice("Pronto para outra foto. Enquadre a imagem e fotografe!", "info");
+  });
+  confirmPhotoButton.addEventListener("click", async () => {
+    if (!capturedBlob) return;
+    const file = new File([capturedBlob], "foto-pokedex.jpg", {type:"image/jpeg"});
+    setSelectedImage(file);
+    identifyBtn.disabled = false;
+    confirmActions.hidden = true;
+    retakeButton.hidden = true;
+    await stopCamera();
+    showNotice("Foto confirmada! Agora clique em “Identificar imagem”.", "info");
+  });
+  discardPhotoButton.addEventListener("click", () => {
+    capturedBlob = null;
+    selectedFile = null;
+    preview.classList.remove("show");
+    preview.removeAttribute("src");
+    identifyBtn.disabled = true;
+    confirmActions.hidden = true;
+    retakeButton.hidden = true;
+    $("identification-result").replaceChildren();
+    showNotice("Foto descartada. Você pode tirar outra ou escolher uma imagem.", "info");
+  });
+  window.addEventListener("beforeunload", () => {
+    if (cameraStream) cameraStream.getTracks().forEach(track => track.stop());
+  });
+
+  const pages = ["inicio","foto","historico","favoritos","sobre"];
+  const navLinks = [...document.querySelectorAll(".nav-link")];
+  let selectedFile = null;
+  let latestResult = null;
+  let latestImageUrl = null;
+  const $ = id => document.getElementById(id);
+
+  function goTo(page, updateHash=true) {
+    if (!pages.includes(page)) page = "inicio";
+    document.querySelectorAll(".page").forEach(section => section.classList.toggle("active", section.id === "page-" + page));
+    navLinks.forEach(button => {
+      const active = button.dataset.page === page;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-current", active ? "page" : "false");
+    });
+    if (updateHash && location.hash !== "#" + page) history.pushState({page}, "", "#" + page);
+    renderLists();
+    if (page !== "foto" && cameraStream) stopCamera();
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+  navLinks.forEach(button => button.addEventListener("click", () => goTo(button.dataset.page)));
+  document.querySelectorAll("[data-go]").forEach(button => button.addEventListener("click", () => goTo(button.dataset.go)));
+  window.addEventListener("popstate", () => goTo(location.hash.slice(1) || "inicio", false));
+  window.addEventListener("hashchange", () => goTo(location.hash.slice(1) || "inicio", false));
+  goTo(location.hash.slice(1) || "inicio", false);
+
+  function readStore(key) {
+    try { return JSON.parse(localStorage.getItem(key) || "[]"); } catch { return []; }
+  }
+  function saveStore(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); }
+    catch { showNotice("Não consegui guardar os dados neste navegador. Você ainda pode continuar usando a página.", "warn"); }
+  }
+  function getHistory(){ return readStore("pokedexMataHistory"); }
+  function getFavorites(){ return readStore("pokedexMataFavorites"); }
+  function updateStats(){
+    $("stat-total").textContent = getHistory().length;
+    $("stat-fav").textContent = getFavorites().length;
+  }
+  function escapeText(value) {
+    const span = document.createElement("span");
+    span.textContent = value == null ? "" : String(value);
+    return span.textContent;
+  }
+  function emptyState(icon,title,description){
+    const div=document.createElement("div"); div.className="empty"; div.style.gridColumn="1/-1";
+    const i=document.createElement("div");i.className="big-icon";i.textContent=icon;
+    const h=document.createElement("h3");h.textContent=title;
+    const p=document.createElement("p");p.textContent=description;
+    div.append(i,h,p);return div;
+  }
+  function makeCard(item, isFavoriteList=false){
+    const card=document.createElement("article");card.className="item-card";
+    const icon=document.createElement("div");icon.className="bird";icon.textContent=item.kindIcon||"🌿";
+    const h=document.createElement("h3");h.textContent=escapeText(item.nome||"Ser vivo identificado");
+    const date=document.createElement("div");date.className="item-meta";date.textContent=item.date?new Date(item.date).toLocaleString("pt-BR"):"Descoberta guardada";
+    const p=document.createElement("p");p.textContent=escapeText(item.curiosidades||"Uma descoberta da natureza para explorar.");
+    card.append(icon,h,date,p);
+    const actions=document.createElement("div");actions.className="card-actions";
+    const fav=document.createElement("button");fav.className="small-btn";fav.textContent=isFavoriteList?"💚 Remover favorito":(getFavorites().some(f=>f.id===item.id)?"💚 Favorito":"♡ Favoritar");
+    fav.addEventListener("click",()=>toggleFavorite(item));
+    actions.append(fav);
+    if(!isFavoriteList){
+      const remove=document.createElement("button");remove.className="small-btn";remove.textContent="Remover";
+      remove.addEventListener("click",()=>{saveStore("pokedexMataHistory",getHistory().filter(x=>x.id!==item.id));renderLists();});
+      actions.append(remove);
+    }
+    card.append(actions);return card;
+  }
+  function renderLists(){
+    const history=getHistory(),favorites=getFavorites();
+    const historyList=$("history-list"),favoritesList=$("favorites-list");
+    historyList.replaceChildren();favoritesList.replaceChildren();
+    if(!history.length) historyList.append(emptyState("🔎","Sua aventura começa aqui","Depois de identificar uma foto com sucesso, ela aparecerá nesta lista."));
+    else history.slice().reverse().forEach(item=>historyList.append(makeCard(item)));
+    if(!favorites.length) favoritesList.append(emptyState("💚","Nenhum favorito por enquanto","Quando encontrar algo especial, toque em “Favoritar” para guardar aqui."));
+    else favorites.slice().reverse().forEach(item=>favoritesList.append(makeCard(item,true)));
+    updateStats();
+  }
+  function toggleFavorite(item){
+    let favorites=getFavorites();
+    if(favorites.some(f=>f.id===item.id)) favorites=favorites.filter(f=>f.id!==item.id);
+    else favorites.push(item);
+    saveStore("pokedexMataFavorites",favorites);renderLists();
+  }
+  $("clear-history").addEventListener("click",()=>{
+    if(!getHistory().length)return;
+    if(confirm("Quer mesmo apagar todas as identificações do histórico?")){
+      saveStore("pokedexMataHistory",[]);renderLists();
+    }
+  });
+
+  const photoInput=$("photo-input"), preview=$("photo-preview"), identifyBtn=$("identify-btn");
+  $("choose-photo").addEventListener("click",()=>photoInput.click());
+  photoInput.addEventListener("change",()=>{
+    const file=photoInput.files&&photoInput.files[0]; if(!file)return;
+    if(!file.type.startsWith("image/")){showNotice("Escolha um arquivo de imagem, por favor.","warn");return;}
+    setSelectedImage(file);
+    confirmActions.hidden = true;
+    retakeButton.hidden = true;
+    stopCamera();
+    showNotice("Imagem selecionada! Clique em “Identificar imagem” quando estiver pronto.","info");
+    photoInput.value = "";
+  });
+  function setSelectedImage(file){
+    selectedFile=file;
+    if(latestImageUrl) URL.revokeObjectURL(latestImageUrl);
+    latestImageUrl=URL.createObjectURL(file);
+    preview.src=latestImageUrl;
+    preview.classList.add("show");
+    identifyBtn.disabled=false;
+    $("identification-result").replaceChildren();
+  }
+  function showNotice(text,type){
+    const notice=$("photo-notice");notice.textContent=text;notice.className="notice show "+(type||"info");
+  }
+  function hideNotice(){const notice=$("photo-notice");notice.textContent="";notice.className="notice";}
+  function fileToDataURL(file){
+    return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(new Error("Não consegui ler a imagem."));reader.readAsDataURL(file);});
+  }
+  identifyBtn.addEventListener("click",async()=>{
+    if(!selectedFile)return;
+    identifyBtn.disabled=true;showNotice("A inteligência artificial está observando a foto. Um instante, por favor…","info");
+    const old=identifyBtn.textContent;identifyBtn.innerHTML='<span class="spinner"></span> Analisando…';
+    try{
+      const dataUrl=await fileToDataURL(selectedFile);
+      const base64=(String(dataUrl).split(",")[1]||"");
+      const mimeType=selectedFile.type || "image/jpeg";
+      // Mantém o endpoint e a estrutura do motor já existente.
+      const pedido={
+        modelo:"gemini-3.6-flash",
+        body:{
+          contents:[{parts:[
+            {text:"Identifique o ser vivo principal na imagem. Pode ser um animal, ave, planta ou fruta. Não chute: se não houver certeza, retorne identificado=false. Quando souber, informe nome, curiosidades curtas e um aviso de segurança se for importante."},
+            {inline_data:{mime_type:mimeType,data:base64}}
+          ]}],
+          generationConfig:{
+            temperature:0.2,
+            responseMimeType:"application/json",
+            responseSchema:{
+              type:"object",
+              properties:{
+                identificado:{type:"boolean"},
+                confianca:{type:"integer"},
+                nome:{type:"string"},
+                curiosidades:{type:"string"},
+                aviso:{type:"string"}
+              },
+              required:["identificado","confianca"]
+            }
+          }
+        }
+      };
+      const response=await fetch("/api/identificar",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(pedido)});
+      if(!response.ok)throw new Error("O servidor respondeu com um erro.");
+      const raw=await response.json();
+      const text=raw?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if(!text)throw new Error("A resposta veio vazia.");
+      const data=JSON.parse(text);
+      if(data.identificado!==true||Number(data.confianca)<80){
+        showNotice("Hmm, não consegui ter certeza. 🌿 Tente outra foto, com o ser vivo mais visível e bem iluminado.","warn");
+        $("identification-result").replaceChildren();return;
+      }
+      latestResult={id:(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random()),nome:escapeText(data.nome||"Ser vivo identificado"),curiosidades:escapeText(data.curiosidades||""),aviso:escapeText(data.aviso||""),confianca:Number(data.confianca),date:new Date().toISOString(),kindIcon:guessIcon(data.nome||"")};
+      const hist=getHistory();hist.push(latestResult);saveStore("pokedexMataHistory",hist);renderLists();
+      renderIdentification(latestResult);
+      showNotice("Identificação concluída! A descoberta foi adicionada ao seu histórico.","info");
+    }catch(error){
+      console.error(error);
+      showNotice("Ops! Parece que a internet ou o servidor deu uma paradinha. Confira a conexão e tente novamente. 💚","error");
+    }finally{
+      identifyBtn.disabled=!selectedFile;identifyBtn.textContent=old;
+    }
+  });
+  function guessIcon(name){
+    const n=String(name).toLowerCase();
+    if(/ave|pássaro|passaro|papagaio|arara|sabiá|sabia|beija/.test(n))return "🐦";
+    if(/flor|planta|árvore|arvore|folha/.test(n))return "🌿";
+    if(/fruta|maçã|maca|banana|manga/.test(n))return "🍎";
+    if(/borboleta|inseto|abelha/.test(n))return "🦋";
+    return "🐾";
+  }
+  function renderIdentification(item){
+    const root=$("identification-result");root.replaceChildren();
+    const box=document.createElement("article");box.className="item-card";box.style.marginTop="18px";
+    const h=document.createElement("h2");h.textContent=item.kindIcon+" "+item.nome;
+    const badge=document.createElement("div");badge.className="item-meta";badge.textContent="Confiança indicada: "+item.confianca+"%";
+    const p=document.createElement("p");p.textContent=item.curiosidades||"Nenhuma curiosidade foi fornecida.";
+    box.append(h,badge,p);
+    if(item.aviso){const warning=document.createElement("div");warning.className="notice show warn";warning.textContent="⚠️ "+item.aviso;box.append(warning);}
+    const fav=document.createElement("button");fav.className="btn btn-light";fav.style.marginTop="12px";fav.textContent="💚 Guardar nos favoritos";fav.addEventListener("click",()=>toggleFavorite(item));box.append(fav);
+    root.append(box);
+  }
+  renderLists();
+})();
+</script>
+
+<style id="ajustes-tablet">
+/* Ajustes de visual para tablet (deitado e em pé) e computador.
+   O visual e as ideias são do grupo; aqui só arrumamos tamanho, espaço e alinhamento. */
+/* tablet em pé: menu vira barra no topo e o conteúdo usa a tela toda */
+@media (max-width:900px){
+  .layout{display:block;padding:18px 18px 40px}
+  .sidebar{position:static;padding:8px;margin-bottom:18px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+  .side-tip,.nav-title{display:none}
+  .nav-link{display:inline-flex;width:auto;flex:0 0 auto;padding:12px 16px;font-size:15px;margin:0}
+  .upload-grid,.about-grid{grid-template-columns:1fr}
+  .feature-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+.btn{min-height:46px}
+</style>
+<!-- POKÉDEX: ficha padrão em pop-up + ligação com o back-end do grupo
+     (comum/ficha.js e comum/adaptador.js). O resto da página é do grupo. -->
+<script src="/comum/ficha.js"></script>
+<script src="/comum/adaptador.js"></script>
+<script>
+/* O grupo já tem a própria câmera ("Abrir câmera"); o botão "Selecionar imagem
+   do dispositivo" fica só para escolher arquivo. */
+document.getElementById("photo-input").removeAttribute("capture");
+PokedexAdaptador.iniciar({
+  // botões por etapa: o de identificar só aparece depois de escolher a foto
+  etapas: { inicio: ["#start-camera", "#choose-photo"], camera: ["#capture-photo", "#choose-photo"], foto: ["#identify-btn", "#retake-photo", "#choose-photo"], fotoTirada: ["#capture-photo"], trocar: ["#retake-photo"] },
+  icone: "🦜", fauna: true,
+  cor: "#174f36", cor2: "#f1ca69",
+  escuro: () => false,
+  noturno: { fundo: "#0f2a1d", texto: "#f1fff5", suave: "#b9dcc6" },
+  carregando: "🦜 A inteligência artificial está observando a foto…",
+  esconder: ["#identification-result", "#photo-notice"],
+  alerta: info => info.aviso || "",
+  salvar: () => { document.querySelector("#identification-result button").click(); document.querySelector('.nav-link[data-page="favoritos"]').click(); },
+  novaFoto: () => document.getElementById("choose-photo").click()
+});
+</script>
+</body>
+</html>

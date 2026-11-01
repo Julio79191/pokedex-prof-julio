@@ -1,0 +1,984 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>FruitDex 🍌</title>
+<style>
+:root{
+  --bg:#04131b;--bg2:#071f29;--card:#0b2731;--card2:#0e3340;
+  --blue:#28b9ff;--cyan:#65e9ff;--green:#6df05e;--green2:#b8ff57;
+  --text:#f2fff9;--muted:#9fc0c0;--line:#1a5360;--danger:#ff5b66;
+  --shadow:0 18px 55px rgba(0,0,0,.32);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;min-height:100vh;color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:
+    radial-gradient(circle at 10% 0%,rgba(40,185,255,.2),transparent 28rem),
+    radial-gradient(circle at 90% 15%,rgba(109,240,94,.14),transparent 25rem),
+    linear-gradient(160deg,var(--bg),#031018 70%);
+}
+button,input{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.app{width:min(1180px,100%);margin:auto;padding:18px 18px 105px}
+.topbar{
+  position:sticky;top:12px;z-index:20;
+  display:flex;align-items:center;justify-content:space-between;gap:15px;
+  padding:12px 15px;margin-bottom:20px;border:1px solid var(--line);
+  border-radius:22px;background:rgba(4,19,27,.86);backdrop-filter:blur(14px);
+  box-shadow:var(--shadow)
+}
+.brand{display:flex;align-items:center;gap:11px}
+.brand-banana{font-size:39px;filter:drop-shadow(0 5px 12px rgba(109,240,94,.2))}
+.logo{font-size:clamp(26px,4vw,36px);font-weight:950;letter-spacing:-1.5px}
+.logo span{color:var(--green)}
+.brand small{display:block;color:var(--muted);font-weight:700}
+.icon-btn{
+  width:45px;height:45px;border-radius:15px;border:1px solid #28616d;
+  background:#09232d;color:white;font-size:21px
+}
+.page{display:none;animation:pageIn .3s ease}
+.page.active{display:block}
+@keyframes pageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card{
+  border:1px solid var(--line);border-radius:28px;
+  background:linear-gradient(145deg,rgba(14,51,64,.94),rgba(5,24,32,.96));
+  box-shadow:var(--shadow);padding:24px;margin-bottom:18px
+}
+.hero{
+  min-height:530px;display:grid;place-items:center;text-align:center;overflow:hidden;
+  position:relative;padding:38px 20px
+}
+.hero:before,.hero:after{
+  content:"";position:absolute;inset:auto;pointer-events:none
+}
+.hero:before{
+  width:360px;height:360px;right:-130px;top:-150px;
+  background:radial-gradient(circle,rgba(40,185,255,.23),transparent 65%)
+}
+.hero:after{
+  width:350px;height:350px;left:-150px;bottom:-160px;
+  background:radial-gradient(circle,rgba(109,240,94,.2),transparent 65%)
+}
+.floating-fruits{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.floating-fruits span{position:absolute;font-size:clamp(28px,5vw,55px);opacity:.85;animation:float 7s ease-in-out infinite}
+.floating-fruits span:nth-child(1){left:6%;top:9%}.floating-fruits span:nth-child(2){right:8%;top:12%;animation-delay:1s}
+.floating-fruits span:nth-child(3){left:12%;bottom:18%;animation-delay:2s}.floating-fruits span:nth-child(4){right:12%;bottom:22%;animation-delay:3s}
+.floating-fruits span:nth-child(5){left:22%;top:27%;animation-delay:4s}.floating-fruits span:nth-child(6){right:25%;top:29%;animation-delay:2.5s}
+@keyframes float{50%{transform:translateY(-17px) rotate(5deg)}}
+.hero-content{position:relative;z-index:1;max-width:700px}
+.mascot-large{font-size:clamp(72px,12vw,118px);filter:drop-shadow(0 12px 25px rgba(0,0,0,.3));animation:bob 3s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-7px) rotate(2deg)}}
+.hero h1{font-size:clamp(34px,6vw,64px);margin:7px 0 4px;letter-spacing:-2px}
+.gradient-text{background:linear-gradient(90deg,var(--blue),var(--green2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{font-size:clamp(16px,2.5vw,20px);color:#c2dddd;margin:0 auto 25px;max-width:560px}
+.actions{display:flex;justify-content:center;flex-wrap:wrap;gap:12px}
+.btn{
+  min-height:52px;padding:13px 20px;border-radius:17px;border:1px solid #2b6975;
+  color:white;background:#123743;font-weight:900;box-shadow:0 8px 25px rgba(0,0,0,.2);
+  transition:.18s transform,.18s filter
+}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.btn.primary{color:#04130c;background:linear-gradient(135deg,var(--green),var(--cyan));border:0}
+.btn.secondary{background:linear-gradient(135deg,#168fff,#2863e9);border:0}
+.btn.danger{background:#351b22;border-color:#8b3943}
+.btn.full{width:100%}
+input[type=file]{display:none}
+.section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:5px 0 15px}
+.section-title h2{margin:0;font-size:26px}
+.muted{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+.span-6{grid-column:span 6}.span-4{grid-column:span 4}.span-8{grid-column:span 8}.span-12{grid-column:1/-1}
+.info-card{padding:18px;border:1px solid #205462;border-radius:21px;background:#071e27}
+.info-card h3{margin:0 0 9px;color:var(--cyan);font-size:17px}
+.info-card p{margin:0;line-height:1.65;color:#e3f2ef;white-space:pre-line}
+.preview-wrap{position:relative;max-width:780px;margin:auto}
+.preview{
+  display:block;width:100%;max-height:520px;object-fit:contain;border-radius:22px;
+  border:1px solid #27616d;background:#020b10
+}
+.scan-line{
+  position:absolute;left:5%;right:5%;height:3px;top:8%;
+  background:linear-gradient(90deg,transparent,var(--green2),var(--cyan),transparent);
+  box-shadow:0 0 22px var(--cyan);animation:scan 2.2s ease-in-out infinite
+}
+@keyframes scan{50%{top:88%}}
+.analysis-box{text-align:center;padding:24px}
+.scanner{font-size:58px;animation:spin 1.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.progress{height:12px;background:#08212a;border-radius:999px;overflow:hidden;margin:17px auto;max-width:620px;border:1px solid #1c4e59}
+.progress span{display:block;width:35%;height:100%;background:linear-gradient(90deg,var(--blue),var(--green));animation:progress 1.8s ease-in-out infinite}
+@keyframes progress{0%{transform:translateX(-120%)}100%{transform:translateX(330%)}}
+.result-hero{display:grid;grid-template-columns:1fr 1.2fr;gap:20px;align-items:stretch}
+.result-photo{min-height:300px;display:flex;align-items:center;justify-content:center;background:#06171f;border-radius:22px;border:1px solid #205461;overflow:hidden}
+.result-photo img{width:100%;height:100%;max-height:500px;object-fit:cover}
+.result-title{display:flex;align-items:flex-start;gap:12px}
+.result-title .emoji{font-size:62px}
+.result-title h1{margin:0;font-size:clamp(32px,5vw,54px);line-height:1}
+.scientific{color:var(--cyan);font-style:italic;font-weight:800;margin-top:8px}
+.pill-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:17px}
+.pill{padding:8px 11px;border-radius:999px;background:#123c35;border:1px solid #2d765f;color:#aaffbd;font-weight:800}
+.map{
+  min-height:350px;border-radius:22px;border:1px solid #205461;
+  background:radial-gradient(circle at 50% 45%,rgba(40,185,255,.14),transparent 40%),#06171f;
+  display:grid;place-items:center;overflow:hidden
+}
+.map svg{width:min(100%,520px);height:auto}
+.brazil-shape{fill:url(#brasilGrad);stroke:#b9ffb4;stroke-width:3;filter:drop-shadow(0 0 12px rgba(109,240,94,.35))}
+.sa-shape{fill:#12353d;stroke:#28616a;stroke-width:2}
+.marker{fill:var(--green2);stroke:#08201a;stroke-width:2}
+.warning{border:2px solid var(--danger);background:rgba(255,91,102,.09);padding:22px;border-radius:22px}
+.warning h2{color:#ff7b84;margin-top:0}
+.warning .alert-icon{font-size:58px}
+.empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.album-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.fruit-card{overflow:hidden;border:1px solid #205461;border-radius:20px;background:#071e27}
+.fruit-card img{display:block;width:100%;height:170px;object-fit:cover;background:#04131b}
+.fruit-card-body{padding:14px}.fruit-card-body h3{margin:0 0 5px}.fruit-card-body small{color:var(--muted)}
+.nav{
+  position:fixed;z-index:30;bottom:12px;left:50%;transform:translateX(-50%);
+  width:min(920px,calc(100% - 24px));display:grid;grid-template-columns:repeat(5,1fr);
+  gap:5px;padding:7px;border:1px solid #215765;border-radius:23px;
+  background:rgba(3,17,24,.91);backdrop-filter:blur(16px);box-shadow:var(--shadow)
+}
+.nav button{border:0;background:transparent;color:#9ebbbb;border-radius:16px;padding:9px 5px;font-weight:800;font-size:12px}
+.nav button span{display:block;font-size:22px;margin-bottom:2px}
+.nav button.active{color:var(--green2);background:#0e3036}
+.modal{
+  position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.78);
+  display:grid;place-items:center;padding:18px
+}
+.modal-card{width:min(760px,100%);max-height:92vh;overflow:auto;background:#071f29;border:1px solid #2a6874;border-radius:25px;padding:18px}
+.camera-video{width:100%;max-height:65vh;object-fit:cover;border-radius:18px;background:#000}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap}
+.toast{
+  position:fixed;z-index:200;left:50%;bottom:95px;transform:translate(-50%,15px);
+  opacity:0;background:#123d32;border:1px solid #4da86e;color:#dffff0;padding:12px 17px;
+  border-radius:14px;font-weight:900;transition:.25s;pointer-events:none
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.map-list{display:flex;flex-wrap:wrap;gap:8px}
+.biome{padding:10px 12px;border-radius:14px;border:1px solid #2b655d;background:#0c302f;color:#b8ffc5;font-weight:800}
+.error-state,.uncertain-state{text-align:center;padding:30px}
+.big-state{font-size:75px}
+.back-row{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:15px}
+#settingsPage label{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:15px 0;border-bottom:1px solid #173f49}
+.toggle{accent-color:var(--green)}
+
+/* Mapa de biomas e filtros do álbum */
+.biome-map-frame{background:#06171f;border:1px solid #205461;border-radius:22px;padding:12px;overflow:hidden}
+.biome-reference-map{display:block;width:100%;max-width:760px;max-height:540px;object-fit:contain;margin:auto;border-radius:14px}
+.biome-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+.biome-pick{min-height:48px;text-align:left;padding:12px;border:1px solid #28616d;border-radius:14px;background:#09242d;color:#effff9;font-weight:850}
+.biome-pick[aria-pressed="true"]{border-color:var(--green);background:#123d32;box-shadow:0 0 0 2px #6df05e33}
+.biome-detail{margin-top:14px;padding:17px;border:1px solid #28616d;border-radius:18px;background:#081e27}
+.album-tools{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;margin-bottom:16px}
+.album-tools input,.album-tools select{min-width:0;width:100%;background:#061820;color:var(--text);border:1px solid #28616d;border-radius:13px;padding:12px}
+.album-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.album-chips button{border:1px solid #28616d;background:#09242d;color:#c8e6e0;padding:9px 12px;border-radius:999px;font-weight:800}
+.album-chips button.active{background:#123d32;color:#b8ffbd;border-color:var(--green)}
+.fruit-card .fruit-card-body .biome-labels{display:flex;flex-wrap:wrap;gap:5px;margin:9px 0}
+.biome-labels span{font-size:11px;padding:4px 7px;border-radius:999px;background:#123d32;color:#b8ffbd;border:1px solid #286b56}
+.fruit-card .fruit-card-body .feature-line{font-size:12px;color:#b8d6d3;margin:8px 0;line-height:1.5}
+.detail-meta{color:var(--muted);font-size:13px;margin-top:7px}
+@media(max-width:700px){.biome-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}.album-tools{grid-template-columns:1fr}.biome-reference-map{max-height:400px}}
+
+@media(max-width:800px){.result-hero{grid-template-columns:1fr}.span-6,.span-4,.span-8{grid-column:1/-1}}
+@media(max-width:600px){
+  .app{padding:10px 10px 98px}.topbar{top:7px}.card{padding:17px;border-radius:22px}
+  .hero{min-height:620px}.floating-fruits span:nth-child(5),.floating-fruits span:nth-child(6){display:none}
+  .nav{bottom:7px}.nav button{font-size:10px}.nav button span{font-size:20px}
+  .actions .btn{width:100%}.result-photo{min-height:230px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-banana">🍌</div>
+      <div><div class="logo">Fruit<span>Dex</span></div><small>Frutas brasileiras • ciência • natureza</small></div>
+    </div>
+    <button class="icon-btn" id="topSettings" aria-label="Configurações">⚙️</button>
+  </header>
+
+  <main>
+    <section class="page active" id="homePage">
+      <div class="card hero">
+        <div class="floating-fruits" aria-hidden="true">
+          <span>🍌</span><span>🍍</span><span>🍓</span><span>🥭</span><span>🍋</span><span>🥥</span>
+        </div>
+        <div class="hero-content">
+          <div class="mascot-large">🍌</div>
+          <h1><span class="gradient-text">FruitDex</span></h1>
+          <h2 style="font-size:clamp(28px,5vw,48px);margin:0 0 8px">Descubra o mundo das frutas!</h2>
+          <p>Tire uma foto ou escolha uma imagem para descobrir a fruta.</p>
+          <div class="actions">
+            <button class="btn primary" id="cameraBtn">📷 Tirar foto</button>
+            <button class="btn secondary" id="galleryBtn">🖼️ Galeria</button>
+          </div>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="info-card span-4"><h3>🔬 Cientista de frutas</h3><p>O FruitDex analisa a foto e só mostra um resultado quando tiver confiança suficiente.</p></div>
+        <div class="info-card span-4"><h3>🌎 Brasil em foco</h3><p>Veja onde a fruta aparece e quais biomas brasileiros estão relacionados.</p></div>
+        <div class="info-card span-4"><h3>📚 Seu álbum</h3><p>Salve descobertas no navegador e volte para elas quando quiser.</p></div>
+      </div>
+    </section>
+
+    <section class="page" id="analysisPage">
+      <div class="card">
+        <div class="back-row"><button class="btn" id="analysisBack">← Voltar</button><strong>🔍 Identificando...</strong><span></span></div>
+        <div class="preview-wrap"><img id="analysisImage" class="preview" alt="Foto sendo analisada"><div class="scan-line"></div></div>
+        <div class="analysis-box">
+          <div class="scanner">🔬</div>
+          <h2>Identificando...</h2>
+          <p class="muted">Analisando características da fruta...</p>
+          <div class="progress"><span></span></div>
+          <p class="muted" id="analysisMessage">Isso pode levar alguns segundos.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="resultPage">
+      <div class="back-row"><button class="btn" id="resultBack">← Voltar</button><button class="btn primary" id="saveBtn">💾 Salvar no álbum</button></div>
+      <div class="card result-hero">
+        <div class="result-photo"><img id="resultImage" alt="Fruta identificada"></div>
+        <div>
+          <div class="result-title"><div class="emoji" id="resultEmoji">🍍</div><div><h1 id="resultName">Abacaxi</h1><div class="scientific" id="resultScientific">Ananas comosus</div></div></div>
+          <div class="pill-row" id="resultTags"></div>
+          <div class="info-card" style="margin-top:18px"><h3>🧾 Descrição</h3><p id="resultDescription"></p></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title"><h2>📋 Características</h2></div>
+        <div class="grid" id="characteristics"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title"><h2>💡 Curiosidades</h2></div>
+        <div class="info-card"><p id="resultCuriosities"></p></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title"><h2>📍 Onde é encontrada?</h2></div>
+        <div class="grid">
+          <div class="span-6"><div class="info-card"><h3>🌎 Países e regiões</h3><p id="resultRegions"></p></div></div>
+          <div class="span-6"><div class="info-card"><h3>🌳 Biomas brasileiros</h3><div class="map-list" id="resultBiomes"></div></div></div>
+          <div class="span-12"><div class="map"><svg viewBox="0 0 600 500" aria-label="Mapa estilizado da América do Sul com Brasil destacado">
+            <defs><linearGradient id="brasilGrad" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#22aaff"/><stop offset="1" stop-color="#74ef55"/></linearGradient></defs>
+            <path class="sa-shape" d="M205 45l100-25 75 38 73 25 55 63 20 66-29 47 18 62-34 54-39 56-58 45-53-25-46-39-49-23-26-47-45-27-20-50-35-31-8-52 27-43 11-56z"/>
+            <path class="brazil-shape" d="M265 75l66 6 46 25 74 15 48 39 11 55-20 41 20 45-25 38-35 15-25 45-44 30-45-15-31-39-43-11-14-42-38-18-12-41 19-33-17-39 25-38z"/>
+            <circle class="marker" cx="347" cy="228" r="8"/><circle class="marker" cx="300" cy="177" r="7"/><circle class="marker" cx="386" cy="300" r="7"/>
+            <text x="292" y="250" fill="#effff5" font-weight="900" font-size="22">BRASIL</text>
+          </svg></div></div>
+        </div>
+      </div>
+
+      <div class="card warning hidden" id="warningCard">
+        <div class="alert-icon">⚠️</div><h2>Fruta venenosa ou não comestível!</h2>
+        <p>Algumas frutas podem ser perigosas para consumo. Nunca coma uma fruta que você não identificou com certeza.</p>
+      </div>
+    </section>
+
+    <section class="page" id="uncertainPage">
+      <div class="card uncertain-state">
+        <div class="big-state">❓🍌</div>
+        <h1>Não consegui identificar essa fruta.</h1>
+        <p class="muted">Tente tirar uma foto melhor, com mais detalhes, ou mostre outro ângulo.</p>
+        <button class="btn primary" id="uncertainAgain">📷 Tirar outra foto</button>
+      </div>
+    </section>
+
+    <section class="page" id="errorPage">
+      <div class="card error-state">
+        <div class="big-state">📡🍌</div>
+        <h1>Não foi possível conectar com o servidor da API.</h1>
+        <p class="muted">Verifique sua conexão com a internet e tente novamente.</p>
+        <button class="btn secondary" id="retryBtn">🔄 Tentar novamente</button>
+      </div>
+    </section>
+
+    <section class="page" id="albumPage">
+      <div class="section-title"><h2>📖 Meu Álbum</h2><span class="muted" id="albumCount"></span></div>
+      <div class="card">
+        <div class="album-tools">
+          <input id="albumSearch" type="search" placeholder="🔎 Buscar por nome popular ou científico">
+          <select id="albumDateFilter" aria-label="Filtrar por data">
+            <option value="all">Todas as datas</option>
+            <option value="7">Últimos 7 dias</option>
+            <option value="30">Últimos 30 dias</option>
+          </select>
+          <select id="albumStatusFilter" aria-label="Filtrar por confirmação">
+            <option value="all">Todas as identificações</option>
+            <option value="confirmed">Identificação confirmada</option>
+          </select>
+        </div>
+        <div class="album-chips" id="albumFeatureFilters"></div>
+        <div class="album-chips" id="albumBiomeFilters"></div>
+        <div id="albumContent"></div>
+      </div>
+    </section>
+
+    <section class="page" id="mapPage">
+      <div class="card">
+        <div class="section-title"><h2>🗺️ Mapa dos biomas</h2></div>
+        <p class="muted">Toque em um bioma para ver um resumo e consultar as frutas salvas associadas a ele. Toque num bioma no mapa (ou nos botões abaixo) para ver as frutas dele.</p>
+        <div class="biome-map-frame">
+          <div id="mapaBiomasFruitdex" class="biome-leaflet" role="img" aria-label="Mapa dos biomas brasileiros"></div>
+        </div>
+        <div class="biome-buttons" id="mapBiomeButtons"></div>
+        <div class="biome-detail" id="mapBiomeDetail"><h3>🌿 Escolha um bioma</h3><p class="muted">As associações são exibidas conforme os dados salvos no FruitDex.</p></div>
+      </div>
+    </section>
+
+    <section class="page" id="biomesPage">
+      <div class="section-title"><h2>🌳 Biomas brasileiros</h2></div>
+      <div class="grid">
+        <div class="info-card span-4"><h3>🌿 Amazônia</h3><p>Floresta muito rica em espécies de plantas e frutos.</p></div>
+        <div class="info-card span-4"><h3>🌾 Cerrado</h3><p>Grande variedade de frutos nativos e árvores adaptadas ao clima.</p></div>
+        <div class="info-card span-4"><h3>🌳 Mata Atlântica</h3><p>Bioma com enorme diversidade de frutas e plantas.</p></div>
+        <div class="info-card span-4"><h3>🌵 Caatinga</h3><p>Vegetação adaptada a períodos de pouca chuva.</p></div>
+        <div class="info-card span-4"><h3>💧 Pantanal</h3><p>Áreas alagadas e paisagens com grande diversidade.</p></div>
+        <div class="info-card span-4"><h3>🌱 Pampa</h3><p>Campos naturais do sul do Brasil.</p></div>
+      </div>
+    </section>
+
+    <section class="page" id="settingsPage">
+      <div class="section-title"><h2>⚙️ Configurações</h2></div>
+      <div class="card">
+        <label><span>🔬 Modo demonstração</span><input class="toggle" id="demoToggle" type="checkbox"></label>
+        <p class="muted">Quando ligado, a identificação usa dados de exemplo para testar a interface sem servidor. A API real continua sendo usada quando desligado.</p>
+        <button class="btn danger" id="clearAlbum">🗑️ Apagar álbum</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<nav class="nav" aria-label="Navegação principal">
+  <button data-page="homePage" class="active"><span>🏠</span>Início</button>
+  <button data-page="mapPage"><span>🗺️</span>Mapa</button>
+  <button data-page="biomesPage"><span>🌳</span>Biomas</button>
+  <button data-page="albumPage"><span>📖</span>Meu Álbum</button>
+  <button data-page="settingsPage"><span>⚙️</span>Configurações</button>
+</nav>
+
+<div class="modal hidden" id="cameraModal">
+  <div class="modal-card">
+    <div class="back-row"><h2 style="margin:0">📷 Câmera</h2><button class="btn" id="closeCamera">Fechar</button></div>
+    <video id="cameraVideo" class="camera-video" autoplay playsinline></video>
+    <canvas id="cameraCanvas" class="hidden"></canvas>
+    <p class="muted" id="cameraMessage">Permita o acesso à câmera para tirar a foto.</p>
+    <div class="modal-actions">
+      <button class="btn" id="cameraGallery">🖼️ Escolher da galeria</button>
+      <button class="btn primary" id="captureBtn">📸 Tirar foto</button>
+    </div>
+  </div>
+</div>
+
+<input id="fileInput" type="file" accept="image/*" capture="environment">
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  "use strict";
+
+  // =========================================================
+  // CONFIGURAÇÃO
+  // =========================================================
+  // false = usa /api/identificar
+  // true  = usa um resultado de demonstração para testar a interface
+  let DEMO_MODE = false;
+
+  const API_URL = "/api/identificar";
+  const MIN_CONFIDENCE = 80;
+  const ALBUM_KEY = "fruitdex_album_v1";
+
+  // =========================================================
+  // ELEMENTOS
+  // =========================================================
+  const $ = id => document.getElementById(id);
+  const pages = [...document.querySelectorAll(".page")];
+  const navButtons = [...document.querySelectorAll(".nav button")];
+  let selectedImage = null;
+  let lastAttempt = null;
+  let currentResult = null;
+  let cameraStream = null;
+
+  // =========================================================
+  // NAVEGAÇÃO
+  // =========================================================
+  function showPage(id) {
+    pages.forEach(p => p.classList.toggle("active", p.id === id));
+    navButtons.forEach(b => b.classList.toggle("active", b.dataset.page === id));
+    window.scrollTo({top:0,behavior:"smooth"});
+    if (id === "albumPage") renderAlbum();
+  }
+
+  navButtons.forEach(btn => btn.addEventListener("click", () => showPage(btn.dataset.page)));
+  $("topSettings").addEventListener("click", () => showPage("settingsPage"));
+
+  // =========================================================
+  // CÂMERA REAL
+  // =========================================================
+  async function openCamera() {
+    $("cameraModal").classList.remove("hidden");
+    $("cameraMessage").textContent = "Tentando abrir a câmera...";
+    try {
+      if (!navigator.mediaDevices?.getUserMedia) throw new Error("Câmera não disponível");
+      cameraStream = await navigator.mediaDevices.getUserMedia({
+        video:{facingMode:{ideal:"environment"},width:{ideal:1280},height:{ideal:720}},
+        audio:false
+      });
+      $("cameraVideo").srcObject = cameraStream;
+      $("cameraMessage").textContent = "Câmera pronta! Aponte para a fruta. 🍍";
+    } catch (e) {
+      $("cameraMessage").textContent = "Não consegui acessar a câmera. Você pode escolher uma imagem da galeria.";
+    }
+  }
+
+  function closeCamera() {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(track => track.stop());
+      cameraStream = null;
+    }
+    $("cameraVideo").srcObject = null;
+    $("cameraModal").classList.add("hidden");
+  }
+
+  $("cameraBtn").addEventListener("click", openCamera);
+  $("closeCamera").addEventListener("click", closeCamera);
+  $("cameraGallery").addEventListener("click", () => {
+    closeCamera();
+    $("fileInput").click();
+  });
+
+  $("captureBtn").addEventListener("click", () => {
+    const video = $("cameraVideo");
+    if (!video.videoWidth) {
+      $("cameraMessage").textContent = "A câmera ainda não está pronta. Tente novamente.";
+      return;
+    }
+    const canvas = $("cameraCanvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext("2d").drawImage(video,0,0,canvas.width,canvas.height);
+    canvas.toBlob(blob => {
+      if (!blob) return;
+      closeCamera();
+      handleImageFile(new File([blob],"fruitdex-camera.jpg",{type:"image/jpeg"}));
+    },"image/jpeg",.92);
+  });
+
+  $("galleryBtn").addEventListener("click", () => FichaPokedex.escolherArquivo(f => { const dt = new DataTransfer(); dt.items.add(f); $("fileInput").files = dt.files; $("fileInput").dispatchEvent(new Event("change", { bubbles: true })); })); /* galeria abre a galeria (o campo do grupo tem "capture", que abre a câmera) */
+
+  $("fileInput").addEventListener("change", () => {
+    const file = $("fileInput").files?.[0];
+    if (file) handleImageFile(file);
+    $("fileInput").value = "";
+  });
+
+  // =========================================================
+  // IMAGEM
+  // =========================================================
+  function handleImageFile(file) {
+    if (!file.type.startsWith("image/")) {
+      toast("Escolha uma imagem válida.");
+      return;
+    }
+    selectedImage = file;
+    const url = URL.createObjectURL(file);
+    $("analysisImage").src = url;
+    showPage("analysisPage");
+    startIdentification(file);
+  }
+
+  async function imageToJpegBase64(file) {
+    const url = URL.createObjectURL(file);
+    try {
+      const img = new Image();
+      img.src = url;
+      await new Promise((resolve,reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+
+      const maxSide = 1600;
+      const scale = Math.min(1,maxSide / Math.max(img.naturalWidth,img.naturalHeight));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1,Math.round(img.naturalWidth*scale));
+      canvas.height = Math.max(1,Math.round(img.naturalHeight*scale));
+      canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
+
+      const dataUrl = canvas.toDataURL("image/jpeg",.88);
+      return dataUrl.substring(dataUrl.indexOf(",")+1);
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
+
+  // =========================================================
+  // IDENTIFICAÇÃO
+  // =========================================================
+  async function identifyFruit(image) {
+    if (DEMO_MODE) {
+      await wait(2600);
+      return {
+        identificado:true,
+        confianca:96,
+        nome:"Abacaxi",
+        nome_cientifico:"Ananas comosus",
+        descricao:"Fruta tropical de casca áspera e polpa amarela, com sabor doce e ácido.",
+        caracteristicas:[
+          "Fruta tropical",
+          "Casca áspera",
+          "Polpa amarela",
+          "Sabor doce e ácido",
+          "Fonte de vitamina C"
+        ],
+        curiosidades:[
+          "Possui uma enzima chamada bromelina.",
+          "Pertence ao grupo das bromélias."
+        ],
+        onde_encontrada:"Brasil e outras regiões tropicais. No Brasil, pode ser cultivado em diferentes regiões.",
+        paises:["🇧🇷 Brasil","🇵🇪 Peru","🇨🇴 Colômbia"],
+        regioes_brasil:["Norte","Nordeste","Centro-Oeste","Sudeste"],
+        biomas:["Mata Atlântica","Cerrado","Amazônia"],
+        caracteristicas_principais:["Tropical","Cultivada","Fonte de vitamina C"],
+        tipo_ocorrencia:"cultivo",
+        comestibilidade:"comestivel",
+        venenosa_ou_nao_comestivel:false
+      };
+    }
+
+    const base64 = await imageToJpegBase64(image);
+
+    // Este objeto segue o formato combinado com o endpoint existente.
+    const requestBody = {
+      modelo:"gemini-3.6-flash",
+      body:{
+        contents:[{
+          parts:[
+            {
+              text:
+                "Você é um cientista especialista em frutas brasileiras. " +
+                "Analise a foto. Só identifique uma fruta quando houver segurança. " +
+                "Nunca chute. Informe nome, nome científico, descrição, características, " +
+                "curiosidades, onde é encontrada, países, regiões do Brasil, biomas brasileiros " +
+                "e se é venenosa ou não comestível. Não invente dados de ocorrência: diferencie ocorrência natural de cultivo, use tipo_ocorrencia como natural, cultivo, ambos ou nao_confirmado; se não souber os biomas, retorne lista vazia. Informe comestibilidade como comestivel, nao_comestivel, potencialmente_venenosa ou nao_confirmada. Retorne somente JSON."
+            },
+            {
+              inline_data:{
+                mime_type:"image/jpeg",
+                data:base64
+              }
+            }
+          ]
+        }],
+        generationConfig:{
+          temperature:.2,
+          responseMimeType:"application/json",
+          responseSchema:{
+            type:"object",
+            properties:{
+              identificado:{type:"boolean"},
+              confianca:{type:"integer"},
+              nome:{type:"string"},
+              nome_cientifico:{type:"string"},
+              descricao:{type:"string"},
+              caracteristicas:{type:"array",items:{type:"string"}},
+              curiosidades:{type:"array",items:{type:"string"}},
+              onde_encontrada:{type:"string"},
+              paises:{type:"array",items:{type:"string"}},
+              regioes_brasil:{type:"array",items:{type:"string"}},
+              biomas:{type:"array",items:{type:"string"}},
+              caracteristicas_principais:{type:"array",items:{type:"string"}},
+              tipo_ocorrencia:{type:"string",enum:["natural","cultivo","ambos","nao_confirmado"]},
+              comestibilidade:{type:"string",enum:["comestivel","nao_comestivel","potencialmente_venenosa","nao_confirmada"]},
+              venenosa_ou_nao_comestivel:{type:"boolean"}
+            },
+            required:["identificado","confianca"]
+          }
+        }
+      }
+    };
+
+    const response = await fetch(API_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(requestBody)
+    });
+
+    if (!response.ok) throw new Error("API_ERROR");
+
+    const responseJson = await response.json();
+    const rawText = responseJson?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (typeof rawText !== "string") throw new Error("BAD_RESPONSE");
+
+    let data;
+    try { data = JSON.parse(rawText); }
+    catch { throw new Error("BAD_JSON"); }
+
+    return data;
+  }
+
+  async function startIdentification(file) {
+    lastAttempt = file;
+    $("analysisMessage").textContent = "Analisando características da fruta...";
+    try {
+      const data = await identifyFruit(file);
+
+      if (data?.identificado !== true || Number(data?.confianca) < MIN_CONFIDENCE) {
+        showPage("uncertainPage");
+        return;
+      }
+
+      currentResult = normalizeResult(data,file);
+      renderResult(currentResult);
+      showPage("resultPage");
+    } catch (e) {
+      showPage("errorPage");
+    }
+  }
+
+  function normalizeResult(data,file) {
+    return {
+      id:crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+      nome:String(data.nome || "Fruta identificada"),
+      nome_cientifico:String(data.nome_cientifico || "Nome científico não informado"),
+      descricao:String(data.descricao || "Descrição não informada."),
+      caracteristicas:Array.isArray(data.caracteristicas) ? data.caracteristicas.map(String) : [],
+      curiosidades:Array.isArray(data.curiosidades) ? data.curiosidades.map(String) : [],
+      onde_encontrada:String(data.onde_encontrada || "Localização não informada."),
+      paises:Array.isArray(data.paises) ? data.paises.map(String) : [],
+      regioes_brasil:Array.isArray(data.regioes_brasil) ? data.regioes_brasil.map(String) : [],
+      biomas:Array.isArray(data.biomas) ? data.biomas.map(String) : [],
+      caracteristicas_principais:Array.isArray(data.caracteristicas_principais) ? data.caracteristicas_principais.map(String) : [],
+      tipo_ocorrencia:["natural","cultivo","ambos","nao_confirmado"].includes(data.tipo_ocorrencia) ? data.tipo_ocorrencia : "nao_confirmado",
+      comestibilidade:["comestivel","nao_comestivel","potencialmente_venenosa","nao_confirmada"].includes(data.comestibilidade) ? data.comestibilidade : "nao_confirmada",
+      estado_confirmacao:(Array.isArray(data.biomas) && data.biomas.length && data.tipo_ocorrencia && data.tipo_ocorrencia !== "nao_confirmado") ? "confirmado pela resposta da API" : "Bioma não confirmado",
+      venenosa_ou_nao_comestivel:Boolean(data.venenosa_ou_nao_comestivel),
+      confianca:Number(data.confianca || 0),
+      imageData:"",
+      date:new Date().toLocaleString("pt-BR"),
+      timestamp:Date.now()
+    };
+  }
+
+  // =========================================================
+  // RESULTADO
+  // =========================================================
+  function fruitEmoji(name) {
+    const n=name.toLowerCase();
+    if(n.includes("banana"))return"🍌";
+    if(n.includes("abacaxi"))return"🍍";
+    if(n.includes("morango"))return"🍓";
+    if(n.includes("manga"))return"🥭";
+    if(n.includes("coco"))return"🥥";
+    if(n.includes("melancia"))return"🍉";
+    if(n.includes("limão")||n.includes("limao"))return"🍋";
+    if(n.includes("laranja"))return"🍊";
+    if(n.includes("maçã")||n.includes("maca"))return"🍎";
+    return"🍈";
+  }
+
+  async function ensureImageData(result) {
+    if (result.imageData) return result.imageData;
+    if (!selectedImage) return "";
+    result.imageData = await imageToDataUrl(selectedImage);
+    return result.imageData;
+  }
+
+  // A foto do tablet tem vários MB e não cabia no álbum (o navegador guarda
+  // pouco): agora vai uma versão menor, de até 600 px.
+  function imageToDataUrl(file) {
+    return new Promise((resolve,reject)=>{
+      const img=new Image(), url=URL.createObjectURL(file);
+      img.onload=()=>{
+        const k=Math.min(1,600/Math.max(img.naturalWidth,img.naturalHeight)), c=document.createElement("canvas");
+        c.width=Math.round(img.naturalWidth*k); c.height=Math.round(img.naturalHeight*k);
+        c.getContext("2d").drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(url);
+        resolve(c.toDataURL("image/jpeg",.78));
+      };
+      img.onerror=reject; img.src=url;
+    });
+  }
+
+  function renderResult(r) {
+    $("resultImage").src = URL.createObjectURL(selectedImage);
+    $("resultName").textContent=r.nome;
+    $("resultScientific").textContent=r.nome_cientifico;
+    $("resultEmoji").textContent=fruitEmoji(r.nome);
+    $("resultDescription").textContent=r.descricao;
+
+    const tags=$("resultTags");
+    tags.replaceChildren();
+    [...r.paises,...r.regioes_brasil].slice(0,8).forEach(x=>{
+      const s=document.createElement("span");s.className="pill";s.textContent=x;tags.appendChild(s);
+    });
+
+    const characteristics=$("characteristics");
+    characteristics.replaceChildren();
+    (r.caracteristicas.length?r.caracteristicas:["Nenhuma característica informada."]).forEach(x=>{
+      const d=document.createElement("div");d.className="info-card span-4";
+      const h=document.createElement("h3");h.textContent="🍃 Característica";
+      const p=document.createElement("p");p.textContent=x;d.append(h,p);characteristics.appendChild(d);
+    });
+
+    $("resultCuriosities").textContent=r.curiosidades.length?r.curiosidades.map(x=>"• "+x).join("\\n"):"Curiosidades não informadas.";
+    $("resultRegions").textContent=[r.onde_encontrada,...r.regioes_brasil].filter(Boolean).join("\\n• ") +
+      "\\n\\nOcorrência: " + (r.tipo_ocorrencia === "natural" ? "encontrada naturalmente" : r.tipo_ocorrencia === "cultivo" ? "cultivada" : r.tipo_ocorrencia === "ambos" ? "ocorrência natural e cultivo" : "não confirmada");
+
+    const biomes=$("resultBiomes");biomes.replaceChildren();
+    (r.biomas.length?r.biomas:["Biomas não informados."]).forEach(x=>{
+      const s=document.createElement("span");s.className="biome";s.textContent=x;biomes.appendChild(s);
+    });
+
+    $("warningCard").classList.toggle("hidden",!r.venenosa_ou_nao_comestivel);
+  }
+
+  // =========================================================
+  // ÁLBUM / LOCALSTORAGE
+  // =========================================================
+  function readAlbum() {
+    try { return JSON.parse(localStorage.getItem(ALBUM_KEY) || "[]"); }
+    catch { return []; }
+  }
+
+  function writeAlbum(items) {
+    localStorage.setItem(ALBUM_KEY,JSON.stringify(items));
+  }
+
+  $("saveBtn").addEventListener("click",async()=>{
+    if(!currentResult)return;
+    const album=readAlbum();
+    const duplicate=album.find(x=>x.nome===currentResult.nome && x.nome_cientifico===currentResult.nome_cientifico);
+    if(duplicate && !confirm("Você já salvou esta fruta. Quer guardar outro registro mesmo assim?")) return;
+    try {
+      await ensureImageData(currentResult);
+      const copy={...currentResult,id:(crypto.randomUUID ? crypto.randomUUID() : String(Date.now())),date:new Date().toLocaleString("pt-BR"),timestamp:Date.now()};
+      album.unshift(copy);
+      writeAlbum(album.slice(0,100));
+      toast("Fruta salva no seu álbum! 🍌");
+      renderAlbum();
+    } catch (e) {
+      toast("Não consegui salvar: o armazenamento do navegador pode estar cheio.");
+    }
+  });
+
+  const BIOMES = ["Amazônia","Cerrado","Mata Atlântica","Caatinga","Pantanal","Pampa","Bioma não confirmado"];
+  const COMMON_FEATURES = ["Tropical","Nativa do Brasil","Cultivada","Encontrada naturalmente","Fruta cítrica","Rica em vitamina C","Polpa doce","Polpa ácida","Comestível","Não comestível","Potencialmente venenosa"];
+  let activeAlbumBiome = "Todas";
+  let activeAlbumFeature = "Todas";
+
+  function canonicalBiome(value) {
+    const v = String(value || "").toLocaleLowerCase("pt-BR").normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+    return BIOMES.find(b => b.toLocaleLowerCase("pt-BR").normalize("NFD").replace(/[\u0300-\u036f]/g,"") === v) || null;
+  }
+
+  function fruitFeatures(item) {
+    const fromApi = Array.isArray(item.caracteristicas_principais) ? item.caracteristicas_principais : [];
+    const text = [...(item.caracteristicas || []), ...(item.curiosidades || []), ...fromApi].join(" ").toLocaleLowerCase("pt-BR");
+    const features = new Set(fromApi);
+    const rules = [
+      ["Tropical",/tropical/],["Nativa do Brasil",/nativa do brasil|nativo do brasil|fruta nativa/],
+      ["Cultivada",/cultivad/],["Encontrada naturalmente",/ocorr[eê]ncia natural|encontrada naturalmente|nativa/],
+      ["Fruta cítrica",/c[ií]tric|[aá]cido/],["Rica em vitamina C",/vitamina c/],
+      ["Polpa doce",/polpa doce|sabor doce|doce/],["Polpa ácida",/polpa [aá]cida|sabor [aá]cido|[aá]cida/]
+    ];
+    rules.forEach(([label,regex])=>{if(regex.test(text))features.add(label)});
+    if(item.comestibilidade==="comestivel")features.add("Comestível");
+    if(item.comestibilidade==="nao_comestivel")features.add("Não comestível");
+    if(item.comestibilidade==="potencialmente_venenosa" || item.venenosa_ou_nao_comestivel)features.add("Potencialmente venenosa");
+    return [...features];
+  }
+
+  function renderFilterButtons() {
+    const biomeWrap=$("albumBiomeFilters"); biomeWrap.replaceChildren();
+    ["Todas",...BIOMES].forEach(b=>{
+      const btn=document.createElement("button");btn.textContent=b;btn.classList.toggle("active",activeAlbumBiome===b);
+      btn.addEventListener("click",()=>{activeAlbumBiome=b;renderAlbum()});biomeWrap.appendChild(btn);
+    });
+    const featureWrap=$("albumFeatureFilters");featureWrap.replaceChildren();
+    ["Todas",...COMMON_FEATURES].forEach(f=>{
+      const btn=document.createElement("button");btn.textContent=f;btn.classList.toggle("active",activeAlbumFeature===f);
+      btn.addEventListener("click",()=>{activeAlbumFeature=f;renderAlbum()});featureWrap.appendChild(btn);
+    });
+  }
+
+  function renderAlbum() {
+    const album=readAlbum();
+    renderFilterButtons();
+    const search=($("albumSearch")?.value || "").trim().toLocaleLowerCase("pt-BR");
+    const dateFilter=$("albumDateFilter")?.value || "all";
+    const statusFilter=$("albumStatusFilter")?.value || "all";
+    const cutoff=dateFilter==="all" ? 0 : Date.now()-Number(dateFilter)*86400000;
+
+    const filtered=album.filter(item=>{
+      const nameMatch=(String(item.nome||"")+" "+String(item.nome_cientifico||"")).toLocaleLowerCase("pt-BR").includes(search);
+      const biomes=(item.biomas||[]).map(canonicalBiome).filter(Boolean);
+      const biomeMatch=activeAlbumBiome==="Todas" ? true :
+        activeAlbumBiome==="Bioma não confirmado" ? !biomes.length || item.estado_confirmacao==="Bioma não confirmado" :
+        biomes.includes(activeAlbumBiome);
+      const featureMatch=activeAlbumFeature==="Todas" || fruitFeatures(item).includes(activeAlbumFeature);
+      const timestamp=Number(item.timestamp||Date.parse(item.date)||0);
+      const dateMatch=!cutoff || timestamp>=cutoff;
+      const statusMatch=statusFilter==="all" || item.estado_confirmacao==="confirmado pela resposta da API";
+      return nameMatch && biomeMatch && featureMatch && dateMatch && statusMatch;
+    });
+
+    $("albumCount").textContent=`${filtered.length} de ${album.length} descoberta${album.length===1?"":"s"}`;
+    const box=$("albumContent");box.replaceChildren();
+    if(!filtered.length){
+      const empty=document.createElement("div");empty.className="empty";
+      const title=album.length?"Nenhuma fruta encontrada":"Seu álbum está vazio";
+      const message=album.length?"Tente mudar a busca ou os filtros.":"Identifique uma fruta e salve a primeira descoberta!";
+      empty.innerHTML=`<div style="font-size:65px">🍎📖</div><h2>${title}</h2><p>${message}</p>`;
+      box.appendChild(empty);return;
+    }
+
+    const grid=document.createElement("div");grid.className="album-grid";
+    filtered.forEach(item=>{
+      const card=document.createElement("article");card.className="fruit-card";
+      const img=document.createElement("img");img.src=item.imageData || "";img.alt=`Foto de ${item.nome}`;
+      const body=document.createElement("div");body.className="fruit-card-body";
+      const h=document.createElement("h3");h.textContent=`${fruitEmoji(item.nome)} ${item.nome}`;
+      const sci=document.createElement("div");sci.className="detail-meta";sci.textContent=item.nome_cientifico||"Nome científico não informado";
+      const labels=document.createElement("div");labels.className="biome-labels";
+      const biomes=(item.biomas||[]).length?item.biomas:["Bioma não confirmado"];
+      biomes.forEach(b=>{const s=document.createElement("span");s.textContent=b;labels.appendChild(s)});
+      const features=document.createElement("div");features.className="feature-line";
+      features.textContent=fruitFeatures(item).slice(0,3).join(" • ") || "Características não confirmadas";
+      const small=document.createElement("small");small.textContent=item.date||"Data não informada";small.style.color="var(--muted)";
+      const actions=document.createElement("div");actions.style.display="grid";actions.style.gridTemplateColumns="1fr auto";actions.style.gap="8px";actions.style.marginTop="10px";
+      const btn=document.createElement("button");btn.className="btn";btn.textContent="📖 Detalhes";btn.addEventListener("click",()=>openSaved(item));
+      const remove=document.createElement("button");remove.className="btn danger";remove.textContent="🗑️";remove.title="Remover do álbum";
+      remove.addEventListener("click",()=>{if(confirm(`Remover ${item.nome} do álbum?`)){writeAlbum(readAlbum().filter(x=>x.id!==item.id));renderAlbum();toast("Fruta removida do álbum.")}});
+      actions.append(btn,remove);body.append(h,sci,labels,features,small,actions);card.append(img,body);grid.appendChild(card);
+    });
+    box.appendChild(grid);
+  }
+
+  function renderBiomeMap() {
+    const wrap=$("mapBiomeButtons"); if(!wrap)return;
+    wrap.replaceChildren();
+    BIOMES.slice(0,6).forEach(b=>{
+      const btn=document.createElement("button");btn.className="biome-pick";btn.textContent="🌿 "+b;btn.setAttribute("aria-pressed","false");
+      btn.addEventListener("click",()=>{
+        wrap.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed","false"));
+        btn.setAttribute("aria-pressed","true");
+        const fruits=readAlbum().filter(f=>(f.biomas||[]).some(x=>canonicalBiome(x)===b));
+        const detail=$("mapBiomeDetail");detail.replaceChildren();
+        const h=document.createElement("h3");h.textContent="🌎 "+b;
+        const p=document.createElement("p");p.className="muted";
+        const descriptions={
+          "Amazônia":"Grande floresta tropical, com alta diversidade de plantas e frutos.",
+          "Cerrado":"Savana brasileira com muitas espécies nativas e frutos do campo.",
+          "Mata Atlântica":"Bioma muito diverso, com florestas e muitas espécies frutíferas.",
+          "Caatinga":"Bioma de clima semiárido, com plantas adaptadas à pouca chuva.",
+          "Pantanal":"Planície alagável com ambientes aquáticos e terrestres.",
+          "Pampa":"Campos naturais predominantes no sul do Brasil."
+        };
+        p.textContent=descriptions[b]||"Bioma brasileiro.";
+        const count=document.createElement("p");count.textContent=`Frutas salvas associadas: ${fruits.length}.`;
+        const note=document.createElement("p");note.className="muted";note.textContent="A associação depende dos dados informados para cada fruta; ausência de associação não prova que a espécie não exista nesse bioma.";
+        const list=document.createElement("div");list.className="map-list";
+        if(fruits.length){fruits.forEach(f=>{const chip=document.createElement("span");chip.className="biome";chip.textContent=f.nome;list.appendChild(chip)})}
+        else {const none=document.createElement("span");none.className="muted";none.textContent="Nenhuma fruta salva associada ainda.";list.appendChild(none)}
+        detail.append(h,p,count,note,list);
+      });
+      wrap.appendChild(btn);
+    });
+  }
+
+  function openSaved(item) {
+    currentResult=item;
+    if(item.imageData){
+      $("resultImage").src=item.imageData;
+    }
+    renderResult(item);
+    showPage("resultPage");
+  }
+
+  // =========================================================
+  // VOLTAR / NOVA FOTO / RETRY
+  // =========================================================
+  $("analysisBack").addEventListener("click",()=>showPage("homePage"));
+  $("resultBack").addEventListener("click",()=>showPage("homePage"));
+  $("uncertainAgain").addEventListener("click",()=>$("fileInput").click());
+  $("retryBtn").addEventListener("click",()=>{
+    if(lastAttempt) startIdentification(lastAttempt);
+    else showPage("homePage");
+  });
+
+  // =========================================================
+  // CONFIGURAÇÕES
+  // =========================================================
+  $("demoToggle").checked=DEMO_MODE;
+  $("demoToggle").addEventListener("change",e=>{DEMO_MODE=e.target.checked;toast(DEMO_MODE?"Modo demonstração ligado.":"Modo demonstração desligado.")});
+  ["albumSearch","albumDateFilter","albumStatusFilter"].forEach(id=>{
+    const el=$(id); if(el) el.addEventListener(id==="albumSearch"?"input":"change",renderAlbum);
+  });
+  renderBiomeMap();
+
+  $("clearAlbum").addEventListener("click",()=>{
+    if(confirm("Apagar todas as frutas salvas?")){
+      localStorage.removeItem(ALBUM_KEY);renderAlbum();toast("Álbum apagado.");
+    }
+  });
+
+  // =========================================================
+  // UTILIDADES
+  // =========================================================
+  function wait(ms){return new Promise(r=>setTimeout(r,ms))}
+  let toastTimer;
+  function toast(message){
+    const el=$("toast");el.textContent=message;el.classList.add("show");
+    clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2500);
+  }
+
+  window.addEventListener("beforeunload",()=>{if(cameraStream)cameraStream.getTracks().forEach(t=>t.stop())});
+  renderAlbum();
+})();
+</script>
+
+<style id="ajustes-tablet">
+/* Ajustes de visual para tablet (deitado e em pé) e computador.
+   O visual e as ideias são do grupo; aqui só arrumamos tamanho, espaço e alinhamento. */
+.biome-leaflet{height:min(52vh,460px);min-height:340px}
+.nav button{font-size:13.5px}
+</style>
+<!-- POKÉDEX: ficha padrão em pop-up + ligação com o back-end do grupo
+     (comum/ficha.js e comum/adaptador.js). O resto da página é do grupo. -->
+<script src="/comum/ficha.js"></script>
+<script src="/comum/adaptador.js"></script>
+<script>
+/* Mapa dos biomas: a imagem antiga era pixelada; agora é um mapa de verdade.
+   Tocar num bioma faz o mesmo que o botão do bioma, logo abaixo. */
+FichaPokedex.mapaBiomas(document.getElementById("mapaBiomasFruitdex"), null, {
+  escuro: true,
+  aoClicar: nome => {
+    const b = [...document.querySelectorAll("#mapBiomeButtons button")].find(x => x.textContent.includes(nome));
+    if (b) { b.click(); document.getElementById("mapBiomeDetail").scrollIntoView({ behavior: "smooth", block: "nearest" }); }
+  }
+});
+PokedexAdaptador.iniciar({
+  icone: "🍌", fauna: false,
+  cor: "#65e9ff", cor2: "#6df05e",
+  escuro: () => true,
+  noturno: { fundo: "#0b2731", texto: "#eafcff", suave: "#a9cbd6" },
+  carregando: "🍍 Analisando características da fruta...",
+  extras: info => [["📜 Descrição", info.descricao], ["📍 Onde é encontrada", info.onde_encontrada], ["🍽️ Pode comer?", ({ comestivel: "Sim, é comestível.", nao_comestivel: "Não é comestível.", potencialmente_venenosa: "Pode ser venenosa! Não coma.", nao_confirmada: "Não foi possível confirmar." })[info.comestibilidade] || ""]],
+  alerta: info => info.venenosa_ou_nao_comestivel === true ? "Cuidado: esta fruta pode ser venenosa ou não comestível. Não coma sem um adulto." : "",
+  salvar: () => { document.getElementById("saveBtn").click(); document.querySelector('.nav button[data-page="albumPage"]').click(); },
+  acoesExtras: () => [{ texto: "🗺️ Ver página da fruta", aoClicar: () => {} }],
+  novaFoto: () => document.querySelector('.nav button[data-page="homePage"]').click()
+});
+</script>
+</body>
+</html>

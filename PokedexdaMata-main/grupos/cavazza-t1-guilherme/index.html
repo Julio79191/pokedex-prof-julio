@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Animais da Amazônia</title>
+<style>
+:root{--bg:#07090d;--panel:#111720;--line:#29313d;--red:#31d26f;--white:#fff;--muted:#a0a9b6;--green:#39e58c;--gold:#ffd02f}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 12% 0,#164d2c88,transparent 28%),radial-gradient(circle at 90% 15%,#0b4a2c55,transparent 24%),var(--bg);color:var(--white);font:15px Arial,sans-serif}
+.layout{min-height:100vh}.side{position:fixed;inset:0 auto 0 0;width:245px;background:#080b10;border-right:1px solid var(--line);padding:22px 15px;display:flex;flex-direction:column}.brand{display:flex;align-items:center;gap:10px;padding:5px 8px 28px}.robot{font-size:30px;background:white;color:#111;border-radius:13px;padding:9px}.brand small{display:block;color:var(--muted);margin-top:4px}.navtitle{font-size:10px;letter-spacing:2px;color:#687382;margin:15px 10px 7px;text-transform:uppercase}nav button{display:block;width:100%;text-align:left;border:0;background:none;color:var(--muted);padding:13px;border-radius:11px;font-weight:bold;cursor:pointer}nav button:hover,nav button.on{background:#181e27;color:white;border-left:3px solid var(--red)}.profile{margin-top:auto;background:var(--panel);border:1px solid var(--line);padding:13px;border-radius:13px}.profile small{color:var(--muted)}
+.main{margin-left:245px}header{height:70px;position:sticky;top:0;z-index:5;background:#080b10ed;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 30px}.search{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 13px;width:350px}.search input{background:none;border:0;outline:0;color:white;width:90%}.xp{color:var(--gold);font-weight:bold}main{padding:30px;max-width:1450px;margin:auto}.page{display:none}.page.on{display:block}.head{display:flex;align-items:end;justify-content:space-between;margin-bottom:22px;gap:12px}.head h1{font-size:30px;margin:0 0 6px}.head p{margin:0;color:var(--muted)}.btn{padding:12px 17px;border-radius:11px;font-weight:bold;cursor:pointer;border:0}.red{background:linear-gradient(135deg,#31d26f,#159447);color:white;box-shadow:0 5px 18px #31d26f22}.dark{background:#171d26;color:white;border:1px solid var(--line)}
+.hero{border:1px solid #245b3b;border-radius:22px;padding:38px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(120deg,#14171e,#090b10);min-height:300px}.kicker{color:#76e6a0;letter-spacing:2px;font-size:11px;font-weight:bold}.hero h2{font-size:42px;line-height:1.02;max-width:680px;margin:12px 0}.hero p{color:#c4cbd4;line-height:1.5;max-width:650px}.heroicon{font-size:145px;filter:drop-shadow(0 0 30px #31d26f55)}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin:18px 0}.stat,.card{background:linear-gradient(145deg,#111720,#0b0f14);border:1px solid var(--line);border-radius:16px;padding:18px}.stat strong{font-size:25px;display:block;margin:7px 0}.stat small{color:var(--muted)}.cols{display:grid;grid-template-columns:2fr 1fr;gap:16px}.quick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.scan{display:grid;grid-template-columns:1.4fr .6fr;gap:16px}.drop{min-height:330px;border:1px dashed #596270;border-radius:15px;display:grid;place-items:center;text-align:center;color:var(--muted)}.drop b{display:block;color:white;margin:10px}.drop .ico{font-size:65px}.file{display:none}video{width:100%;max-height:400px;object-fit:cover;border-radius:14px;margin-top:12px;background:#000}
+.resultgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.photo{width:100%;height:360px;object-fit:cover;border-radius:14px;background:#000}.tag{display:inline-block;background:#10271c;color:var(--green);border-radius:99px;padding:7px 10px;font-size:11px;font-weight:bold;margin-top:12px}.animalname{font-size:34px;font-weight:bold;margin:9px 0}.muted{color:var(--muted)}.bar{height:8px;background:#2a3039;border-radius:20px;overflow:hidden;margin:9px 0 16px}.bar i{height:100%;display:block;background:var(--green)}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.fact{background:#090c11;border:1px solid var(--line);border-radius:12px;padding:12px}.fact b{display:block;margin-bottom:5px}.fact span{font-size:12px;color:var(--muted);line-height:1.4}
+.map{height:230px;border-radius:14px;background:radial-gradient(ellipse at 50% 50%,#287d48 0 18%,transparent 19%),linear-gradient(135deg,#06140a,#0b2c17);display:grid;place-items:center;color:#9aefb1;font-weight:bold;letter-spacing:4px;position:relative}.pin{position:absolute;left:53%;top:40%;font-size:35px}.warning{border:1px solid #31d26f;background:#2a0d12;border-radius:13px;padding:14px;margin-top:14px}.warning b{color:#8af0ad}
+.album{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.animal{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}.animal img{width:100%;aspect-ratio:1.2;object-fit:cover;background:#000}.animal div{padding:11px}.animal small{display:block;color:var(--green);margin-top:5px}.empty{text-align:center;padding:50px;border:1px dashed #46505c;border-radius:15px;color:var(--muted)}.loading{text-align:center;padding:50px}.spin{font-size:45px;display:block;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.toast{display:none;position:fixed;right:25px;bottom:25px;background:white;color:#111;padding:13px 17px;border-radius:11px;font-weight:bold;z-index:30}
+@media(max-width:900px){.side{width:75px}.brand div:last-child,.navtitle,.profile{display:none}.brand{justify-content:center}.main{margin-left:75px}.cols,.scan,.resultgrid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.album{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){header{padding:0 12px}.search{width:50px}.search input{display:none}main{padding:15px}.hero{padding:24px}.heroicon{display:none}.hero h2{font-size:30px}.album{grid-template-columns:1fr 1fr}}
+
+.brand-logo{width:100%;max-width:215px;height:128px;object-fit:cover;object-position:left top;border-radius:18px;
+border:1px solid #245b3b;box-shadow:0 0 28px #31d26f22;margin-bottom:8px}
+.nature-badge{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:999px;
+background:#0b2b19;border:1px solid #26784a;color:#8af0ad;font-weight:bold;font-size:12px}
+</style></head>
+<body><aside class="side"><div class="brand"><div class="robot">🤖</div><div><b>ANIMAIS DA<br>AMAZÔNIA</b><small>Central de exploração</small></div></div>
+<div class="navtitle">Menu</div><nav><button class="on" data-page="home">🏠 &nbsp; Visão geral</button><button data-page="scanner">📷 &nbsp; Identificar</button><button data-page="album">📖 &nbsp; Meu álbum</button><button data-page="badges">🏆 &nbsp; Conquistas</button></nav><div class="navtitle">Explorar</div><nav><button data-page="groups">🌿 &nbsp; Grupos de animais</button><button data-page="help">❔ &nbsp; Como usar</button></nav><div class="profile">🤖 Robô Explorador<br><small>Especialista em mamíferos</small></div></aside>
+<div class="main"><header><div class="search">🔎 <input id="search" placeholder="Procurar no álbum"></div><div class="xp">⭐ <span id="xpTop">0</span> XP</div></header><main>
+<section id="home" class="page on"><div class="head"><div><h1>Central de Exploração 🌳</h1><p>Pronto para descobrir um mamífero?</p></div><button class="btn red" onclick="go('scanner')">📸 Nova descoberta</button></div><div class="hero"><div><div class="kicker">MODO AMAZÔNIA ATIVADO</div><h2>Descubra quem está escondido na floresta.</h2><p>Fotografe um mamífero e deixe o robô analisar. Se não tiver certeza, ele não inventa!</p><button class="btn red" onclick="go('scanner')">Começar expedição →</button></div><div class="heroicon">🤖</div></div><div class="stats"><div class="stat">🐾<strong id="count">0</strong><small>animais descobertos</small></div><div class="stat">⭐<strong id="xp">0</strong><small>pontos de exploração</small></div><div class="stat">🏅<strong id="medals">0</strong><small>medalhas</small></div><div class="stat">🗺️<strong>Amazônia</strong><small>região explorada</small></div></div><div class="cols"><div class="card"><h3>🚀 Atalhos</h3><div class="quick"><button class="btn dark" onclick="go('scanner')">📷 Identificar foto</button><button class="btn dark" onclick="go('album')">📖 Abrir álbum</button><button class="btn dark" onclick="go('groups')">🌿 Grupos de animais</button><button class="btn dark" onclick="go('badges')">🏆 Medalhas</button></div></div><div class="card"><h3>🤖 Dica do robô</h3><p class="muted">Use uma foto clara e mostre bem o animal. Observe sempre de longe!</p></div></div></section>
+<section id="scanner" class="page"><div class="head"><div><h1>Identificar mamífero 📷</h1><p>Escolha uma foto ou use a câmera.</p></div></div><div class="scan"><div class="card"><div class="drop" id="drop"><div><div class="ico">📸</div><b>Coloque uma foto aqui</b><p>Ou escolha uma imagem do computador.</p><label class="btn red" for="file">Escolher foto</label><input id="file" class="file" type="file" accept="image/*"></div></div><button id="cam" class="btn dark" style="width:100%;margin-top:12px">🎥 Usar câmera</button><video id="video" autoplay playsinline hidden></video><button id="snap" class="btn red" style="display:none;width:100%;margin-top:10px">📷 Tirar foto</button></div><div class="card"><h3>Como funciona?</h3><p>① Você fotografa</p><p>② O robô analisa</p><p>③ Só mostra se tiver 80% ou mais de certeza</p><hr style="border-color:var(--line)"><p class="muted">Não se aproxime de animais selvagens para fotografar.</p></div></div><canvas id="canvas" hidden></canvas><div id="status"></div></section>
+<section id="result" class="page"><div class="head"><div><h1>Ficha do animal</h1><p>Características e curiosidades da descoberta.</p></div><button class="btn dark" onclick="go('scanner')">📷 Outra foto</button></div><div id="resultBox"></div></section>
+<section id="album" class="page"><div class="head"><div><h1>Meu álbum 📖</h1><p>Suas descobertas guardadas.</p></div></div><div id="albumGrid" class="album"></div></section>
+<section id="badges" class="page"><div class="head"><div><h1>Conquistas 🏆</h1><p>Explore para ganhar medalhas.</p></div></div><div class="stats"><div class="card">🥇 <b>Primeira descoberta</b><p class="muted">Faça 1 descoberta.</p></div><div class="card">🐾 <b>Grande explorador</b><p class="muted">Descubra 3 animais.</p></div><div class="card">🌳 <b>Lenda da Amazônia</b><p class="muted">Descubra 5 animais.</p></div></div></section>
+
+<section id="groups" class="page"><div class="head"><div><h1>Grupos de animais 🌿</h1><p>Organize os mamíferos que você encontrou por família, alimentação e tamanho.</p></div></div><div class="card" style="margin-bottom:16px"><label for="groupBy" style="display:block;margin-bottom:8px;font-weight:bold">Agrupar por</label><select id="groupBy" class="btn dark" style="width:100%;max-width:420px"><option value="todos">Todos os animais</option><option value="grupo">Tipo de animal (felino, primata etc.)</option><option value="dieta">Alimentação</option><option value="porte">Tamanho</option><option value="habitat">Habitat</option></select><p class="muted">As categorias são preenchidas pela identificação. Se uma informação não estiver disponível, ela aparece como “Não informado”.</p></div><div id="groupsGrid" class="album"></div></section>
+<section id="help" class="page"><div class="head"><div><h1>Como usar ❔</h1><p>É fácil!</p></div></div><div class="cols"><div class="card"><h3>📸 Fazer uma descoberta</h3><p>1. Clique em Identificar.</p><p>2. Escolha uma foto ou abra a câmera.</p><p>3. Espere o robô analisar.</p><p>4. Se tiver certeza, o resultado aparece.</p></div><div class="card"><h3>⚠️ Segurança</h3><p class="muted">Observe animais selvagens de longe. Se encontrar um animal perigoso, não chegue perto e procure um adulto.</p></div></div></section>
+</main></div></div><div id="toast" class="toast"></div>
+<script>
+const S={score:Number(localStorage.getItem('ama_score')||0),album:JSON.parse(localStorage.getItem('ama_album')||'[]'),stream:null,last:null};const $=id=>document.getElementById(id);
+function go(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));$(id).classList.add('on');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.page===id));if(id!=='scanner')stopCam();if(id==='album')renderAlbum();if(id==='groups')renderGroups();stats();window.scrollTo(0,0)}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.page));
+function stats(){$('xpTop').textContent=S.score;$('xp').textContent=S.score;$('count').textContent=S.album.length;$('medals').textContent=S.album.length>=5?3:S.album.length>=3?2:S.album.length?1:0}
+function toast(t){$('toast').textContent=t;$('toast').style.display='block';clearTimeout(window.tm);window.tm=setTimeout(()=>$('toast').style.display='none',2200)}
+function base64(d){return d.split(',')[1]||''}
+$('file').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{let im=new Image();im.onload=()=>{let c=$('canvas'),scale=Math.min(1,1500/im.width);c.width=im.width*scale;c.height=im.height*scale;c.getContext('2d').drawImage(im,0,0,c.width,c.height);identify(c.toDataURL('image/jpeg',.88))};im.src=r.result};r.readAsDataURL(f)};
+$('cam').onclick=async()=>{try{S.stream=await navigator.mediaDevices.getUserMedia({video:true,audio:false});$('video').srcObject=S.stream;$('video').hidden=false;$('snap').style.display='block';$('cam').style.display='none';$('drop').style.display='none'}catch(e){$('status').textContent='Não consegui abrir a câmera. Escolha uma foto!'}};
+$('snap').onclick=()=>{let v=$('video'),c=$('canvas');if(!v.videoWidth)return;c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);identify(c.toDataURL('image/jpeg',.88))};
+function stopCam(){if(S.stream){S.stream.getTracks().forEach(t=>t.stop());S.stream=null}if($('video')){$('video').hidden=true;$('snap').style.display='none';$('cam').style.display='block';$('drop').style.display='grid'}}
+async function identify(photo){S.last=photo;go('result');$('resultBox').innerHTML='<div class="loading"><span class="spin">🤖</span><h2>O robô está analisando...</h2><p class="muted">Ele está tomando cuidado para não chutar.</p></div>';
+const prompt='Identifique SOMENTE mamíferos que vivem na Amazônia. Nunca chute. Se não houver certeza, identificado=false. confiança deve ser inteiro de 0 a 100; identificado=true somente com confiança >=80. Responda em português. Para animal identificado, forneça nome, características, curiosidades, habitat, perigoso (boolean), aviso, grupo (ex.: felino, primata, roedor, cetáceo, marsupial, outro mamífero), dieta (herbívoro, carnívoro, onívoro ou não informado) e porte (pequeno, médio, grande ou não informado). Use valores simples em português e não invente informações.';
+const req={"modelo":"gemini-3.6-flash","body":{"contents":[{"parts":[{"text":prompt},{"inline_data":{"mime_type":"image/jpeg","data":base64(photo)}}]}],"generationConfig":{"temperature":0.2,"responseMimeType":"application/json","responseSchema":{"type":"object","properties":{"identificado":{"type":"boolean"},"confianca":{"type":"integer"},"nome":{"type":"string"},"caracteristicas":{"type":"string"},"curiosidades":{"type":"string"},"habitat":{"type":"string"},"perigoso":{"type":"boolean"},"aviso":{"type":"string"},"grupo":{"type":"string"},"dieta":{"type":"string"},"porte":{"type":"string"}},"required":["identificado","confianca"]}}}};
+try{let r=await fetch('/api/identificar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(req)});if(!r.ok)throw Error();let j=await r.json(),t=j?.candidates?.[0]?.content?.parts?.[0]?.text;if(typeof t!=='string')throw Error();let d=JSON.parse(t);if(d.identificado!==true||Number(d.confianca)<80){$('resultBox').innerHTML=`<div class="empty"><div style="font-size:60px">🤔🌿</div><h2>Hmm... não consegui ter certeza!</h2><p>O robô não quer chutar. Tente outra foto, com mais luz.</p><button class="btn red" id="tryAgain">📸 Tentar outra foto</button></div>`;$('tryAgain').onclick=()=>go('scanner');return}showResult(d,photo)}
+catch(e){$('resultBox').innerHTML='<div class="empty"><div style="font-size:55px">😵</div><h2>Ops! O robô ficou sem conexão.</h2><p>Tente de novo daqui a pouco.</p><button class="btn red" onclick="identify(S.last)">🔄 Tentar novamente</button></div>'}}
+function addText(parent,tag,cls,text){let el=document.createElement(tag);if(cls)el.className=cls;el.textContent=text;parent.appendChild(el);return el}
+function showResult(d,photo){let name=typeof d.nome==='string'&&d.nome.trim()?d.nome:'Mamífero amazônico',conf=Math.min(100,Math.max(0,Number(d.confianca)||0));let wrap=document.createElement('div');wrap.className='resultgrid';
+let left=document.createElement('div');left.className='card';let im=document.createElement('img');im.className='photo';im.src=photo;im.alt='Foto do animal';left.appendChild(im);addText(left,'div','tag','✓ IDENTIFICADO');addText(left,'div','animalname',name);addText(left,'div','muted','Certeza do robô: '+conf+'%');let bar=document.createElement('div');bar.className='bar';let fill=document.createElement('i');fill.style.width=conf+'%';bar.appendChild(fill);left.appendChild(bar);addText(left,'p','','🤖 Descoberta confirmada! Veja a ficha para conhecer melhor esse animal.');
+let right=document.createElement('div');let facts=document.createElement('div');facts.className='card';addText(facts,'h3','','🔎 Ficha do animal');
+const entries=[['🧬 Características',d.caracteristicas||'O robô não trouxe detalhes desta vez.'],['💡 Curiosidades',d.curiosidades||'Continue explorando para aprender mais!'],['🌿 Onde vive',d.habitat||'Região amazônica'],['⭐ Recompensa','+10 pontos de exploração']];
+entries.forEach(([label,value])=>{let f=document.createElement('div');f.className='fact';addText(f,'b','',label);addText(f,'span','',String(value));facts.appendChild(f)});right.appendChild(facts);
+let mc=document.createElement('div');mc.className='card';addText(mc,'h3','','🗺️ Região do animal');let map=document.createElement('div');map.className='map';map.textContent='AMAZÔNIA';let pin=document.createElement('span');pin.className='pin';pin.textContent='📍';map.appendChild(pin);mc.appendChild(map);right.appendChild(mc);
+if(d.perigoso===true){let w=document.createElement('div');w.className='warning';addText(w,'b','','⚠️ ATENÇÃO');addText(w,'p','',d.aviso||'Não se aproxime. Observe de longe e peça ajuda a um adulto.');right.appendChild(w)}
+wrap.append(left,right);$('resultBox').replaceChildren(wrap);
+if(!S.album.some(x=>x.nome.toLowerCase()===name.toLowerCase())){miniAlbum(photo,name);S.album.unshift({nome:name,conf,photo:'',grupo:d.grupo||'Não informado',dieta:d.dieta||'Não informado',porte:d.porte||'Não informado',habitat:d.habitat||'Não informado',caracteristicas:d.caracteristicas||''});S.album=S.album.slice(0,40);localStorage.setItem('ama_album',JSON.stringify(S.album))}S.score+=10;localStorage.setItem('ama_score',S.score);stats();toast('⭐ +10 pontos! Ficha salva no álbum.')}
+/* O álbum guardava a foto inteira (400 KB cada) e enchia o navegador em ~12 animais:
+   agora guarda uma miniatura. */
+function miniAlbum(src,nome){const im=new Image();im.onload=()=>{const k=Math.min(1,360/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);const x=S.album.find(y=>y.nome===nome);if(x){x.photo=c.toDataURL('image/jpeg',.75);try{localStorage.setItem('ama_album',JSON.stringify(S.album))}catch(e){}}};im.src=src}
+function renderAlbum(){let g=$('albumGrid');g.innerHTML='';if(!S.album.length){g.innerHTML='<div class="empty" style="grid-column:1/-1">📖 Seu álbum está vazio.<br><br>Faça sua primeira descoberta!</div>';return}S.album.forEach(x=>{let a=document.createElement('article');a.className='animal';let im=document.createElement('img');im.src=x.photo;im.alt='Foto de '+x.nome;let d=document.createElement('div');addText(d,'b','',x.nome);addText(d,'small','',x.conf+'% de certeza');a.append(im,d);g.appendChild(a)})}
+
+function renderGroups(){
+ const grid=$('groupsGrid'); if(!grid)return; grid.innerHTML='';
+ const key=$('groupBy').value;
+ if(!S.album.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1">🌱 Ainda não há animais no seu álbum. Identifique um mamífero para começar seus grupos!</div>';return;}
+ if(key==='todos'){
+   const groups={}; S.album.forEach(x=>{const k=x.grupo||'Não informado';(groups[k]||(groups[k]=[])).push(x)});
+   Object.entries(groups).forEach(([label,animals])=>appendGroup(grid,label,animals));
+ } else {
+   const prop={grupo:'grupo',dieta:'dieta',porte:'porte',habitat:'habitat'}[key]; const groups={};
+   S.album.forEach(x=>{const k=(x[prop]||'Não informado').trim()||'Não informado';(groups[k]||(groups[k]=[])).push(x)});
+   Object.entries(groups).sort((a,b)=>a[0].localeCompare(b[0],'pt-BR')).forEach(([label,animals])=>appendGroup(grid,label,animals));
+ }
+}
+function appendGroup(root,label,animals){
+ const card=document.createElement('section');card.className='card';card.style.gridColumn='1/-1';
+ const title=document.createElement('h3');title.textContent='🌿 '+label+' ('+animals.length+')';card.appendChild(title);
+ const row=document.createElement('div');row.className='album';
+ animals.forEach(x=>{const a=document.createElement('article');a.className='animal';const im=document.createElement('img');im.src=x.photo;im.alt='Foto de '+x.nome;const d=document.createElement('div');addText(d,'b','',x.nome);addText(d,'small','',`${x.grupo||'Grupo não informado'} • ${x.dieta||'Dieta não informada'} • ${x.porte||'Porte não informado'}`);a.append(im,d);row.appendChild(a)});
+ card.appendChild(row);root.appendChild(card);
+}
+$('groupBy').addEventListener('change',renderGroups);
+$('search').oninput=e=>{let q=e.target.value.toLowerCase();document.querySelectorAll('.animal').forEach(x=>x.style.display=x.textContent.toLowerCase().includes(q)?'block':'none')};stats();renderAlbum();
+</script>
+<style id="ajustes-tablet">
+/* Ajustes de visual para tablet (deitado e em pé) e computador.
+   O visual e as ideias são do grupo; aqui só arrumamos tamanho, espaço e alinhamento. */
+html{background:#05070a}
+body{min-height:100vh;background-attachment:fixed}
+nav button{min-height:46px;font-size:15px}
+/* tablet em pé: menu vira uma barra no topo */
+@media (max-width:900px){
+  .side{position:sticky;top:0;z-index:6;width:auto;inset:auto;flex-direction:row;align-items:center;gap:6px;padding:8px 10px;border-right:0;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+  .side::-webkit-scrollbar{display:none}
+  .brand{padding:0 6px 0 0}
+  .navtitle,.profile{display:none!important}
+  .side nav{display:flex;gap:4px}
+  .side nav button{width:auto;white-space:nowrap;padding:10px 12px;font-size:14px}
+  .main{margin-left:0!important}
+  header{position:static}
+}
+/* menu inteiro visível no tablet em pé */
+@media(max-width:900px){nav{flex-wrap:wrap!important;overflow:visible!important}nav button{white-space:nowrap}}
+</style>
+<!-- POKÉDEX: ficha padrão em pop-up + ligação com o back-end do grupo
+     (comum/ficha.js e comum/adaptador.js). O resto da página é do grupo. -->
+<script src="/comum/ficha.js"></script>
+<script src="/comum/adaptador.js"></script>
+<script>
+PokedexAdaptador.iniciar({
+  icone: "🐆", fauna: true,
+  cor: "#39e58c", cor2: "#ffd02f",
+  escuro: () => true,
+  noturno: { fundo: "#111720", texto: "#ffffff", suave: "#a0a9b6" },
+  carregando: "🤖 O robô está analisando o animal...",
+  extras: info => [["🧬 Características", info.caracteristicas], ["🍖 Dieta", info.dieta], ["📏 Porte", info.porte]],
+  alerta: info => info.perigoso === true ? (info.aviso || "Este animal pode ser perigoso. Observe de longe!") : "",
+  salvar: () => go("album"),
+  acoesExtras: () => [{ texto: "🗺️ Ver ficha do robô", aoClicar: () => {} }],
+  novaFoto: () => go("scanner")
+});
+</script>
+</body></html>

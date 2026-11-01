@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codex — Mundo Animal</title>
+<style>
+:root{--blue:#9edcff;--pink:#ffb7d5;--yellow:#ffe56d;--ink:#20202a;--paper:#fffdf8;--muted:#666575;--line:#24232b}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+header{background:linear-gradient(115deg,var(--blue),var(--pink) 58%,var(--yellow));padding:22px 5vw 28px;border-bottom:3px solid var(--line);position:relative;overflow:hidden}
+header:after{content:"★  ★  ★";position:absolute;right:4%;top:16px;font-size:24px;letter-spacing:12px;color:#111}
+.brand{font-weight:1000;font-size:clamp(2.6rem,7vw,4.5rem);letter-spacing:-4px;margin:4px 0}.brand span{display:inline-block;transform:rotate(-4deg);background:white;border:3px solid var(--line);border-radius:18px;padding:2px 18px;box-shadow:5px 5px 0 var(--line)}
+header p{font-size:1.05rem;max-width:620px;line-height:1.5;margin:14px 0 0}
+main{width:min(1100px,92%);margin:28px auto 60px}
+.search-panel{background:white;border:2px solid var(--line);border-radius:22px;padding:20px;box-shadow:5px 5px 0 var(--line)}
+.search-row{display:flex;gap:10px;flex-wrap:wrap}.search-row input{flex:1;min-width:220px;padding:14px 16px;border:2px solid var(--line);border-radius:12px;font-size:1rem}
+button,.chip{border:2px solid var(--line);border-radius:12px;background:var(--yellow);font-weight:800;padding:12px 16px;cursor:pointer;color:var(--ink);transition:transform .12s}
+button:hover,.chip:hover{transform:translateY(-2px)}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.chip{background:#fff;padding:9px 12px}.chip.active{background:var(--pink)}
+h2{font-size:1.6rem;margin:30px 0 14px}.category-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.category{border:2px solid var(--line);border-radius:17px;padding:16px;background:white;box-shadow:3px 3px 0 var(--line);cursor:pointer;text-align:left}
+.category:nth-child(3n+1){background:#e3f5ff}.category:nth-child(3n+2){background:#ffe2ef}.category:nth-child(3n){background:#fff4b8}.category b{display:block;font-size:1.05rem;margin:8px 0}.category small{color:#4f4c5b;line-height:1.4}
+.result-heading{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap}.result-heading p{color:var(--muted);margin:0}
+.results{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:16px;margin-top:16px}
+.animal-card{border:2px solid var(--line);border-radius:18px;overflow:hidden;background:white;box-shadow:4px 4px 0 var(--line);cursor:pointer}
+.animal-card img{width:100%;height:190px;object-fit:cover;display:block;background:#eee}.animal-card .body{padding:14px}.animal-card h3{margin:0 0 6px;font-size:1.25rem}.animal-card p{margin:0;color:var(--muted);line-height:1.45;font-size:.94rem}.tag{display:inline-block;background:var(--yellow);border:1px solid var(--line);border-radius:30px;padding:4px 8px;font-size:.78rem;font-weight:800;margin:0 5px 8px 0}
+.detail{display:none;margin-top:24px;border:2px solid var(--line);border-radius:22px;overflow:hidden;background:white;box-shadow:5px 5px 0 var(--line)}.detail.show{display:grid;grid-template-columns:minmax(250px, .9fr) 1.1fr}
+.detail img{width:100%;height:100%;min-height:300px;object-fit:cover;background:#eee}.detail-copy{padding:22px}.detail-copy h2{margin:0 0 8px}.detail-copy p{line-height:1.55}.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:9px;margin:16px 0}.fact{background:#f5f7fb;border:1px solid #d4d6df;border-radius:10px;padding:10px;font-size:.9rem}.fact strong{display:block;margin-bottom:4px}.note{font-size:.83rem;color:var(--muted)}
+.empty{padding:25px;background:#fff4b8;border:2px dashed var(--line);border-radius:16px;line-height:1.5}
+footer{padding:22px;text-align:center;background:var(--blue);border-top:2px solid var(--line);line-height:1.5}
+@media(max-width:650px){.detail.show{grid-template-columns:1fr}.detail img{height:240px;min-height:0}header:after{font-size:16px;letter-spacing:5px;right:2%}.brand{letter-spacing:-2px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><span>codex</span></div>
+  <p><strong>Um mundo de animais para descobrir!</strong><br>Pesquise espécies, conheça filhotes e adultos e aprenda sobre habitats, alimentação e conservação. 💙💗💛</p>
+</header>
+<main>
+  <section class="search-panel" aria-label="Pesquisa de animais">
+    <h2 style="margin:0 0 12px">🔎 O que você quer descobrir?</h2>
+    <div class="search-row">
+      <input id="search" type="search" placeholder="Ex.: ararinha-azul, onça-pintada, cachorro..." aria-label="Pesquisar animais">
+      <button id="searchBtn">Pesquisar</button>
+    </div>
+    <div class="tabs" id="filters">
+      <button class="chip active" data-filter="Todos">Todos</button>
+      <button class="chip" data-filter="Mamíferos">Mamíferos</button>
+      <button class="chip" data-filter="Aves">Aves</button>
+      <button class="chip" data-filter="Répteis">Répteis</button>
+      <button class="chip" data-filter="Peixes">Peixes</button>
+    </div>
+  </section>
+
+<style>
+.scan-row{display:grid;grid-template-columns:minmax(200px,280px) 1fr;gap:16px;align-items:center;margin-top:12px}
+.scan-preview{aspect-ratio:4/3;border:2px dashed var(--line);border-radius:16px;background:#e3f5ff;display:grid;place-items:center;text-align:center;overflow:hidden;font-size:2.4rem}
+.scan-preview small{display:block;font-size:.85rem;color:var(--muted)}
+.scan-preview img{width:100%;height:100%;object-fit:cover}
+.scan-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.scan-actions .note{flex-basis:100%;font-size:.95rem}
+button:disabled{opacity:.5;cursor:not-allowed;transform:none}
+@media(max-width:650px){.scan-row{grid-template-columns:1fr}}
+</style>
+  <section class="search-panel" id="reconhecer" style="margin-top:22px;background:linear-gradient(115deg,#e3f5ff,#ffe2ef 60%,#fff4b8)">
+    <h2 style="margin:0 0 6px">📷 Descobrir pela foto</h2>
+    <p style="margin:0;line-height:1.5">Tire uma foto de um animal (ou escolha uma da galeria) e o Codex tenta descobrir qual é! 💙💗💛</p>
+    <div class="scan-row">
+      <div class="scan-preview" id="previaCodex"><div>🐾<small>A foto aparece aqui</small></div></div>
+      <div class="scan-actions">
+        <button id="btnCamCodex">📷 Tirar foto</button>
+        <button id="btnGalCodex" class="chip">🖼️ Escolher da galeria</button>
+        <button id="btnDescobrir" style="background:var(--pink)" disabled>🔎 Descobrir animal</button>
+        <div id="statusCodex" class="note"></div>
+      </div>
+    </div>
+    <input id="camCodex" type="file" accept="image/*" capture="environment" hidden>
+    <input id="galCodex" type="file" accept="image/*" hidden>
+  </section>
+
+  <h2>📒 Meu Codex</h2>
+  <p class="note" style="margin-top:-6px">Os animais que você descobriu pela foto ficam guardados aqui (neste aparelho).</p>
+  <section id="meuCodex" class="results" style="margin-top:0"></section>
+
+  <h2>⭐ Categorias do Codex</h2>
+  <section class="category-grid">
+    <button class="category" data-category="Mamíferos"><span style="font-size:1.8rem">🐾</span><b>Mamíferos</b><small>Animais como onças, cães, gatos e capivaras. Em geral, têm pelos e alimentam os filhotes com leite.</small></button>
+    <button class="category" data-category="Aves"><span style="font-size:1.8rem">🦜</span><b>Aves</b><small>Animais com penas e bico. Conheça araras, ararinhas-azuis, tucanos e outras espécies.</small></button>
+    <button class="category" data-category="Répteis"><span style="font-size:1.8rem">🐢</span><b>Répteis</b><small>Grupo que inclui tartarugas, jacarés, serpentes e lagartos.</small></button>
+    <button class="category" data-category="Peixes"><span style="font-size:1.8rem">🐟</span><b>Peixes</b><small>Animais aquáticos que, em sua maioria, respiram por brânquias.</small></button>
+    <button class="category" data-category="Raças"><span style="font-size:1.8rem">🐕</span><b>Raças</b><small>Explore raças de animais domésticos. Raça não é o mesmo que espécie.</small></button>
+    <button class="category" data-category="Habitats"><span style="font-size:1.8rem">🌎</span><b>Habitats e países</b><small>Descubra ambientes e regiões onde os animais vivem naturalmente.</small></button>
+  </section>
+
+  <div class="result-heading">
+    <div><h2>🐣 Conheça os animais</h2><p>Selecione um cartão para ver mais informações.</p></div>
+    <span class="note">As fotos são carregadas de fontes externas.</span>
+  </div>
+  <section id="results" class="results" aria-live="polite"></section>
+  <section id="detail" class="detail" aria-live="polite"></section>
+  <p class="note" style="margin-top:22px">Nota: as informações são educativas e resumidas. As imagens dependem de conexão com a internet; confirme dados específicos com fontes científicas ou instituições de conservação.</p>
+</main>
+<footer>⭐ <strong>Codex</strong> — descubra, respeite e proteja os animais. ⭐<br>Projeto educativo sobre animais filhotes e adultos.</footer>
+<script>
+const animals = [
+ {name:"Onça-pintada",group:"Mamíferos",scientific:"Panthera onca",young:"Filhote",adult:"Adulto",habitat:"Florestas, Pantanal, Cerrado e outros ambientes naturais",countries:"Do México ao norte da Argentina, incluindo o Brasil",food:"Carnívora; caça diferentes animais",description:"É o maior felino das Américas. Tem corpo forte, pelagem com rosetas e costuma viver perto de água em muitos ambientes.",fact:"Sua mordida é muito potente para seu tamanho.",image:"https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=1000&q=85"},
+ {name:"Ararinha-azul",group:"Aves",scientific:"Cyanopsitta spixii",young:"Filhote",adult:"Adulto",habitat:"Caatinga, especialmente áreas de mata ciliar",countries:"Brasil; a espécie é nativa do país e participa de programas de conservação e reintrodução",food:"Principalmente sementes e frutos",description:"É uma ave brasileira de plumagem azul. É uma espécie criticamente ameaçada e depende de ações de conservação para continuar existindo na natureza.",fact:"A conservação da espécie envolve reprodução planejada e reintrodução monitorada.",image:"https://images.unsplash.com/photo-1552728089-57bdde30beb3?auto=format&fit=crop&w=1000&q=85"},
+ {name:"Capivara",group:"Mamíferos",scientific:"Hydrochoerus hydrochaeris",young:"Filhote",adult:"Adulto",habitat:"Áreas úmidas, margens de rios, lagos e brejos",countries:"Vários países da América do Sul, incluindo o Brasil",food:"Herbívoras; comem principalmente gramíneas e plantas aquáticas",description:"É o maior roedor vivo do mundo. É semiaquática, costuma viver em grupos e usa a água para se refrescar e escapar de perigos.",fact:"Seus dedos têm pequenas membranas que ajudam a nadar.",image:"https://images.unsplash.com/photo-1557431177-36141475c676?auto=format&fit=crop&w=1000&q=85"},
+ {name:"Leão",group:"Mamíferos",scientific:"Panthera leo",young:"Filhote de leão",adult:"Leão adulto",habitat:"Savanas e campos africanos; pequena população asiática na Índia",countries:"Principalmente países da África; uma população vive na Índia",food:"Carnívoro",description:"Felino social que vive em grupos chamados bandos. Os machos adultos geralmente desenvolvem juba, embora isso varie.",fact:"É um dos poucos felinos que vivem naturalmente em grupos sociais grandes.",image:"https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=1000&q=85"},
+ {name:"Panda-gigante",group:"Mamíferos",scientific:"Ailuropoda melanoleuca",young:"Filhote",adult:"Adulto",habitat:"Florestas temperadas de montanha com bambu",countries:"China",food:"Principalmente bambu",description:"Mamífero conhecido pela pelagem preta e branca. Apesar de pertencer à ordem dos carnívoros, sua alimentação é quase toda composta por bambu.",fact:"Os pandas têm uma estrutura semelhante a um polegar que ajuda a segurar o bambu.",image:"https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?auto=format&fit=crop&w=1000&q=85"},
+ {name:"Tartaruga-marinha",group:"Répteis",scientific:"Cheloniidae (família)",young:"Filhote",adult:"Adulto",habitat:"Oceanos tropicais e subtropicais; fêmeas põem ovos em praias",countries:"Mares de muitas regiões do mundo; a distribuição varia conforme a espécie",food:"Varia conforme a espécie: algas, plantas marinhas, invertebrados ou outros animais",description:"Tartarugas marinhas passam a maior parte da vida no oceano e retornam a praias para a reprodução. Muitas espécies enfrentam ameaças causadas por atividades humanas.",fact:"A iluminação artificial nas praias pode desorientar filhotes recém-nascidos.",image:"https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?auto=format&fit=crop&w=1000&q=85"},
+ {name:"Cachorro doméstico",group:"Mamíferos",scientific:"Canis lupus familiaris",young:"Filhote",adult:"Adulto",habitat:"Ambientes domésticos e, quando sem tutor, diversos ambientes modificados por humanos",countries:"Presente em todo o mundo",food:"Alimentação formulada para cães; necessidades variam com idade e saúde",description:"Animal domesticado com grande variedade de tamanhos, pelagens e comportamentos. As raças são variedades dentro da mesma espécie domesticada.",fact:"Socialização, enriquecimento e cuidados veterinários ajudam no bem-estar.",image:"https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=1000&q=85"},
+ {name:"Gato doméstico",group:"Mamíferos",scientific:"Felis catus",young:"Filhote",adult:"Adulto",habitat:"Ambientes domésticos e áreas urbanas",countries:"Presente em todo o mundo",food:"Carnívoro obrigatório; precisa de dieta apropriada para gatos",description:"Pequeno felino domesticado, com sentidos apurados e comportamento de caça. Pode ter muitos padrões de pelagem.",fact:"Brincadeiras que simulam caça ajudam a estimular o gato com segurança.",image:"https://images.unsplash.com/photo-1573865526739-10659fec78a5?auto=format&fit=crop&w=1000&q=85"},
+ {name:"Tucano-toco",group:"Aves",scientific:"Ramphastos toco",young:"Filhote",adult:"Adulto",habitat:"Cerrado, bordas de florestas e áreas abertas com árvores",countries:"América do Sul central e oriental, incluindo o Brasil",food:"Frutos e também insetos, ovos e pequenos animais",description:"Ave reconhecida pelo bico grande e colorido. O bico ajuda a alcançar alimentos e participa da regulação de calor.",fact:"Apesar do tamanho, o bico é relativamente leve por sua estrutura interna.",image:"https://images.unsplash.com/photo-1552728089-57bdde30beb3?auto=format&fit=crop&w=1000&q=85"}
+];
+let activeGroup="Todos";
+const results=document.getElementById("results"), search=document.getElementById("search"), detail=document.getElementById("detail");
+function render(){
+ const q=search.value.trim().toLocaleLowerCase("pt-BR");
+ const list=animals.filter(a=>(activeGroup==="Todos"||a.group===activeGroup||activeGroup==="Raças"&&a.name==="Cachorro doméstico"||activeGroup==="Habitats")&&(!q||[a.name,a.group,a.scientific,a.habitat,a.countries,a.food].join(" ").toLocaleLowerCase("pt-BR").includes(q)));
+ results.innerHTML="";
+ if(!list.length){results.innerHTML='<div class="empty">Não encontrei esse termo no catálogo de demonstração. Tente “onça”, “ararinha”, “país”, “ave” ou “cachorro”.</div>';return}
+ list.forEach(a=>{const card=document.createElement("article");card.className="animal-card";card.tabIndex=0;card.innerHTML=`<img src="${a.image}" data-especie="${a.scientific.replace(/ \(.*\)/,"")}" alt="Foto de ${a.name}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/800x500/e3f5ff/20202a?text=Foto+indisponivel'"><div class="body"><span class="tag">${a.group}</span><span class="tag">Filhote e adulto</span><h3>${a.name}</h3><p>${a.description}</p></div>`;card.addEventListener("click",()=>showDetail(a));card.addEventListener("keydown",e=>{if(e.key==="Enter")showDetail(a)});results.appendChild(card)});
+}
+function showDetail(a){
+ detail.className="detail show";
+ detail.innerHTML=`<img src="${a.image}" data-especie="${a.scientific.replace(/ \(.*\)/,"")}" alt="Foto de ${a.name}" onerror="this.onerror=null;this.src='https://placehold.co/800x600/ffe2ef/20202a?text=Foto+indisponivel'"><div class="detail-copy"><span class="tag">${a.group}</span><h2>${a.name}</h2><p><em>${a.scientific}</em></p><p>${a.description}</p><div class="facts"><div class="fact"><strong>🐣 Filhote</strong>${a.young}</div><div class="fact"><strong>🐾 Adulto</strong>${a.adult}</div><div class="fact"><strong>🌿 Habitat</strong>${a.habitat}</div><div class="fact"><strong>🌎 Países / região</strong>${a.countries}</div><div class="fact"><strong>🍃 Alimentação</strong>${a.food}</div><div class="fact"><strong>⭐ Curiosidade</strong>${a.fact}</div></div><button id="closeDetail">Fechar informações</button><p class="note">As fotos são fornecidas por links externos e podem variar em disponibilidade. Para uso público, confira a licença e o crédito de cada imagem.</p></div>`;
+ document.getElementById("closeDetail").addEventListener("click",()=>{detail.className="detail";detail.innerHTML=""});
+ detail.scrollIntoView({behavior:"smooth",block:"start"});
+}
+document.getElementById("searchBtn").addEventListener("click",render);
+search.addEventListener("input",render);
+search.addEventListener("keydown",e=>{if(e.key==="Enter")render()});
+document.querySelectorAll("#filters .chip").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll("#filters .chip").forEach(b=>b.classList.remove("active"));btn.classList.add("active");activeGroup=btn.dataset.filter;render()}));
+document.querySelectorAll("[data-category]").forEach(btn=>btn.addEventListener("click",()=>{const c=btn.dataset.category;activeGroup=["Mamíferos","Aves","Répteis","Peixes"].includes(c)?c:c==="Raças"?"Raças":"Habitats";document.querySelectorAll("#filters .chip").forEach(b=>b.classList.toggle("active",b.dataset.filter===activeGroup));search.value="";render();document.getElementById("results").scrollIntoView({behavior:"smooth"})}));
+render();
+</script>
+
+<style id="ajustes-tablet">
+/* Ajustes de visual para tablet (deitado e em pé) e computador.
+   O visual e as ideias são do grupo; aqui só arrumamos tamanho, espaço e alinhamento. */
+@media (min-width:700px){body>header,body>main{zoom:1.1}}
+button,.chip{min-height:44px}
+.category small{font-size:13.5px}
+</style>
+<!-- POKÉDEX: ficha padrão em pop-up + ligação com o back-end do grupo
+     (comum/ficha.js e comum/adaptador.js). O resto da página é do grupo. -->
+<script src="/comum/ficha.js"></script>
+<script src="/comum/adaptador.js"></script>
+<script>
+/* ===== Parte nova: descobrir o animal pela foto + "Meu Codex" =====
+   (o catálogo e o visual são do grupo; a ficha aparece no pop-up) */
+(function () {
+  const $ = id => document.getElementById(id);
+  const CHAVE = "codexMeusAnimais";
+  let foto = null, miniatura = "", ultimo = null;
+
+  function reduzir(arquivo, lado) {
+    return new Promise(res => {
+      const img = new Image();
+      img.onload = () => {
+        const k = Math.min(1, lado / Math.max(img.width, img.height));
+        const c = document.createElement("canvas");
+        c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        res(c.toDataURL("image/jpeg", .85));
+      };
+      img.onerror = () => res("");
+      img.src = URL.createObjectURL(arquivo);
+    });
+  }
+  function escolher(f) {
+    if (!f) return;
+    foto = f;
+    $("previaCodex").innerHTML = `<img src="${URL.createObjectURL(f)}" alt="Foto escolhida">`;
+    $("btnDescobrir").disabled = false;
+    $("statusCodex").textContent = "Foto pronta! Agora toque em “Descobrir animal”. 🐾";
+  }
+  $("btnCamCodex").onclick = () => $("camCodex").click();
+  $("btnGalCodex").onclick = () => $("galCodex").click();
+  ["camCodex", "galCodex"].forEach(id => $(id).addEventListener("change", e => escolher(e.target.files[0])));
+
+  $("btnDescobrir").onclick = async () => {
+    if (!foto) return;
+    $("btnDescobrir").disabled = true;
+    try {
+      const grande = await reduzir(foto, 1600);
+      miniatura = await reduzir(foto, 400);
+      const r = await fetch("/api/identificar", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ modelo: "gemini-3.6-flash", mime: "image/jpeg", imagem: grande.split(",")[1] })
+      });
+      const dados = await r.json().catch(() => ({}));
+      const texto = dados && dados.candidates && dados.candidates[0].content.parts[0].text;
+      ultimo = texto ? JSON.parse(texto) : null;
+      $("statusCodex").textContent = ultimo && ultimo.identificado ? "🎉 Animal descoberto!" : "Vamos tentar outra foto? 📷";
+    } catch (e) {
+      $("statusCodex").textContent = "Ops! Não consegui falar com o servidor.";
+    } finally {
+      $("btnDescobrir").disabled = false;
+    }
+  };
+
+  const ler = () => { try { return JSON.parse(localStorage.getItem(CHAVE) || "[]"); } catch (e) { return []; } };
+  function desenhar() {
+    const caixa = $("meuCodex"), lista = ler();
+    caixa.innerHTML = "";
+    if (!lista.length) { caixa.innerHTML = '<div class="empty">🐣 Seu Codex ainda está vazio. Descubra um animal pela foto!</div>'; return; }
+    lista.forEach(a => {
+      const card = document.createElement("article"); card.className = "animal-card";
+      const img = document.createElement("img"); img.src = a.foto; img.alt = "Foto de " + a.nome;
+      const body = document.createElement("div"); body.className = "body";
+      const tag = document.createElement("span"); tag.className = "tag"; tag.textContent = "Descoberto em " + a.data;
+      const h = document.createElement("h3"); h.textContent = a.nome;
+      const p = document.createElement("p"); p.textContent = a.cientifico || "";
+      body.append(tag, h, p); card.append(img, body); caixa.appendChild(card);
+    });
+  }
+  window.salvarNoCodex = () => {
+    if (!ultimo || !ultimo.identificado) return;
+    const lista = ler().filter(a => a.nome.toLowerCase() !== String(ultimo.nome_popular).toLowerCase());
+    lista.unshift({ nome: ultimo.nome_popular, cientifico: ultimo.nome_cientifico || "", foto: miniatura, data: new Date().toLocaleDateString("pt-BR") });
+    try { localStorage.setItem(CHAVE, JSON.stringify(lista.slice(0, 40))); } catch (e) {}
+    desenhar();
+    $("meuCodex").scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+  desenhar();
+
+  /* Fotos certas no catálogo: cada animal busca a foto pela espécie */
+  const desenharCatalogo = render, abrirDetalhe = showDetail;
+  render = function () { desenharCatalogo(); FichaPokedex.trocarFotos($("results")); };
+  showDetail = function (a) { abrirDetalhe(a); FichaPokedex.trocarFotos($("detail")); };
+  render();
+})();
+
+PokedexAdaptador.iniciar({
+  // botões por etapa: o de identificar só aparece depois de escolher a foto
+  etapas: { foto: ["#btnDescobrir"] },
+  icone: "🐾", fauna: true,
+  cor: "#ff7fb5", cor2: "#5bb8f0",
+  escuro: () => false,
+  claro: { fundo: "#fffdf8", texto: "#20202a", suave: "#666575" },
+  carregando: "🔎 O Codex está olhando a foto...",
+  salvar: () => salvarNoCodex(),
+  novaFoto: () => document.getElementById("btnGalCodex").click()
+});
+</script>
+</body>
+</html>
