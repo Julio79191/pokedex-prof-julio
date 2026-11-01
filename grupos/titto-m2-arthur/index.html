@@ -18,12 +18,15 @@ button{background:#22c55e;border:0;padding:12px 18px;border-radius:15px;cursor:p
 .card{background:#09242c;border-radius:20px;padding:15px}
 .info{background:#0b3540;padding:10px;border-radius:10px;margin:8px 0}
 .perigo{background:#991b1b;padding:10px;border-radius:10px}
+.logo img{width:80px;height:80px;object-fit:contain}
+.emoji-img{height:1em;width:auto;vertical-align:-0.15em}
+.bichos img{height:70px;width:auto;vertical-align:middle}
 </style>
 </head>
 <body>
 
 <header>
-<div class="logo">🦫</div>
+<div class="logo"><img src="/grupos/titto-m2-arthur/img/capivara.png" alt="Capivara"></div>
 <h1>WitAnimals</h1>
 <p>🌿 Pokédex da Mata</p>
 <p>🔬 Explore animais como um cientista!</p>
@@ -48,7 +51,7 @@ button{background:#22c55e;border:0;padding:12px 18px;border-radius:15px;cursor:p
 <div class="safari">
 <h1>🌅 Safári da Mata</h1>
 <p>Encontre animais escondidos!</p>
-<div class="bichos">🦫 🐆 🦁 🐘 🦒</div>
+<div class="bichos"><img src="/grupos/titto-m2-arthur/img/capivara.png" alt="Capivara"> 🐆 🦁 🐘 🦒</div>
 <button onclick="abrir('pokedex')">Abrir Pokédex</button>
 </div>
 </div>
@@ -63,7 +66,7 @@ button{background:#22c55e;border:0;padding:12px 18px;border-radius:15px;cursor:p
 
 <script>
 const animais=[
-["🦫 Capivara","Vive perto de rios","Plantas e capim","Maior roedor do mundo","Assobio"],
+['<img class="emoji-img" src="/grupos/titto-m2-arthur/img/capivara.png" alt=""> Capivara',"Vive perto de rios","Plantas e capim","Maior roedor do mundo","Assobio"],
 ["🦁 Leão","Savanas africanas","Carne","Vive em grupos","Rugido"],
 ["🐘 Elefante","África e Ásia","Folhas e frutas","Usa a tromba para beber água","Trombeta"],
 ["🐺 Lobo","Florestas e montanhas","Carne","Se comunica por uivos","Uivo"],
