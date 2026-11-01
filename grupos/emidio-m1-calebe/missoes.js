@@ -39,7 +39,7 @@ const O_QUE_PROCURAR = "Répteis e Anfíbios do Brasil";
 
 // Missão 3: quanta certeza a IA precisa ter (número de 0 a 100, sem aspas)
 // Por que o grupo escolheu: ""
-const CERTEZA_MINIMA = 77;
+const CERTEZA_MINIMA = 75;
 
 // Missão 4: o porteiro
 function conferirFoto(foto) {
