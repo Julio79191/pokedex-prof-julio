@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aventura da Mata 🦜</title>
+<style>
+  :root{
+    --azul:#1597ff;
+    --azul-escuro:#062b35;
+    --verde:#39d353;
+    --verde-escuro:#073d2e;
+    --fundo:#031d25;
+    --card:#0b3440;
+    --branco:#f4fff9;
+    --amarelo:#ffe45c;
+    --vermelho:#ff554f;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:Arial,Helvetica,sans-serif;
+    color:var(--branco);
+    background:
+      radial-gradient(circle at 15% 10%, rgba(21,151,255,.28), transparent 28%),
+      radial-gradient(circle at 85% 90%, rgba(57,211,83,.22), transparent 30%),
+      linear-gradient(145deg,#02161d,#063c3c 55%,#021b24);
+  }
+  button{font:inherit}
+  .app{max-width:480px;margin:auto;min-height:100vh;position:relative;overflow:hidden}
+  .screen{display:none;min-height:100vh;padding:22px 18px 100px}
+  .screen.active{display:block}
+  .hero{text-align:center;padding:26px 8px 10px}
+  .logo{
+    font-size:42px;font-weight:900;line-height:.92;
+    color:var(--amarelo);
+    text-shadow:3px 4px 0 #087a44, 0 0 22px rgba(57,211,83,.3);
+  }
+  .subtitle{font-size:17px;margin:14px 0;color:#d9fff0}
+  .mascot{font-size:95px;filter:drop-shadow(0 8px 12px rgba(0,0,0,.35));animation:float 2.6s ease-in-out infinite}
+  @keyframes float{50%{transform:translateY(-8px) rotate(2deg)}}
+  .card{
+    background:rgba(11,52,64,.92);
+    border:1px solid rgba(122,255,192,.2);
+    border-radius:24px;padding:18px;margin:14px 0;
+    box-shadow:0 14px 35px rgba(0,0,0,.25)
+  }
+  .primary{
+    width:100%;border:0;border-radius:18px;padding:16px 18px;
+    background:linear-gradient(135deg,var(--verde),#1ec8b1);
+    color:#03251d;font-weight:900;font-size:18px;cursor:pointer;
+    box-shadow:0 8px 22px rgba(57,211,83,.22)
+  }
+  .secondary{
+    border:0;border-radius:15px;padding:12px 16px;background:#125261;color:white;font-weight:800;cursor:pointer
+  }
+  .camera-wrap{position:relative;border-radius:25px;overflow:hidden;background:#00151b;min-height:390px}
+  video{width:100%;height:390px;object-fit:cover;display:block}
+  .camera-frame{position:absolute;inset:38px 28px;border:3px solid white;border-radius:24px;box-shadow:0 0 0 999px rgba(0,0,0,.12)}
+  .camera-hint{position:absolute;bottom:15px;left:15px;right:15px;text-align:center;background:rgba(0,0,0,.55);padding:10px;border-radius:14px}
+  .camera-actions{display:flex;gap:10px;margin-top:12px}
+  .camera-actions button{flex:1}
+  .title-row{display:flex;align-items:center;gap:10px}
+  h1,h2{margin:0 0 8px}
+  .back{width:42px;height:42px;border:0;border-radius:50%;background:#104754;color:white;font-size:22px;cursor:pointer}
+  .result-img{width:100%;height:210px;object-fit:cover;border-radius:20px;background:#09252d}
+  .confidence{display:inline-block;background:#b8ffcf;color:#06452b;padding:7px 10px;border-radius:99px;font-weight:900;margin:7px 0}
+  .curiosity{margin:8px 0;padding-left:20px;line-height:1.5}
+  .map{
+    min-height:260px;border-radius:20px;position:relative;overflow:hidden;
+    background:
+      radial-gradient(ellipse at 20% 30%,#5fce8b 0 13%,transparent 14%),
+      radial-gradient(ellipse at 75% 65%,#65d596 0 18%,transparent 19%),
+      linear-gradient(135deg,#bcecf0,#58bcd0);
+  }
+  .map::before{
+    content:"";position:absolute;inset:0;opacity:.7;
+    background:repeating-linear-gradient(35deg,transparent 0 22px,rgba(255,255,255,.18) 23px 25px)
+  }
+  .pin{position:absolute;font-size:35px;filter:drop-shadow(0 3px 3px #164);animation:pulse 1.5s infinite}
+  @keyframes pulse{50%{transform:scale(1.15)}}
+  .map-label{position:absolute;bottom:12px;left:12px;right:12px;background:rgba(0,45,50,.82);padding:10px;border-radius:12px;font-weight:800}
+  .warning{background:linear-gradient(135deg,#551f22,#8e2525);border:2px solid #ff6d65;color:white}
+  .warning h2{color:#ffd05c}
+  .celebrate{text-align:center}
+  .confetti{font-size:42px;letter-spacing:8px;animation:pop .8s ease}
+  @keyframes pop{0%{transform:scale(.5);opacity:0}100%{transform:scale(1);opacity:1}}
+  .error{text-align:center;padding-top:70px}
+  .big-emoji{font-size:80px}
+  .spinner{width:45px;height:45px;border:5px solid #275a62;border-top-color:var(--verde);border-radius:50%;animation:spin 1s linear infinite;margin:20px auto}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .bottom{
+    position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+    width:min(480px,100%);display:flex;gap:8px;padding:10px 12px;
+    background:rgba(2,26,32,.94);backdrop-filter:blur(10px);border-top:1px solid #1a5660
+  }
+  .bottom button{flex:1;border:0;background:transparent;color:#b7d9d8;padding:8px 4px;border-radius:12px;cursor:pointer}
+  .bottom button.active{background:#104754;color:white}
+  .hidden{display:none!important}
+  .tiny{font-size:13px;color:#a9cfcd}
+  .file-input{display:none}
+  .preview{width:100%;max-height:260px;object-fit:cover;border-radius:20px}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <section id="home" class="screen active">
+    <div class="hero">
+      <div class="mascot">🦜</div>
+      <div class="logo">Aventura<br>da Mata</div>
+      <p class="subtitle">Tire uma foto e descubra os segredos da natureza! 🌿</p>
+    </div>
+    <div class="card">
+      <button class="primary" id="startCamera">📸 Tirar foto</button>
+      <button class="primary" id="choosePhoto" style="margin-top:10px;background:linear-gradient(135deg,#1597ff,#36d5c4)">🖼️ Escolher foto</button>
+      <input id="fileInput" class="file-input" type="file" accept="image/jpeg,image/png,image/webp,image/*" capture="environment">
+      <p class="tiny" style="text-align:center;margin-bottom:0">Passarinhos 🐦 • Frutas 🍓 • Plantas 🌿</p>
+    </div>
+    <div class="card">
+      <h2>🧭 Como funciona?</h2>
+      <p>1. Tire uma foto.</p>
+      <p>2. A nossa exploradora olha a foto.</p>
+      <p>3. Se tiver certeza, ela mostra o nome, curiosidades e onde vive.</p>
+    </div>
+  </section>
+
+  <section id="camera" class="screen">
+    <div class="title-row"><button class="back" data-back>←</button><h1>Nova descoberta 📸</h1></div>
+    <div class="card">
+      <div class="camera-wrap">
+        <video id="video" autoplay playsinline></video>
+        <div class="camera-frame"></div>
+        <div class="camera-hint">Coloque o passarinho, fruto ou planta dentro do quadrado 🌿</div>
+      </div>
+      <div class="camera-actions">
+        <button class="secondary" id="galleryBtn">🖼️ Galeria</button>
+        <button class="primary" id="snap">📷 Fotografar</button>
+      </div>
+    </div>
+    <canvas id="canvas" class="hidden"></canvas>
+  </section>
+
+  <section id="loading" class="screen">
+    <div class="error">
+      <div class="big-emoji">🦜</div>
+      <h1>Vamos descobrir!</h1>
+      <p>Minha arara está olhando a foto com muita atenção... 🔎</p>
+      <div class="spinner"></div>
+      <p class="tiny">Isso pode levar alguns segundos.</p>
+    </div>
+  </section>
+
+  <section id="result" class="screen">
+    <div class="title-row"><button class="back" data-back>←</button><h1>Descoberta! 🎉</h1></div>
+    <div class="card">
+      <img id="resultImg" class="result-img" alt="Foto da descoberta">
+      <div class="celebrate">
+        <div class="confetti">🎉 🦜 🎊</div>
+        <h2 id="resultName">Você encontrou!</h2>
+        <span id="confidence" class="confidence"></span>
+      </div>
+      <h2>💡 Curiosidades</h2>
+      <ul id="curiosities" class="curiosity"></ul>
+    </div>
+
+    <div id="dangerCard" class="card warning hidden">
+      <h2>⚠️ Atenção!</h2>
+      <p id="dangerText"></p>
+    </div>
+
+    <div class="card">
+      <h2>🗺️ Onde vive?</h2>
+      <div class="map">
+        <div class="pin" id="mapPin">📍</div>
+        <div class="map-label" id="habitatText">Veja as regiões onde vive.</div>
+      </div>
+    </div>
+
+    <button class="primary" id="newDiscovery">📸 Fazer outra descoberta</button>
+  </section>
+
+  <section id="album" class="screen">
+    <div class="hero" style="padding-top:10px">
+      <div class="mascot" style="font-size:65px">🦜</div>
+      <h1>Meu Álbum 📖</h1>
+      <p>Suas descobertas aparecem aqui.</p>
+    </div>
+    <div id="albumList"></div>
+  </section>
+
+  <section id="error" class="screen">
+    <div class="error">
+      <div class="big-emoji">🌧️</div>
+      <h1>Ops! A mata ficou sem sinal.</h1>
+      <p id="errorText">Não consegui olhar a foto agora.</p>
+      <button class="primary" id="tryAgain">🔄 Tentar de novo</button>
+    </div>
+  </section>
+
+  <nav class="bottom">
+    <button class="active" data-nav="home">🏠<br>Início</button>
+    <button data-nav="album">📖<br>Meu Álbum</button>
+  </nav>
+</div>
+
+<script>
+"use strict";
+
+const state = {
+  stream: null,
+  lastPhotoDataUrl: null,
+  album: JSON.parse(localStorage.getItem("aventuraDaMataAlbum") || "[]")
+};
+
+const screens = [...document.querySelectorAll(".screen")];
+
+function showScreen(id){
+  screens.forEach(s => s.classList.toggle("active", s.id === id));
+  document.querySelectorAll(".bottom button").forEach(b => {
+    b.classList.toggle("active", b.dataset.nav === id || (id === "result" && b.dataset.nav === "home"));
+  });
+  if(id !== "camera") stopCamera();
+}
+
+function stopCamera(){
+  if(state.stream){
+    state.stream.getTracks().forEach(t => t.stop());
+    state.stream = null;
+  }
+}
+
+async function startCamera(){
+  showScreen("camera");
+  const video = document.getElementById("video");
+  try{
+    state.stream = await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:{ideal:"environment"}},
+      audio:false
+    });
+    video.srcObject = state.stream;
+  }catch(err){
+    document.getElementById("errorText").textContent =
+      "Não consegui abrir a câmera. Você pode escolher uma foto da galeria.";
+    showScreen("error");
+  }
+}
+
+function fileToDataURL(file){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function dataUrlToJpeg(dataUrl, maxSide=1400){
+  return new Promise((resolve,reject)=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const scale = Math.min(1, maxSide / Math.max(img.width,img.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.width*scale);
+      c.height = Math.round(img.height*scale);
+      const ctx = c.getContext("2d");
+      ctx.drawImage(img,0,0,c.width,c.height);
+      resolve(c.toDataURL("image/jpeg",0.88));
+    };
+    img.onerror = reject;
+    img.src = dataUrl;
+  });
+}
+
+async function capturePhoto(){
+  const video = document.getElementById("video");
+  if(!video.videoWidth){
+    document.getElementById("errorText").textContent = "A câmera ainda está abrindo. Tente novamente.";
+    showScreen("error");
+    return;
+  }
+  const canvas = document.getElementById("canvas");
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext("2d").drawImage(video,0,0);
+  const dataUrl = canvas.toDataURL("image/jpeg",0.88);
+  await identify(dataUrl);
+}
+
+async function handleFile(file){
+  if(!file || !file.type.startsWith("image/")) return;
+  try{
+    const dataUrl = await fileToDataURL(file);
+    const jpeg = await dataUrlToJpeg(dataUrl);
+    await identify(jpeg);
+  }catch(e){
+    document.getElementById("errorText").textContent = "Não consegui abrir essa foto. Tente outra.";
+    showScreen("error");
+  }
+}
+
+function base64Only(dataUrl){
+  return dataUrl.substring(dataUrl.indexOf(",") + 1);
+}
+
+async function identify(dataUrl){
+  state.lastPhotoDataUrl = dataUrl;
+  showScreen("loading");
+
+  const prompt = `
+Você é a inteligência de um aplicativo infantil chamado "Aventura da Mata".
+Analise a foto com muito cuidado. Ela pode mostrar APENAS um passarinho, uma fruta ou uma planta.
+Nunca invente uma identificação. Se não houver certeza de pelo menos 80%, retorne identificado=false.
+Se a foto mostrar algo perigoso, como cobra, aranha, cogumelo ou planta que não deve ser comida, não diga que é seguro e explique um aviso simples.
+Quando conseguir identificar com segurança, informe um nome comum em português, curiosidades curtas e simples e as principais regiões/habitats onde vive.
+`.trim();
+
+  const requestBody = {
+    modelo: "gemini-3.6-flash",
+    body: {
+      contents: [{
+        parts: [
+          { text: prompt },
+          {
+            inline_data: {
+              mime_type: "image/jpeg",
+              data: base64Only(dataUrl)
+            }
+          }
+        ]
+      }],
+      generationConfig: {
+        temperature: 0.2,
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: "object",
+          properties: {
+            identificado: {type:"boolean"},
+            confianca: {type:"integer"},
+            nome: {type:"string"},
+            curiosidades: {type:"array", items:{type:"string"}},
+            habitat: {type:"string"},
+            perigo: {type:"string"}
+          },
+          required: ["identificado","confianca"]
+        }
+      }
+    }
+  };
+
+  try{
+    const response = await fetch("/api/identificar", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(requestBody)
+    });
+
+    if(!response.ok) throw new Error("Servidor não respondeu.");
+
+    const resposta = await response.json();
+    const text = resposta?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if(!text) throw new Error("Resposta vazia.");
+
+    let data;
+    try{
+      data = JSON.parse(text);
+    }catch(e){
+      throw new Error("A resposta não veio no formato esperado.");
+    }
+
+    if(data.identificado !== true || Number(data.confianca) < 80){
+      showNotSure();
+      return;
+    }
+
+    renderResult(data);
+  }catch(err){
+    document.getElementById("errorText").textContent =
+      "Não consegui conversar com a inteligência agora. Confira a internet e tente de novo. 💚";
+    showScreen("error");
+  }
+}
+
+function showNotSure(){
+  document.getElementById("errorText").textContent =
+    "Hmm... minha arara não conseguiu ter certeza do que apareceu na foto. Tente tirar outra foto mais de perto! 🦜💚";
+  showScreen("error");
+}
+
+function renderResult(data){
+  document.getElementById("resultImg").src = state.lastPhotoDataUrl;
+  document.getElementById("resultName").textContent = data.nome || "Nova descoberta";
+  document.getElementById("confidence").textContent = "Confiança: " + Number(data.confianca) + "%";
+
+  const list = document.getElementById("curiosities");
+  list.replaceChildren();
+  const curiosidades = Array.isArray(data.curiosidades) ? data.curiosidades : [];
+  if(curiosidades.length === 0){
+    const li = document.createElement("li");
+    li.textContent = "Uma descoberta muito legal da natureza!";
+    list.appendChild(li);
+  }else{
+    curiosidades.slice(0,5).forEach(item=>{
+      const li = document.createElement("li");
+      li.textContent = String(item);
+      list.appendChild(li);
+    });
+  }
+
+  const dangerCard = document.getElementById("dangerCard");
+  const dangerText = document.getElementById("dangerText");
+  if(data.perigo && String(data.perigo).trim()){
+    dangerText.textContent = String(data.perigo);
+    dangerCard.classList.remove("hidden");
+  }else{
+    dangerText.textContent = "";
+    dangerCard.classList.add("hidden");
+  }
+
+  document.getElementById("habitatText").textContent =
+    data.habitat ? String(data.habitat) : "Regiões e ambientes onde essa descoberta costuma viver.";
+
+  // A posição é ilustrativa: o texto de habitat vem da inteligência.
+  document.getElementById("mapPin").style.left = "58%";
+  document.getElementById("mapPin").style.top = "40%";
+
+  const entry = {
+    nome: String(data.nome || "Descoberta"),
+    curiosidades: curiosidades.map(String),
+    habitat: String(data.habitat || ""),
+    perigo: String(data.perigo || ""),
+    foto: state.lastPhotoDataUrl,
+    data: new Date().toLocaleDateString("pt-BR")
+  };
+  state.album.unshift(entry);
+  state.album = state.album.slice(0,20);
+  localStorage.setItem("aventuraDaMataAlbum", JSON.stringify(state.album));
+
+  showScreen("result");
+}
+
+function renderAlbum(){
+  const box = document.getElementById("albumList");
+  box.replaceChildren();
+
+  if(state.album.length === 0){
+    const card = document.createElement("div");
+    card.className = "card";
+    card.style.textAlign = "center";
+    card.innerHTML = "<div style='font-size:60px'>🌿</div>";
+    const h = document.createElement("h2");
+    h.textContent = "Seu álbum está esperando!";
+    const p = document.createElement("p");
+    p.textContent = "Faça sua primeira descoberta na mata. 🦜";
+    card.append(h,p);
+    box.appendChild(card);
+    return;
+  }
+
+  state.album.forEach(item=>{
+    const card = document.createElement("div");
+    card.className = "card";
+    const img = document.createElement("img");
+    img.className = "result-img";
+    img.style.height = "150px";
+    img.src = item.foto;
+    img.alt = "";
+    const h = document.createElement("h2");
+    h.textContent = "🦜 " + item.nome;
+    const p = document.createElement("p");
+    p.textContent = item.habitat || "Uma descoberta da mata!";
+    card.append(img,h,p);
+    box.appendChild(card);
+  });
+}
+
+document.getElementById("startCamera").addEventListener("click", startCamera);
+document.getElementById("choosePhoto").addEventListener("click", ()=>document.getElementById("fileInput").click());
+document.getElementById("galleryBtn").addEventListener("click", ()=>document.getElementById("fileInput").click());
+document.getElementById("fileInput").addEventListener("change", e=>handleFile(e.target.files[0]));
+document.getElementById("snap").addEventListener("click", capturePhoto);
+document.getElementById("newDiscovery").addEventListener("click", startCamera);
+document.getElementById("tryAgain").addEventListener("click", ()=>showScreen("home"));
+
+document.querySelectorAll("[data-back]").forEach(btn=>btn.addEventListener("click",()=>showScreen("home")));
+document.querySelectorAll("[data-nav]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    if(btn.dataset.nav === "album"){
+      renderAlbum();
+      showScreen("album");
+    }else showScreen("home");
+  });
+});
+
+window.addEventListener("pagehide", stopCamera);
+renderAlbum();
+</script>
+</body>
+</html>
