@@ -35,7 +35,7 @@ const ESPECIALISTA = "um herpetólogo especialista";
 // Aparece também na mensagem de "fora do tema":
 //   "🚫 Não reconhecemos porque isso parece ser uma melancia, e aqui a gente
 //    só reconhece <O_QUE_PROCURAR>."
-const O_QUE_PROCURAR = "répteis e anfíbios do brasil";
+const O_QUE_PROCURAR = "Répteis e Anfíbios do Brasil";
 
 // Missão 3: quanta certeza a IA precisa ter (número de 0 a 100, sem aspas)
 // Por que o grupo escolheu: ""
