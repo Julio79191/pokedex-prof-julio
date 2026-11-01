@@ -24,7 +24,7 @@ const GRUPO = {
   escola: "Titto",
   turma: "IAM1",
   tema: "plantas medicinais",
-  pendencias: [Nome do grupo]          // ex.: ["Missão 5", "Missão 6"]
+  pendencias: []          // ex.: ["Missão 5", "Missão 6"]
 };
 
 // Missão 1: quem a IA vai fingir ser
