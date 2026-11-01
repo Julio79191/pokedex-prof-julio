@@ -85,8 +85,22 @@ ${i>0?'<div class="perigo">⚠️ Atenção: animal que pode ser perigoso</div>'
 </div>`;
 });
 
+const SONS = [
+  "sons/capivara.mp3",
+  "sons/leao.mp3",
+  "sons/elefante.mp3",
+  "sons/lobo.mp3",
+  "sons/tigre.mp3"
+];
+
+const PASTA = "/grupos/titto-m2-arthur/";
+let somAtual = null;
+
 function som(i){
-alert("🔊 O botão de som está pronto! Para tocar o som real, coloque o arquivo de áudio do animal.");
+  if (somAtual) { somAtual.pause(); somAtual.currentTime = 0; } // para o anterior
+  somAtual = new Audio(PASTA + SONS[i]);
+  somAtual.onerror = () => alert("🔇 Não encontrei o som desse animal ainda.");
+  somAtual.play().catch(() => {});
 }
 
 function abrir(id){
