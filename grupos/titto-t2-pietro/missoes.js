@@ -19,11 +19,11 @@
 // Quem é o grupo (aparece no painel). Use SÓ o primeiro nome dos alunos:
 // o site é público.
 const GRUPO = {
-  nome: "Nome do grupo",
-  integrantes: "Ana, Bruno e Carla",
-  escola: "Escola",
-  turma: "Turma 1",
-  tema: "Flores do Brasil",
+  nome: "FloraDex",
+  integrantes: "Pietro, Matheus, Lorenzo, Pedro, Arthur",
+  escola: "Titto",
+  turma: "IAT2",
+  tema: "Plantas do Brasil",
   pendencias: ["index"]          // ex.: ["Missão 5", "Missão 6"]
 };
 
@@ -50,12 +50,12 @@ function conferirFoto(foto) {
 
 // Missão 5: quando a IA fica em dúvida (foto pouco nítida)
 function mensagemDeDuvida(r) {
-    return "Tenho apenas" + r.confianca + "de confiança sobre essa planta";
+    return "Tenho apenas" + r.confianca + "% de confiança sobre essa planta";
 }
 
 // Missão 6: quando a IA acerta
 function mensagemDeAcerto(r) {
-    return "Você achou " + r.nome_popular + "Incrível!";
+    return "Você achou " + r.nome_popular + "! Incrível!";
 }
 
 // ----------------------------------------------------------------------------
