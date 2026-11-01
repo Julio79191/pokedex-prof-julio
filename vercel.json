@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/identificar.js": {
+      "includeFiles": "grupos/**/missoes.js"
+    }
+  }
+}
