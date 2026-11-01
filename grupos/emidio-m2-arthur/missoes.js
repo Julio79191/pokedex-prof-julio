@@ -22,7 +22,7 @@ const GRUPO = {
   nome: "Pokedex da amazonia",
   integrantes: "Pedro, Samuel, Nicholas, Raphael e Arthur",
   escola: "Emidio",
-  turma: "Turma 2",
+  turma: "IAM2",
   tema: "ANIMAIS",
   pendencias: []          // ex.: ["Missão 5", "Missão 6"]
 };
