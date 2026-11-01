@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WitAnimals - Pokédex da Mata</title>
+<style>
+body{margin:0;font-family:Arial;background:#06202a;color:white}
+header{background:linear-gradient(135deg,#00a878,#087ca7);padding:35px;text-align:center}
+.logo{font-size:80px}
+nav{text-align:center;background:#03151c;padding:15px}
+button{background:#22c55e;border:0;padding:12px 18px;border-radius:15px;cursor:pointer;font-weight:bold;margin:5px}
+.tela{display:none;padding:25px}.ativa{display:block}
+.caixa{background:#102d36;border-radius:25px;padding:25px;max-width:1100px;margin:auto}
+.safari{height:350px;background:linear-gradient(#7dd3fc,#d6a04b);border-radius:25px;text-align:center;color:#17301c;padding:25px}
+.bichos{font-size:70px;margin:70px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.card{background:#09242c;border-radius:20px;padding:15px}
+.info{background:#0b3540;padding:10px;border-radius:10px;margin:8px 0}
+.perigo{background:#991b1b;padding:10px;border-radius:10px}
+</style>
+</head>
+<body>
+
+<header>
+<div class="logo">🦫</div>
+<h1>WitAnimals</h1>
+<p>🌿 Pokédex da Mata</p>
+<p>🔬 Explore animais como um cientista!</p>
+</header>
+
+<nav>
+<button onclick="abrir('inicio')">🏠 Início</button>
+<button onclick="abrir('safari')">🌅 Safári</button>
+<button onclick="abrir('pokedex')">🐾 Pokédex</button>
+</nav>
+
+<section id="inicio" class="tela ativa">
+<div class="caixa">
+<h2>Bem-vindo ao WitAnimals!</h2>
+<p>Descubra mamíferos, curiosidades, habitats e sons.</p>
+<button onclick="abrir('safari')">🚀 Começar aventura</button>
+</div>
+</section>
+
+<section id="safari" class="tela">
+<div class="caixa">
+<div class="safari">
+<h1>🌅 Safári da Mata</h1>
+<p>Encontre animais escondidos!</p>
+<div class="bichos">🦫 🐆 🦁 🐘 🦒</div>
+<button onclick="abrir('pokedex')">Abrir Pokédex</button>
+</div>
+</div>
+</section>
+
+<section id="pokedex" class="tela">
+<div class="caixa">
+<h2>🐾 Fichas dos animais</h2>
+<div class="grid" id="lista"></div>
+</div>
+</section>
+
+<script>
+const animais=[
+["🦫 Capivara","Vive perto de rios","Plantas e capim","Maior roedor do mundo","Assobio"],
+["🦁 Leão","Savanas africanas","Carne","Vive em grupos","Rugido"],
+["🐘 Elefante","África e Ásia","Folhas e frutas","Usa a tromba para beber água","Trombeta"],
+["🐺 Lobo","Florestas e montanhas","Carne","Se comunica por uivos","Uivo"],
+["🐯 Tigre","Florestas da Ásia","Carne","Grande felino","Rugido"]
+];
+
+const lista=document.getElementById("lista");
+
+animais.forEach((a,i)=>{
+lista.innerHTML+=`
+<div class="card">
+<h2>${a[0]}</h2>
+<div class="info">🌎 Habitat: ${a[1]}</div>
+<div class="info">🍎 Alimentação: ${a[2]}</div>
+<div class="info">💡 Curiosidade: ${a[3]}</div>
+<div class="info">🔊 Som: ${a[4]}</div>
+<button onclick="som('${i}')">▶ Ouvir som do animal</button>
+${i>0?'<div class="perigo">⚠️ Atenção: animal que pode ser perigoso</div>':''}
+</div>`;
+});
+
+function som(i){
+alert("🔊 O botão de som está pronto! Para tocar o som real, coloque o arquivo de áudio do animal.");
+}
+
+function abrir(id){
+document.querySelectorAll('.tela').forEach(t=>t.classList.remove('ativa'));
+document.getElementById(id).classList.add('ativa');
+window.scrollTo(0,0);
+}
+</script>
+
+</body>
+</html>
