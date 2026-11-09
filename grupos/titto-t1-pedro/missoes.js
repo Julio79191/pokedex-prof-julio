@@ -24,12 +24,12 @@ const GRUPO = {
   escola: "Titto",
   turma: "IAT1",
   tema: "Animais do Brasil",
-  pendencias: ["Missão 1, Missão 2, Missão 3, Missão 4, Missão 5, Missão 6"]          // ex.: ["Missão 5", "Missão 6"]
+  pendencias: []          // ex.: ["Missão 5", "Missão 6"]
 };
 
 // Missão 1: quem a IA vai fingir ser
 // Exemplo (tema flores): "um botânico especialista em flores do Brasil"
-const ESPECIALISTA = "um botânico especialista em flores do Brasil";
+const ESPECIALISTA = "um zoólogo especialista";
 
 // Missão 2: o que procurar na foto (uma ou duas palavras)
 // Aparece também na mensagem de "fora do tema":
@@ -43,8 +43,8 @@ const CERTEZA_MINIMA = 80;
 
 // Missão 4: o porteiro
 function conferirFoto(foto) {
-  if (!foto.type.startsWith("image/")) return "📷 Isso não é uma foto!";
-  if (foto.size > 10000000) return "🐘 Foto grande demais! Escolha outra.";
+  if (!foto.type.startsWith("image/")) return "Só aceito imagens!";
+  if (foto.size > 10000000) return "Imagem menor!";
   return "ok";
 }
 
