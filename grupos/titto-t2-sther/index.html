@@ -242,6 +242,16 @@ header,main,footer{position:relative;z-index:1}
   100%{transform:translateY(-55px) scale(.45) rotate(180deg);opacity:0}
 }
 
+
+/* 🏆 CONQUISTAS organizadas: 3 colunas iguais; bloqueadas ficam apagadas */
+.trophies{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+.trophies .trophy{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;margin:0;padding:22px 12px;min-height:200px;font-size:54px;text-align:center;transition:.3s}
+.trophies .trophy small{font-size:17px;font-weight:800;color:var(--dark)}
+.trophies .trophy .hint{font-size:13px;color:#4d6b57}
+.trophies .trophy .st{font-size:13px;font-weight:800;color:var(--green)}
+.trophies .trophy.locked{opacity:.45;filter:grayscale(.85);animation:none}
+.trophies .trophy.locked .st{color:#7a7a7a}
+@media(max-width:600px){.trophies{grid-template-columns:1fr}.trophies .trophy{min-height:150px}}
 </style>
 
 </head>
@@ -314,7 +324,12 @@ header,main,footer{position:relative;z-index:1}
 <section id="livro" class="screen"><div class="card"><h1 class="title">📖 Livro Mágico das Flores</h1><h2>🌸 Primeiras descobertas</h2><div id="saved"></div><h2>🎖️ Conquistas dentro do livro</h2><p>Suas descobertas salvas aparecem aqui.</p></div></section>
 
 <section id="conquistas" class="screen"><div class="card"><h1 class="title">🏆 Conquistas</h1><p>Aqui ficam somente os troféus.</p>
-<div class="trophy">🌱<br><small>Primeira flor</small></div><div class="trophy">🌸<br><small>Exploradora Floral</small></div><div class="trophy">👑<br><small>Mestre das Flores</small></div>
+<p id="trophyCount"></p>
+<div class="trophies" id="trophies">
+<div class="trophy" data-need="1">🌱<small>Primeira flor</small><span class="hint"></span><span class="st"></span></div>
+<div class="trophy" data-need="5">🌸<small>Exploradora Floral</small><span class="hint"></span><span class="st"></span></div>
+<div class="trophy" data-need="10">👑<small>Mestre das Flores</small><span class="hint"></span><span class="st"></span></div>
+</div>
 </div></section>
 
 <section id="professor" class="screen"><div class="card"><h1 class="title">🤖 Professor das Flores</h1><div id="chat" class="chat"><div class="msg">Olá! 🌿 Pergunte sobre flores, pétalas, polinização ou jardins.</div></div>
@@ -339,7 +354,7 @@ hibisco:{n:"Hibisco",i:"🌺",t:"🌺 Ornamental • 🌿 Arbusto",h:"Jardins e 
 };
 let current=null, photoUrl=null;
 
-function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");if(id==="livro")renderSaved();scrollTo(0,0)}
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");if(id==="livro")renderSaved();if(id==="conquistas")renderTrophies();scrollTo(0,0)}
 function toast(t,ms=1600){const e=document.getElementById("toast");e.textContent=t;e.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>e.style.display="none",ms)}
 function picture(key){const f=F[key],c=document.createElement("canvas");c.width=800;c.height=500;const x=c.getContext("2d");const g=x.createLinearGradient(0,0,800,500);g.addColorStop(0,"#fff0f6");g.addColorStop(1,"#e6f7ea");x.fillStyle=g;x.fillRect(0,0,800,500);x.font="220px Arial";x.textAlign="center";x.textBaseline="middle";x.fillText(f.i,400,235);x.fillStyle="#2f7d4a";x.font="bold 38px Arial";x.fillText(f.n,400,430);return c.toDataURL()}
 function openFlower(key, img=null){const f=F[key];if(!f)return;current={key,f};document.getElementById("rname").textContent=f.n;document.getElementById("rtags").textContent=f.t;document.getElementById("rhab").textContent="🏡 Habitat: "+f.h;document.getElementById("rcare").textContent="💧 Cuidados: "+f.c;document.getElementById("rcur").textContent="💡 Curiosidade: "+f.u;document.getElementById("rdanger").textContent=f.d;document.getElementById("rimg").src=img||picture(key);show("resultado")}
@@ -392,6 +407,12 @@ async function sendPhoto(){
 }
 loadIdentified();
 function save(){if(!current)return;const a=JSON.parse(localStorage.getItem("savedFlowers")||"[]");if(!a.some(x=>x.name===current.f.n)){a.push({name:current.f.n,icon:current.f.i,curiosity:current.f.u});localStorage.setItem("savedFlowers",JSON.stringify(a));toast("💾 Salva no Livro Mágico! +50 pontos")}else toast("Essa flor já está salva.")}
+/* Conquistas: cada troféu pede um número de flores salvas no Livro (data-need no HTML) */
+function renderTrophies(){let n=0;try{n=JSON.parse(localStorage.getItem("savedFlowers")||"[]").length}catch(e){}
+  document.querySelectorAll("#trophies .trophy").forEach(t=>{const need=+t.dataset.need,ok=n>=need;t.classList.toggle("locked",!ok);
+    t.querySelector(".hint").textContent="Salve "+need+(need>1?" flores":" flor")+" no Livro";
+    t.querySelector(".st").textContent=ok?"✅ Conquistada":"🔒 "+Math.min(n,need)+"/"+need});
+  document.getElementById("trophyCount").textContent="🌸 Flores salvas no Livro: "+n}
 function favorite(){toast("⭐ Flor adicionada aos favoritos!")}
 function renderSaved(){const a=JSON.parse(localStorage.getItem("savedFlowers")||"[]"),b=document.getElementById("saved");b.innerHTML=a.length?a.map(x=>`<div class="item"><b>${safe(x.icon)} ${safe(x.name)}</b><p>💡 ${safe(x.curiosity)}</p></div>`).join(""):"<p>🌱 Nenhuma flor salva ainda.</p>"}
 function listen(){if(!current)return;if("speechSynthesis"in window){speechSynthesis.cancel();const f=current.f,u=new SpeechSynthesisUtterance(f.n+". "+f.u+". "+f.h+". "+f.c);u.lang="pt-BR";speechSynthesis.speak(u);toast("🔊 O Professor está lendo.")}else toast("Leitura de voz não disponível.")}
