@@ -21,6 +21,13 @@ button{background:#22c55e;border:0;padding:12px 18px;border-radius:15px;cursor:p
 .logo img{width:80px;height:80px;object-fit:contain}
 .emoji-img{height:1em;width:auto;vertical-align:-0.15em}
 .bichos img{height:70px;width:auto;vertical-align:middle}
+.upload{border:2px dashed #1f6f5c;border-radius:25px;background:#06202a;padding:35px 20px;text-align:center;margin-top:20px}
+.upload-icone{font-size:55px}
+.btn-foto{background:linear-gradient(135deg,#00a878,#087ca7)}
+.btn-foto:disabled{opacity:.6;cursor:wait}
+#idPreview{max-width:100%;max-height:260px;border-radius:18px;margin-top:15px}
+#idStatus{min-height:1.2em}
+#idResultado{background:#0b3540;border-radius:15px;padding:15px;margin-top:15px;text-align:left}
 </style>
 </head>
 <body>
@@ -34,6 +41,7 @@ button{background:#22c55e;border:0;padding:12px 18px;border-radius:15px;cursor:p
 
 <nav>
 <button onclick="abrir('inicio')">🏠 Início</button>
+<button onclick="abrir('identificar')">📷 Identificar</button>
 <button onclick="abrir('safari')">🌅 Safári</button>
 <button onclick="abrir('pokedex')">🐾 Pokédex</button>
 </nav>
@@ -61,6 +69,28 @@ button{background:#22c55e;border:0;padding:12px 18px;border-radius:15px;cursor:p
 <div class="caixa">
 <h2>🐾 Fichas dos animais</h2>
 <div class="grid" id="lista"></div>
+</div>
+</section>
+
+<section id="identificar" class="tela">
+<div class="caixa">
+<h2>🔍 Vamos identificar!</h2>
+<p>Sou seu companheiro de expedição. Tire uma foto de um mamífero brasileiro e vamos descobrir qual animal apareceu.</p>
+<div class="upload">
+<div class="upload-icone">📷</div>
+<h3>Fotografe um animal</h3>
+<p>Escolha uma foto para começar sua descoberta.</p>
+<button id="idEscolher" class="btn-foto" onclick="document.getElementById('fotoInput').click()">📷 Escolher foto</button>
+<input type="file" id="fotoInput" accept="image/*" hidden>
+<div><img id="idPreview" alt="Foto escolhida" style="display:none"></div>
+<p id="idStatus"></p>
+<div id="idResultado" style="display:none">
+<h3 id="idNome"></h3>
+<p><i id="idCient"></i> <b id="idCerteza"></b></p>
+<p id="idMsg"></p>
+<button onclick="salvarAnimal()">💾 Salvar na Pokédex</button>
+</div>
+</div>
 </div>
 </section>
 
@@ -112,6 +142,117 @@ document.getElementById(id).classList.add('ativa');
 window.scrollTo(0,0);
 }
 </script>
+
+<script>
+/* ===== IDENTIFICAR ANIMAL (guia Identificar) ===== */
+const GRUPO = "titto-m2-arthur";
+const CHAVE_SALVOS = "witanimals_salvos";
+let ultimoResultado = null;
+
+function esc(t){return String(t==null?"":t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function lerSalvos(){try{return JSON.parse(localStorage.getItem(CHAVE_SALVOS)||"[]")}catch(e){return []}}
+function gravarSalvos(l){try{localStorage.setItem(CHAVE_SALVOS,JSON.stringify(l))}catch(e){}}
+
+/* Cartão no mesmo formato dos animais que já estão na Pokédex */
+function cartaoSalvo(a){
+return `
+<div class="card">
+<h2>🐾 ${esc(a.nome)}</h2>
+<div class="info">🌎 Habitat: ${esc(a.habitat||"—")}</div>
+<div class="info">🛡️ Conservação: ${esc(a.conservacao||"—")}</div>
+<div class="info">💡 Curiosidade: ${esc(a.curiosidade||"—")}</div>
+<div class="info">🔬 Nome científico: ${esc(a.cientifico||"—")}</div>
+</div>`;
+}
+
+/* Animais salvos antes entram na sequência da lista, depois dos 5 fixos */
+lerSalvos().forEach(a=>document.getElementById("lista").insertAdjacentHTML("beforeend",cartaoSalvo(a)));
+
+/* Reduz a foto (celular manda foto enorme) e devolve só o base64 em JPEG */
+function reduzirImagem(file){
+  return new Promise((ok,erro)=>{
+    const url=URL.createObjectURL(file), img=new Image();
+    img.onload=()=>{
+      const k=Math.min(1,1280/Math.max(img.width,img.height));
+      const c=document.createElement("canvas");
+      c.width=Math.round(img.width*k); c.height=Math.round(img.height*k);
+      c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+      URL.revokeObjectURL(url);
+      ok(c.toDataURL("image/jpeg",.85).split(",")[1]);
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);erro(new Error("Não consegui abrir essa imagem. Tente uma foto JPG ou PNG."))};
+    img.src=url;
+  });
+}
+
+/* O servidor devolve no formato do Gemini (candidates...); aceitamos também o já aberto */
+function lerResultado(j){
+  if(j&&j.candidates){
+    const t=(j.candidates[0]?.content?.parts||[]).map(p=>p.text||"").join("");
+    try{return JSON.parse(t)}catch(e){return null}
+  }
+  return j;
+}
+
+async function identificarFoto(file){
+  const status=document.getElementById("idStatus"), res=document.getElementById("idResultado"),
+        btn=document.getElementById("idEscolher"), prev=document.getElementById("idPreview");
+  ultimoResultado=null; res.style.display="none";
+  prev.src=URL.createObjectURL(file); prev.style.display="inline-block";
+  status.textContent="🔎 Analisando a foto..."; btn.disabled=true;
+  try{
+    const imagem=await reduzirImagem(file);
+    const resp=await fetch("/api/identificar",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({grupo:GRUPO,imagem,mime:"image/jpeg",tipo:file.type||"image/jpeg",tamanho:file.size})
+    });
+    const j=await resp.json().catch(()=>({}));
+    if(!resp.ok) throw new Error(j?.error?.message||"Não consegui analisar agora. Tente de novo.");
+    const r=lerResultado(j);
+    if(!r) throw new Error("A resposta da IA veio num formato inesperado.");
+    if(r.identificado===false||r.fora_do_tema){
+      status.textContent=r.mensagem_backend||r.mensagem||"Não consegui identificar com segurança. Tente uma foto mais nítida.";
+      return;
+    }
+    ultimoResultado=r;
+    status.textContent="";
+    document.getElementById("idNome").textContent=r.nome_popular||"Animal identificado";
+    document.getElementById("idCient").textContent=r.nome_cientifico||"";
+    document.getElementById("idCerteza").textContent=r.confianca?"· Certeza: "+Math.round(r.confianca)+"%":"";
+    document.getElementById("idMsg").textContent=r.mensagem_backend||"";
+    res.style.display="block";
+  }catch(e){
+    status.textContent="⚠️ "+e.message;
+  }finally{
+    btn.disabled=false;
+  }
+}
+
+document.getElementById("fotoInput").addEventListener("change",e=>{
+  const f=e.target.files[0]; e.target.value="";
+  if(f) identificarFoto(f);
+});
+
+/* Salva o último animal identificado no fim da lista da Pokédex */
+function salvarAnimal(){
+  const r=ultimoResultado; if(!r) return;
+  const a={
+    nome:r.nome_popular||"Animal",
+    cientifico:r.nome_cientifico||"",
+    habitat:(Array.isArray(r.biomas)&&r.biomas.length)?r.biomas.join(", "):String(r.habitat_descricao||"").split(". ")[0],
+    conservacao:r.status_conservacao||"",
+    curiosidade:Array.isArray(r.curiosidades)?(r.curiosidades[0]||""):String(r.curiosidades||"")
+  };
+  const salvos=lerSalvos();
+  if(!salvos.some(x=>String(x.nome).toLowerCase()===a.nome.toLowerCase())){
+    salvos.push(a); gravarSalvos(salvos.slice(-30));
+    document.getElementById("lista").insertAdjacentHTML("beforeend",cartaoSalvo(a));
+  }
+  abrir("pokedex");
+  const cards=document.querySelectorAll("#lista .card");
+  cards[cards.length-1].scrollIntoView({behavior:"smooth",block:"center"});
+}
+</script>
 <!--
   COLE ESTE BLOCO NO FINAL DO index.html DO GRUPO, logo ANTES do </body>.
   Ele liga o front do grupo ao back-end e à ficha padrão em pop-up.
@@ -131,15 +272,15 @@ window.scrollTo(0,0);
 <script src="/comum/adaptador.js"></script>
 <script>
 PokedexAdaptador.iniciar({
-  icone: "🐀", fauna: true,                 // fauna: true para animais
-  cor: "#06202a",
+  icone: "🐾", fauna: true,                 // fauna: true para animais
+  cor: "#22c55e",
   escuro: () => true,
   carregando: "🔎 Procurando pistas na foto...",
   // Campos que o front do grupo pede à IA e que você quer mostrar na ficha:
   extras: info => [["🌿 Onde vive", info.habitat]],
   // Aviso vermelho na ficha (ex.: planta venenosa):
   alerta: info => info.perigoso === true ? (info.aviso || "Cuidado! Peça ajuda a um adulto.") : "",
-  salvar: () => { document.getElementById("saveBtn").click(); document.getElementById("abaAlbum").click(); },
+  salvar: () => salvarAnimal(),
   novaFoto: () => document.getElementById("fotoInput").click()
 });
 </script>
