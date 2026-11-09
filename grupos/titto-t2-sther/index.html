@@ -270,8 +270,8 @@ header,main,footer{position:relative;z-index:1}
 <h1>Mundo das Flores</h1>
 <p>Um jardim mágico para descobrir flores, aprender curiosidades e guardar suas descobertas.</p>
 <div class="book">
-<div class="page left"><div class="flower">🌹</div><h2>Segredos das Flores</h2><p>Cores, perfumes, cuidados e curiosidades.</p></div>
-<div class="page right"><div class="flower">🌷</div><h2>Livro Floral</h2><p>Salve suas flores e conquiste troféus.</p></div>
+<div class="page left" onclick="show('descobrir')" style="cursor:pointer"><div class="flower">🌹</div><h2>Segredos das Flores</h2><p>Cores, perfumes, cuidados e curiosidades.</p></div>
+<div class="page right" onclick="show('livro')" style="cursor:pointer"><div class="flower">🌷</div><h2>Livro Floral</h2><p>Salve suas flores e conquiste troféus.</p></div>
 </div>
 <button class="explore" onclick="show('descobrir')">EXPLORAR O JARDIM ✨</button>
 </div>
@@ -340,17 +340,67 @@ hibisco:{n:"Hibisco",i:"🌺",t:"🌺 Ornamental • 🌿 Arbusto",h:"Jardins e 
 let current=null, photoUrl=null;
 
 function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");if(id==="livro")renderSaved();scrollTo(0,0)}
-function toast(t){const e=document.getElementById("toast");e.textContent=t;e.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>e.style.display="none",1600)}
+function toast(t,ms=1600){const e=document.getElementById("toast");e.textContent=t;e.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>e.style.display="none",ms)}
 function picture(key){const f=F[key],c=document.createElement("canvas");c.width=800;c.height=500;const x=c.getContext("2d");const g=x.createLinearGradient(0,0,800,500);g.addColorStop(0,"#fff0f6");g.addColorStop(1,"#e6f7ea");x.fillStyle=g;x.fillRect(0,0,800,500);x.font="220px Arial";x.textAlign="center";x.textBaseline="middle";x.fillText(f.i,400,235);x.fillStyle="#2f7d4a";x.font="bold 38px Arial";x.fillText(f.n,400,430);return c.toDataURL()}
 function openFlower(key, img=null){const f=F[key];if(!f)return;current={key,f};document.getElementById("rname").textContent=f.n;document.getElementById("rtags").textContent=f.t;document.getElementById("rhab").textContent="🏡 Habitat: "+f.h;document.getElementById("rcare").textContent="💧 Cuidados: "+f.c;document.getElementById("rcur").textContent="💡 Curiosidade: "+f.u;document.getElementById("rdanger").textContent=f.d;document.getElementById("rimg").src=img||picture(key);show("resultado")}
 function searchFlower(){const q=(document.getElementById("q").value||"").trim().toLowerCase();if(!q){toast("Digite o nome de uma flor 🌸");return}const k=Object.keys(F).find(k=>q.includes(k)||F[k].n.toLowerCase().includes(q));if(k)openFlower(k);else toast("Essa flor ainda não está no jardim desta versão. 🌿")}
 function preview(e){const f=e.target.files?.[0];if(!f)return;photoUrl=URL.createObjectURL(f);const p=document.getElementById("preview");p.src=photoUrl;p.style.display="block";toast("Foto pronta! Toque em ENVIAR FOTO.")}
-function sendPhoto(){if(!photoUrl){toast("Escolha uma foto primeiro 📸");return}show("loading");setTimeout(()=>{show("descobrir");toast("Foto recebida! Nesta versão, escolha a flor pelo nome para ver as informações.")},220)}
+/* ===== IDENTIFICAR FLOR PELA FOTO (usa /api/identificar, como os outros grupos) ===== */
+const GRUPO=(location.pathname.match(/\/grupos\/([^\/]+)/)||[])[1]||"";
+const PROMPT_FLOR='Identifique a flor da foto. Além dos campos de sempre, preencha: "emoji" (UM único emoji que represente essa flor, como 🌹 🌻 🌷 🌺 🌼 🪻 🪷 🌸 💐 ou 🏵️), "cuidados" (uma frase curta com cuidados de cultivo: luz, água e solo), "perigoso" (true se a planta for tóxica ou tiver espinhos) e "aviso" (uma frase curta de segurança, ou texto vazio se não houver).';
+const SCHEMA_FLOR={type:"object",properties:{emoji:{type:"string"},cuidados:{type:"string"},perigoso:{type:"boolean"},aviso:{type:"string"}},required:["emoji","cuidados","perigoso","aviso"]};
+
+function slug(t){return String(t).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"flor"}
+function reducePhoto(file){return new Promise((ok,fail)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{const k=Math.min(1,1280/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);ok(c.toDataURL("image/jpeg",.85).split(",")[1])};im.onerror=()=>{URL.revokeObjectURL(u);fail(new Error("Não consegui abrir essa imagem. Tente uma foto JPG ou PNG."))};im.src=u})}
+function readResult(j){if(j&&j.candidates){const t=(j.candidates[0]?.content?.parts||[]).map(p=>p.text||"").join("");try{return JSON.parse(t)}catch(e){return null}}return j}
+function flowerEmoji(v){const m=String(v||"").match(/\p{Extended_Pictographic}(\uFE0F|\u200D\p{Extended_Pictographic})*/u);return m?m[0]:"🌸"}
+function addFlowerButton(key){const f=F[key],g=document.querySelector("#descobrir .grid");g.insertAdjacentHTML("beforeend",`<button class="flowerbtn" onclick="openFlower('${key}')"><span>${safe(f.i)}</span>${safe(f.n)}</button>`)}
+function loadIdentified(){let a=[];try{a=JSON.parse(localStorage.getItem("identifiedFlowers")||"[]")}catch(e){}a.forEach(x=>{if(!F[x.key]){F[x.key]=x.f;addFlowerButton(x.key)}})}
+function addIdentified(r){
+  const name=String(r.nome_popular||"Flor").trim(),key=slug(name);let isNew=false;
+  if(!F[key]){
+    const cur=Array.isArray(r.curiosidades)?(r.curiosidades[0]||""):String(r.curiosidades||"");
+    F[key]={n:name,i:flowerEmoji(r.emoji),t:"🔬 "+(r.nome_cientifico||"Flor identificada")+(r.status_conservacao?" • 🌿 "+r.status_conservacao:""),
+      h:r.habitat_descricao||"Informação de habitat não disponível.",c:r.cuidados||"Precisa de luz, água e solo adequados à espécie.",
+      u:cur||"Cada flor tem sua própria história.",d:r.perigoso===true?"⚠️ "+(r.aviso||"Manuseie com cuidado."):"✅ Sem alerta especial."};
+    isNew=true;addFlowerButton(key);
+    try{const a=JSON.parse(localStorage.getItem("identifiedFlowers")||"[]");a.push({key,f:F[key]});localStorage.setItem("identifiedFlowers",JSON.stringify(a.slice(-30)))}catch(e){}
+  }
+  const f=F[key];
+  try{const s=JSON.parse(localStorage.getItem("savedFlowers")||"[]");if(!s.some(x=>x.name===f.n)){s.push({name:f.n,icon:f.i,curiosity:f.u});localStorage.setItem("savedFlowers",JSON.stringify(s))}}catch(e){}
+  return {key,isNew};
+}
+async function sendPhoto(){
+  const file=document.getElementById("photo").files?.[0];
+  if(!file){toast("Escolha uma foto primeiro 📸");return}
+  show("loading");
+  try{
+    const b64=await reducePhoto(file);
+    const resp=await fetch("/api/identificar",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+      grupo:GRUPO,tipo:file.type||"image/jpeg",tamanho:file.size,
+      body:{contents:[{parts:[{text:PROMPT_FLOR},{inline_data:{mime_type:"image/jpeg",data:b64}}]}],
+            generationConfig:{temperature:.2,responseMimeType:"application/json",responseSchema:SCHEMA_FLOR}}})});
+    const j=await resp.json().catch(()=>({}));
+    if(!resp.ok)throw new Error(j?.error?.message||"Não consegui analisar a foto agora. Tente de novo.");
+    const r=readResult(j);
+    if(!r)throw new Error("A resposta da IA veio num formato inesperado.");
+    show("descobrir");
+    if(r.identificado===false||r.fora_do_tema){toast(r.mensagem_backend||r.mensagem||"Não consegui identificar essa flor. Tente uma foto mais nítida. 🌿",6000);return}
+    const {key,isNew}=addIdentified(r);
+    toast((isNew?"🌸 ":"")+F[key].n+" identificada e salva no Livro Mágico!",4500);
+  }catch(e){show("descobrir");toast("⚠️ "+e.message,6000)}
+}
+loadIdentified();
 function save(){if(!current)return;const a=JSON.parse(localStorage.getItem("savedFlowers")||"[]");if(!a.some(x=>x.name===current.f.n)){a.push({name:current.f.n,icon:current.f.i,curiosity:current.f.u});localStorage.setItem("savedFlowers",JSON.stringify(a));toast("💾 Salva no Livro Mágico! +50 pontos")}else toast("Essa flor já está salva.")}
 function favorite(){toast("⭐ Flor adicionada aos favoritos!")}
-function renderSaved(){const a=JSON.parse(localStorage.getItem("savedFlowers")||"[]"),b=document.getElementById("saved");b.innerHTML=a.length?a.map(x=>`<div class="item"><b>${x.icon} ${x.name}</b><p>💡 ${x.curiosity}</p></div>`).join(""):"<p>🌱 Nenhuma flor salva ainda.</p>"}
+function renderSaved(){const a=JSON.parse(localStorage.getItem("savedFlowers")||"[]"),b=document.getElementById("saved");b.innerHTML=a.length?a.map(x=>`<div class="item"><b>${safe(x.icon)} ${safe(x.name)}</b><p>💡 ${safe(x.curiosity)}</p></div>`).join(""):"<p>🌱 Nenhuma flor salva ainda.</p>"}
 function listen(){if(!current)return;if("speechSynthesis"in window){speechSynthesis.cancel();const f=current.f,u=new SpeechSynthesisUtterance(f.n+". "+f.u+". "+f.h+". "+f.c);u.lang="pt-BR";speechSynthesis.speak(u);toast("🔊 O Professor está lendo.")}else toast("Leitura de voz não disponível.")}
-function ask(){const i=document.getElementById("question"),q=i.value.trim();if(!q)return;const c=document.getElementById("chat");c.innerHTML+=`<div class="msg me">${safe(q)}</div>`;const l=q.toLowerCase();let a=l.includes("polin")?"Muitas flores são visitadas por polinizadores, como abelhas e borboletas. 🐝🦋":l.includes("petala")||l.includes("pétala")?"As pétalas ajudam a deixar muitas flores chamativas e podem ajudar a atrair polinizadores. 🌸":"Escolha uma flor no jardim e eu conto habitat, cuidados e curiosidades. 🌿";c.innerHTML+=`<div class="msg">${a}</div>`;c.scrollTop=c.scrollHeight;i.value=""}
+function localAnswer(q){const l=q.toLowerCase();return l.includes("polin")?"Muitas flores são visitadas por polinizadores, como abelhas e borboletas. 🐝🦋":l.includes("petala")||l.includes("pétala")?"As pétalas ajudam a deixar muitas flores chamativas e podem ajudar a atrair polinizadores. 🌸":"Escolha uma flor no jardim e eu conto habitat, cuidados e curiosidades. 🌿"}
+let asking=false;
+async function ask(){const i=document.getElementById("question"),q=i.value.trim();if(!q||asking)return;asking=true;const c=document.getElementById("chat");c.innerHTML+=`<div class="msg me">${safe(q)}</div>`;i.value="";const b=document.createElement("div");b.className="msg";b.textContent="Pensando... 🌿";c.appendChild(b);c.scrollTop=c.scrollHeight;
+  try{const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:q,tema:"flores"})});const j=await r.json().catch(()=>({}));if(!r.ok||!j.resposta)throw new Error(j.erro||"Falha no chat");b.textContent=j.resposta}
+  catch(e){b.textContent=localAnswer(q)}
+  finally{asking=false;c.scrollTop=c.scrollHeight}}
 function lesson(){toast("📚 Aula especial: como as flores ajudam o jardim!")}
 function pronounce(){if("speechSynthesis"in window){const u=new SpeechSynthesisUtterance("flor");u.lang="pt-BR";u.rate=.65;speechSynthesis.cancel();speechSynthesis.speak(u)}toast("🗣️ Repita a palavra!")}
 function safe(t){return String(t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
@@ -375,15 +425,15 @@ function safe(t){return String(t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;"
 <script>
 PokedexAdaptador.iniciar({
   icone: "🌸", fauna: false,                 // fauna: true para animais
-  cor: "#fff9fc", 
+  cor: "#e95b94", cor2: "#2f7d4a",
   escuro: () => false,
   carregando: "🔎 Procurando pistas na foto...",
   // Campos que o front do grupo pede à IA e que você quer mostrar na ficha:
-  extras: info => [["🌿 Onde vive", info.habitat]],
+  extras: info => [["💧 Cuidados", info.cuidados]],
   // Aviso vermelho na ficha (ex.: planta venenosa):
   alerta: info => info.perigoso === true ? (info.aviso || "Cuidado! Peça ajuda a um adulto.") : "",
-  salvar: () => { document.getElementById("saveBtn").click(); document.getElementById("abaAlbum").click(); },
-  novaFoto: () => document.getElementById("fotoInput").click()
+  salvar: () => show("livro"),
+  novaFoto: () => { show("descobrir"); document.getElementById("photo").click(); }
 });
 </script>
 </body>
