@@ -5,7 +5,9 @@
 //  chaves (GEMINI_API_KEY, GEMINI_API_KEY_2 … _10) e a chave nunca aparece no
 //  navegador do aluno.
 //
-//  O front (index.html do grupo) manda:    { "message": "pergunta do aluno" }
+//  O front (index.html do grupo) manda:    { "message": "pergunta do aluno", "tema": "flores" }
+//  ("tema" é opcional: escolhe a personalidade da IA entre as que existem em
+//   TEMAS, mais abaixo. Sem "tema", vale a da Amazônia.)
 //  Este arquivo responde:                  { "resposta": "texto da IA" }
 //  Em caso de erro responde:               { "erro": "o que aconteceu" }
 //
@@ -21,15 +23,23 @@ const MODELO_RESERVA = process.env.GEMINI_MODELO_RESERVA !== undefined
   ? process.env.GEMINI_MODELO_RESERVA.trim()
   : "gemini-3.5-flash-lite";
 
-// Quem a IA "é" e o que ela pode responder. Este é o texto que os alunos
-// podem editar para mudar a personalidade do chat.
-const PERSONALIDADE = `Você é a IA da "Pokédex da Amazônia", uma assistente amigável para estudantes.
+// Quem a IA "é" e o que ela pode responder, uma personalidade por tema.
+// Cada grupo escolhe a sua mandando "tema" no pedido. Para criar outra, é só
+// acrescentar mais uma entrada aqui (o nome é o que o front vai mandar).
+const REGRAS_COMUNS = `
 Regras:
 - Responda sempre em português do Brasil, de forma simples, simpática e curta (no máximo 4 frases).
-- Fale somente sobre animais, plantas, habitats, rios, clima e conservação da Amazônia e da fauna e flora brasileiras.
-- Se a pergunta fugir desse tema, diga com educação que você só conversa sobre a Amazônia e sugira uma pergunta sobre o tema.
+- Se a pergunta fugir do tema, diga com educação que você só conversa sobre ele e sugira uma pergunta sobre o tema.
 - Se não tiver certeza de algo, diga que não tem certeza. Nunca invente dados.
 - Não use formatação especial (sem asteriscos, sem listas longas): é texto simples para um balão de conversa.`;
+
+const TEMAS = {
+  amazonia: `Você é a IA da "Pokédex da Amazônia", uma assistente amigável para estudantes.
+Fale somente sobre animais, plantas, habitats, rios, clima e conservação da Amazônia e da fauna e flora brasileiras.` + REGRAS_COMUNS,
+  flores: `Você é o "Professor das Flores", o assistente amigável do app "Mundo das Flores" para estudantes.
+Fale somente sobre flores, plantas ornamentais, jardinagem, pétalas, cores, perfumes, polinização, cuidados de cultivo e curiosidades do mundo das flores.` + REGRAS_COMUNS,
+};
+const TEMA_PADRAO = "amazonia";
 
 const TAMANHO_MAXIMO = 500;      // caracteres da pergunta
 const TROCAR_DE_CHAVE = [400, 403, 429];
@@ -100,8 +110,9 @@ module.exports = async (req, res) => {
     return;
   }
 
+  const tema = Object.prototype.hasOwnProperty.call(TEMAS, corpo.tema) ? corpo.tema : TEMA_PADRAO;
   const body = {
-    systemInstruction: { parts: [{ text: PERSONALIDADE }] },
+    systemInstruction: { parts: [{ text: TEMAS[tema] }] },
     contents: [{ role: "user", parts: [{ text: pergunta }] }],
     generationConfig: { temperature: 0.6, maxOutputTokens: 1024 },
   };
