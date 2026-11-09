@@ -20,26 +20,26 @@
 // o site é público.
 const GRUPO = {
   nome: "Aventura da Mata",
-  integrantes: "Richard",
+  integrantes: "Richard, Anny",
   escola: "Titto",
   turma: "IAT2",
-  tema: "Passaros, Frutas e Plantas",
-  pendencias: ["Missão 1, Missão 3, Missão 4, Missão 5 e Missão 6"]          // ex.: ["Missão 5", "Missão 6"]
+  tema: "Animais e Insetos",
+  pendencias: []          // ex.: ["Missão 5", "Missão 6"]
 };
 
 // Missão 1: quem a IA vai fingir ser
 // Exemplo (tema flores): "um botânico especialista em flores do Brasil"
-const ESPECIALISTA = "um botânico especialista em flores do Brasil";
+const ESPECIALISTA = "um zoologo especialista em animais do Brasil";
 
 // Missão 2: o que procurar na foto (uma ou duas palavras)
 // Aparece também na mensagem de "fora do tema":
 //   "🚫 Não reconhecemos porque isso parece ser uma melancia, e aqui a gente
 //    só reconhece <O_QUE_PROCURAR>."
-const O_QUE_PROCURAR = "Passaros, Frutas e Plantas do Brasil";
+const O_QUE_PROCURAR = "Animais e Insetos";
 
 // Missão 3: quanta certeza a IA precisa ter (número de 0 a 100, sem aspas)
 // Por que o grupo escolheu: ""
-const CERTEZA_MINIMA = 80;
+const CERTEZA_MINIMA = 90;
 
 // Missão 4: o porteiro
 function conferirFoto(foto) {
@@ -50,12 +50,12 @@ function conferirFoto(foto) {
 
 // Missão 5: quando a IA fica em dúvida (foto pouco nítida)
 function mensagemDeDuvida(r) {
-  return "🤔 Tenho só " + r.confianca + "% de certeza. Tenta outra foto, mais de perto!";
+  return "🍕 " + r.confianca + "%";
 }
 
 // Missão 6: quando a IA acerta
 function mensagemDeAcerto(r) {
-  return "🎉 Achei! É " + r.nome_popular + "! Que demais!";
+  return "Vixi, acertei!!! É um(a) " + r.nome_popular + "! Vamos tentar outra!";
 }
 
 // ----------------------------------------------------------------------------
