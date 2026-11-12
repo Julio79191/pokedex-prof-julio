@@ -90,9 +90,11 @@ button:focus-visible{outline:3px solid #52e477;outline-offset:3px}
           <div class="cameraIcon">📷</div>
           <h2>Tire uma foto de uma planta medicinal</h2>
           <p>Observe a planta, tire uma foto nítida e deixe a Pokédex procurar uma resposta.</p>
-          <input id="file" type="file" accept="image/*" capture="environment">
+          <input id="camera" type="file" accept="image/*" capture="environment">
+          <input id="file" type="file" accept="image/*">
           <div class="actions">
-            <button class="primary" id="choose" type="button">📸 Tirar / Escolher Foto</button>
+            <button class="primary" id="take" type="button">📸 Tirar foto</button>
+            <button class="primary" id="choose" type="button">🖼️ Escolher da galeria</button>
             <button class="secondary" id="discover" type="button" hidden>🔎 Descobrir planta</button>
           </div>
           <img id="preview" class="preview" alt="Foto selecionada">
@@ -123,9 +125,11 @@ button:focus-visible{outline:3px solid #52e477;outline-offset:3px}
 const file=document.getElementById('file'),choose=document.getElementById('choose'),discover=document.getElementById('discover'),preview=document.getElementById('preview'),status=document.getElementById('status'),result=document.getElementById('result'),warning=document.getElementById('warning'),nameEl=document.getElementById('name'),factsEl=document.getElementById('facts'),habitatEl=document.getElementById('habitat');
 const medalsButton=document.getElementById('medals'),albumButton=document.getElementById('album'),medalPanel=document.getElementById('medalPanel'),albumPanel=document.getElementById('albumPanel'),medalList=document.getElementById('medalList'),medalSummary=document.getElementById('medalSummary'),albumList=document.getElementById('albumList');
 let selected=null,plantAlbum=[];
+const camera=document.getElementById('camera'),take=document.getElementById('take');
+take.onclick=()=>camera.click();
 choose.onclick=()=>file.click();
-file.onchange=()=>{
-  selected=file.files?.[0]||null;
+file.onchange=camera.onchange=(e)=>{
+  selected=e.target.files?.[0]||null;
   if(!selected)return;
   if(!selected.type.startsWith('image/')){setStatus('Escolha um arquivo de imagem válido.','error');return}
   const reader=new FileReader();
@@ -226,7 +230,7 @@ PokedexAdaptador.iniciar({
   // Aviso vermelho na ficha (ex.: planta venenosa):
   alerta: info => info.perigoso === true ? (info.aviso || "Cuidado! Peça ajuda a um adulto.") : "",
   salvar: () => { document.getElementById("saveBtn").click(); document.getElementById("abaAlbum").click(); },
-  novaFoto: () => document.getElementById("fotoInput").click()
+  novaFoto: () => document.getElementById("file").click()
 });
 </script>
   
