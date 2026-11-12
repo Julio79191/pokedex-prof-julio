@@ -23,19 +23,19 @@ const GRUPO = {
   integrantes: "Richard, Anny",
   escola: "Titto",
   turma: "IAT2",
-  tema: "Animais e Insetos",
+  tema: "Aves, Frutas e Plantas",
   pendencias: []          // ex.: ["Missão 5", "Missão 6"]
 };
 
 // Missão 1: quem a IA vai fingir ser
 // Exemplo (tema flores): "um botânico especialista em flores do Brasil"
-const ESPECIALISTA = "um zoologo especialista em animais do Brasil";
+const ESPECIALISTA = "um ornitólogo especialista em aves do Brasil, um frutologo especialista em frutas do Brasil e um Botânico especialista em plantas do Brasil";
 
 // Missão 2: o que procurar na foto (uma ou duas palavras)
 // Aparece também na mensagem de "fora do tema":
 //   "🚫 Não reconhecemos porque isso parece ser uma melancia, e aqui a gente
 //    só reconhece <O_QUE_PROCURAR>."
-const O_QUE_PROCURAR = "Animais e Insetos";
+const O_QUE_PROCURAR = "Aves, Frutas e Plantas";
 
 // Missão 3: quanta certeza a IA precisa ter (número de 0 a 100, sem aspas)
 // Por que o grupo escolheu: ""
