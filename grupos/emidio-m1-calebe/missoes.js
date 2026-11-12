@@ -20,7 +20,7 @@
 // o site é público.
 const GRUPO = {
   nome: "Tsukikage",
-  integrantes: "Calebe, Lucos e Luis",
+  integrantes: "Calebe, Lucas e Luis",
   escola: "Emidio",
   turma: "IAM1",
   tema: "Repteis e anfibios",
@@ -55,7 +55,7 @@ function mensagemDeDuvida(r) {
 
 // Missão 6: quando a IA acerta
 function mensagemDeAcerto(r) {
-    return "achei! É " + r.nome_popular + " Volume 1 pag 177 1 balão de fala de call of the night";
+    return "achei! É " + r.nome_popular + " ! FAAAAAAAAAAAAAAAAAAAAAAAAH";
 }
 
 // ----------------------------------------------------------------------------
