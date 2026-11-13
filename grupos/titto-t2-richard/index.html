@@ -115,7 +115,7 @@
     <div class="card">
       <button class="primary" id="startCamera">📸 Tirar foto</button>
       <button class="primary" id="choosePhoto" style="margin-top:10px;background:linear-gradient(135deg,#1597ff,#36d5c4)">🖼️ Escolher foto</button>
-      <input id="fileInput" class="file-input" type="file" accept="image/jpeg,image/png,image/webp,image/*" capture="environment">
+      <input id="fileInput" class="file-input" type="file" accept="image/jpeg,image/png,image/webp,image/*">
       <p class="tiny" style="text-align:center;margin-bottom:0">Passarinhos 🐦 • Frutas 🍓 • Plantas 🌿</p>
     </div>
     <div class="card">
@@ -524,7 +524,7 @@ PokedexAdaptador.iniciar({
   // Aviso vermelho na ficha (ex.: planta venenosa):
   alerta: info => info.perigoso === true ? (info.aviso || "Cuidado! Peça ajuda a um adulto.") : "",
   salvar: () => { document.getElementById("saveBtn").click(); document.getElementById("abaAlbum").click(); },
-  novaFoto: () => document.getElementById("fotoInput").click()
+  novaFoto: () => document.getElementById("fileInput").click()
 });
 </script>
   
