@@ -59,6 +59,7 @@
   }
   .camera-icon{font-size:54px}
   .camera input{display:none}
+  .camera label.primary{display:inline-block;margin:6px}
   .primary,.secondary,.danger-btn{
     border:0;border-radius:16px;padding:13px 18px;cursor:pointer;font-weight:bold;
     transition:.2s transform,.2s opacity
@@ -135,7 +136,9 @@
           <div class="camera-icon">📸</div>
           <h3>Fotografe um animal</h3>
           <p>Escolha uma foto para começar sua descoberta.</p>
-          <label class="primary" for="photo">📷 Escolher foto</label>
+          <label class="primary" for="camera">📸 Tirar foto</label>
+          <input id="camera" type="file" accept="image/png,image/jpeg,image/jpg,image/webp" capture="environment">
+          <label class="primary" for="photo">🖼️ Escolher foto</label>
           <input id="photo" type="file" accept="image/png,image/jpeg,image/jpg,image/webp">
           <img id="preview" class="preview" alt="Foto escolhida">
           <div id="loadingCard" class="loading-card" style="display:none"><div class="loading-animal">🦜🐆</div><h3 id="loadingTitle">Preparando sua descoberta...</h3><p id="loadingFact">Você sabia? O Brasil tem uma das maiores diversidades de aves e mamíferos do mundo!</p><div class="fact-dots"><span></span><span></span><span></span></div></div><div id="loading" class="loading"><span class="spinner"></span> Analisando a foto...</div>
@@ -260,15 +263,18 @@ function startLoadingFacts(){const c=$("loadingCard"),f=$("loadingFact");c.style
 function stopLoadingFacts(){if(factTimer)clearInterval(factTimer);factTimer=null;$("loadingCard").style.display="none"}
 async function identify(file){$("loading").style.display="block";startLoadingFacts();showMessage("");try{const compactDataUrl=await resizeImage(file);const imageBase64=base64FromDataUrl(compactDataUrl);const prompt=`Você é um guia de uma expedição infantil sobre a fauna brasileira.\nAnalise a foto e identifique SOMENTE mamíferos ou aves do Brasil.\nNão chute. Se não houver certeza suficiente, use identificado=false.\nA confiança deve ser um número inteiro de 0 a 100.\nQuando identificado=true, informe nome comum em português, curiosidades curtas, habitat no Brasil, e se o animal pode oferecer perigo para uma criança.\nSe for perigoso, escreva um aviso simples. Não invente dados.`;const payload={modelo:"gemini-3.6-flash",body:{contents:[{parts:[{text:prompt},{inline_data:{mime_type:"image/jpeg",data:imageBase64}}]}],generationConfig:{temperature:0.2,responseMimeType:"application/json",responseSchema:{type:"object",properties:{identificado:{type:"boolean"},confianca:{type:"integer"},nome:{type:"string"},curiosidades:{type:"string"},habitat:{type:"string"},perigoso:{type:"boolean"},aviso_perigo:{type:"string"}},required:["identificado","confianca"]}}}};const response=await fetch("/api/identificar",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});if(!response.ok)throw new Error("servidor");const resposta=await response.json();const text=resposta?.candidates?.[0]?.content?.parts?.[0]?.text;if(typeof text!=="string")throw new Error("resposta");const result=normalizeResponse(JSON.parse(text));if(!result.identificado||!Number.isFinite(result.confianca)||result.confianca<80){stopLoadingFacts();$("loading").style.display="none";showMessage("Hmm... não consegui ter certeza. 🌿 Tente outra foto, de mais perto e com boa luz!");return}state.current={...result,image:compactDataUrl};$("animalName").textContent=result.nome;$("confidence").textContent="Certeza da identificação: "+result.confianca+"%";$("curiosities").textContent=result.curiosidades;$("habitat").textContent=result.habitat;$("dangerBox").style.display=result.perigoso?"block":"none";$("dangerText").textContent=result.aviso;stopLoadingFacts();$("loading").style.display="none";showScreen("result")}catch(error){console.error(error);stopLoadingFacts();$("loading").style.display="none";showMessage("Ops! A expedição encontrou um probleminha. 🌧️ Confira a internet e tente de novo.",true)}}
 
-$("photo").addEventListener("change", async e => {
+const onPhotoPicked = async e => {
   const file=e.target.files?.[0]; if(!file)return;
   const allowed=["image/png","image/jpeg","image/jpg","image/webp"];
   if(!allowed.includes(file.type)){showMessage("Escolha uma imagem PNG, JPG ou WebP. 📸",true);return}
   try{const preview=await resizeImage(file,1200,0.82);$("preview").src=preview;$("preview").style.display="block";identify(file)}catch(err){showMessage("Não consegui preparar essa imagem. Tente outra foto. 🌿",true)}
-});
+};
+$("photo").addEventListener("change", onPhotoPicked);
+$("camera").addEventListener("change", onPhotoPicked);
 
 $("againBtn").addEventListener("click", () => {
   $("photo").value = "";
+  $("camera").value = "";
   $("preview").style.display = "none";
   $("status").textContent = "";
   showScreen("home");
@@ -323,7 +329,7 @@ PokedexAdaptador.iniciar({
   // Aviso vermelho na ficha (ex.: planta venenosa):
   alerta: info => info.perigoso === true ? (info.aviso || "Cuidado! Peça ajuda a um adulto.") : "",
   salvar: () => { document.getElementById("saveBtn").click(); document.getElementById("abaAlbum").click(); },
-  novaFoto: () => document.getElementById("fotoInput").click()
+  novaFoto: () => document.getElementById("photo").click()
 });
 </script>
   
