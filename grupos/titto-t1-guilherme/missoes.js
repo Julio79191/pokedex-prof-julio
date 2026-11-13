@@ -50,12 +50,12 @@ function conferirFoto(foto) {
 
 // Missão 5: quando a IA fica em dúvida (foto pouco nítida)
 function mensagemDeDuvida(r) {
-    return "Fruta não encontrada" + r.confianca + "Melhore a resolução ou tire uma foto mais perto";
+    return "Fruta não encontrada. Porcentagem atingida: " + r.confianca + "%. Melhore a resolução ou tire uma foto mais perto";
 }
 
 // Missão 6: quando a IA acerta
 function mensagemDeAcerto(r) {
-    return "Sua fruta é" + r.nome_popular + "que delicia";
+    return "Sua fruta é " + r.nome_popular + " que delicia";
 }
 
 // ----------------------------------------------------------------------------
