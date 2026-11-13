@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>FloraDex - LAM as três frutas</title>
+<title>LAM as três frutas</title>
 <style>
 :root{
   --bg1:#082117;--bg2:#12402b;--card:#173f2e;--card2:#1d5039;--borda:#2f7a55;
@@ -103,8 +103,8 @@ ul{margin:4px 0 0;padding-left:22px;line-height:1.5}
 
 <header>
   <div class="frutas">🍓🍌🍇</div>
-  <h1>FloraDex</h1>
-  <p>LAM as três frutas • Plantas do Brasil</p>
+  <h1>LAM as três frutas</h1>
+  <p>Frutas do Brasil</p>
 </header>
 
 <main>
@@ -112,8 +112,8 @@ ul{margin:4px 0 0;padding-left:22px;line-height:1.5}
   <!-- TELA 1: tirar ou escolher a foto -->
   <section id="tela-descobrir" class="tela ativa">
     <div class="card">
-      <h2>🌿 Vamos descobrir uma planta?</h2>
-      <p class="suave">Tire uma foto agora ou escolha uma da galeria do aparelho. A IA tenta descobrir qual planta é.</p>
+      <h2>🍓 Vamos descobrir uma fruta?</h2>
+      <p class="suave">Tire uma foto agora ou escolha uma da galeria do aparelho. A IA tenta descobrir qual fruta é.</p>
 
       <div class="acoes">
         <button class="btn" id="btnCamera" type="button">📸 Tirar foto</button>
@@ -139,16 +139,16 @@ ul{margin:4px 0 0;padding-left:22px;line-height:1.5}
   <section id="tela-galeria" class="tela">
     <div class="card">
       <h2>🖼️ Minha galeria</h2>
-      <p class="suave">Plantas encontradas: <b id="contador">0</b>. Toque em uma planta para ver os detalhes.</p>
-      <div id="vazia">Nenhuma planta guardada ainda. Descubra uma e toque em “Salvar na galeria”! 🌱</div>
+      <p class="suave">Frutas encontradas: <b id="contador">0</b>. Toque em uma fruta para ver os detalhes.</p>
+      <div id="vazia">Nenhuma fruta guardada ainda. Descubra uma e toque em “Salvar na galeria”! 🍌</div>
       <div id="grade"></div>
     </div>
   </section>
 
 </main>
 
-<!-- detalhe de uma planta da galeria -->
-<div id="modal" role="dialog" aria-modal="true" aria-label="Detalhes da planta">
+<!-- detalhe de uma fruta da galeria -->
+<div id="modal" role="dialog" aria-modal="true" aria-label="Detalhes da fruta">
   <div class="caixa">
     <button id="fechar" type="button" aria-label="Fechar">✕</button>
     <img id="modalImg" alt="">
@@ -170,13 +170,13 @@ ul{margin:4px 0 0;padding-left:22px;line-height:1.5}
 /* ===== CONFIGURAÇÃO ===== */
 // A pasta do grupo vem do endereço da página (/grupos/<pasta>/). Se não achar, usa a do grupo.
 const GRUPO = (location.pathname.match(/\/grupos\/([^\/]+)/) || [])[1] || "titto-t2-pietro";
-const CHAVE_GALERIA = "floradex_galeria";   // onde a galeria fica salva no navegador
-const MAX_ITENS = 60;                       // máximo de plantas guardadas
+const CHAVE_GALERIA = "lam_frutas_galeria";   // onde a galeria fica salva no navegador
+const MAX_ITENS = 60;                       // máximo de frutas guardadas
 
 const $ = id => document.getElementById(id);
-let atual = null;      // última planta identificada (ainda não salva)
+let atual = null;      // última fruta identificada (ainda não salva)
 let ocupado = false;   // true enquanto a IA analisa
-let abertoId = null;   // planta aberta na janela de detalhe
+let abertoId = null;   // fruta aberta na janela de detalhe
 
 /* ===== UTILIDADES ===== */
 const esc = t => String(t == null ? "" : t).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -229,7 +229,7 @@ function lerResultado(j) {
 }
 function normalizar(r) {
   return {
-    nome: String(r.nome_popular || "Planta encontrada"),
+    nome: String(r.nome_popular || "Fruta encontrada"),
     cientifico: String(r.nome_cientifico || ""),
     certeza: Math.round(Number(r.confianca) || 0),
     conservacao: String(r.status_conservacao || ""),
@@ -246,7 +246,7 @@ ${d.certeza ? `<span class="chip">🎯 Certeza: ${d.certeza}%</span>` : ""}
 ${d.conservacao ? `<span class="chip">🛡️ ${esc(d.conservacao)}</span>` : ""}
 ${d.onde ? `<span class="chip">📍 ${esc(d.onde)}</span>` : ""}
 </div>
-${d.habitat ? `<h4>🌎 Onde vive</h4><p>${esc(d.habitat)}</p>` : ""}
+${d.habitat ? `<h4>🌳 Onde cresce</h4><p>${esc(d.habitat)}</p>` : ""}
 ${d.curiosidades.length ? `<h4>💡 Curiosidades</h4><ul>${d.curiosidades.map(c => `<li>${esc(c)}</li>`).join("")}</ul>` : ""}`;
 }
 
@@ -289,7 +289,7 @@ async function identificar(file) {
     const r = lerResultado(j);
     if (!r) throw new Error("A resposta da IA veio num formato inesperado.");
     if (r.identificado === false || r.fora_do_tema) {
-      setStatus(r.mensagem_backend || r.mensagem || "Não consegui identificar com segurança. Tente uma foto mais nítida. 🌿", "aviso");
+      setStatus(r.mensagem_backend || r.mensagem || "Não consegui identificar com segurança. Tente uma foto mais nítida. 🍓", "aviso");
       return;
     }
 
@@ -328,11 +328,11 @@ function salvarNaGaleria() {
   if (!atual || atual.salvo) return;
   const g = lerGaleria();
   if (g.some(x => String(x.nome).toLowerCase() === atual.d.nome.toLowerCase())) {
-    toast("Essa planta já está na galeria 🌿"); marcarSalvo(); return;
+    toast("Essa fruta já está na galeria 🍓"); marcarSalvo(); return;
   }
   g.unshift({ id: String(Date.now()), data: new Date().toLocaleDateString("pt-BR"), thumb: atual.thumb, ...atual.d });
-  if (!gravarGaleria(g.slice(0, MAX_ITENS))) { toast("Sem espaço no navegador. Remova alguma planta da galeria."); return; }
-  marcarSalvo(); renderGaleria(); toast("🌿 Salva na galeria!");
+  if (!gravarGaleria(g.slice(0, MAX_ITENS))) { toast("Sem espaço no navegador. Remova alguma fruta da galeria."); return; }
+  marcarSalvo(); renderGaleria(); toast("🍓 Salva na galeria!");
 }
 $("btnSalvar").addEventListener("click", salvarNaGaleria);
 
@@ -362,7 +362,7 @@ $("btnRemover").addEventListener("click", () => {
   const g = lerGaleria(), x = g.find(i => i.id === abertoId); if (!x) return;
   if (!confirm("Remover " + x.nome + " da galeria?")) return;
   gravarGaleria(g.filter(i => i.id !== abertoId));
-  fecharModal(); renderGaleria(); toast("Planta removida da galeria.");
+  fecharModal(); renderGaleria(); toast("Fruta removida da galeria.");
 });
 
 renderGaleria();
@@ -371,7 +371,7 @@ renderGaleria();
 <!--
   Liga este front ao back-end e à ficha padrão em pop-up (comum/ficha.js e comum/adaptador.js).
   - esconder: o resultado da própria página, para a ficha não aparecer duas vezes;
-  - salvar: o botão "💾 Salvar no álbum" do pop-up guarda a planta na Galeria e abre essa tela;
+  - salvar: o botão "💾 Salvar no álbum" do pop-up guarda a fruta na Galeria e abre essa tela;
   - novaFoto: o botão "🔍 Reconhecer outra" do pop-up abre a galeria de fotos do aparelho.
   (Não usamos "extras" nem "alerta": este front não pede campos extras à IA.)
 -->
@@ -379,7 +379,7 @@ renderGaleria();
 <script src="/comum/adaptador.js"></script>
 <script>
 PokedexAdaptador.iniciar({
-  icone: "🌿", fauna: false,                 // fauna: true para animais
+  icone: "🍓", fauna: false,                 // fauna: true para animais
   cor: "#5be38a", cor2: "#4cc9f0",
   escuro: () => true,
   noturno: { fundo: "#0d2b1e", texto: "#eafff1", suave: "#a9d9bd" },
