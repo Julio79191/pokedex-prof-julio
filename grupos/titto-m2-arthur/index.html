@@ -50,7 +50,7 @@ button{background:#22c55e;border:0;padding:12px 18px;border-radius:15px;cursor:p
 <div class="caixa">
 <h2>Bem-vindo ao WitAnimals!</h2>
 <p>Descubra mamíferos, curiosidades, habitats e sons.</p>
-<button onclick="abrir('safari')">🚀 Começar aventura</button>
+<button onclick="abrir('identificar')">🚀 Começar aventura</button>
 </div>
 </section>
 
@@ -80,6 +80,8 @@ button{background:#22c55e;border:0;padding:12px 18px;border-radius:15px;cursor:p
 <div class="upload-icone">📷</div>
 <h3>Fotografe um animal</h3>
 <p>Escolha uma foto para começar sua descoberta.</p>
+<button id="idCamera" class="btn-foto" onclick="document.getElementById('cameraInput').click()">📸 Tirar foto</button>
+<input type="file" id="cameraInput" accept="image/*" capture="environment" hidden>
 <button id="idEscolher" class="btn-foto" onclick="document.getElementById('fotoInput').click()">📷 Escolher foto</button>
 <input type="file" id="fotoInput" accept="image/*" hidden>
 <div><img id="idPreview" alt="Foto escolhida" style="display:none"></div>
@@ -196,10 +198,10 @@ function lerResultado(j){
 
 async function identificarFoto(file){
   const status=document.getElementById("idStatus"), res=document.getElementById("idResultado"),
-        btn=document.getElementById("idEscolher"), prev=document.getElementById("idPreview");
+        btn=document.getElementById("idEscolher"), cam=document.getElementById("idCamera"), prev=document.getElementById("idPreview");
   ultimoResultado=null; res.style.display="none";
   prev.src=URL.createObjectURL(file); prev.style.display="inline-block";
-  status.textContent="🔎 Analisando a foto..."; btn.disabled=true;
+  status.textContent="🔎 Analisando a foto..."; btn.disabled=cam.disabled=true;
   try{
     const imagem=await reduzirImagem(file);
     const resp=await fetch("/api/identificar",{
@@ -224,14 +226,16 @@ async function identificarFoto(file){
   }catch(e){
     status.textContent="⚠️ "+e.message;
   }finally{
-    btn.disabled=false;
+    btn.disabled=cam.disabled=false;
   }
 }
 
-document.getElementById("fotoInput").addEventListener("change",e=>{
+const aoEscolherFoto=e=>{
   const f=e.target.files[0]; e.target.value="";
   if(f) identificarFoto(f);
-});
+};
+document.getElementById("fotoInput").addEventListener("change",aoEscolherFoto);
+document.getElementById("cameraInput").addEventListener("change",aoEscolherFoto);
 
 /* Salva o último animal identificado no fim da lista da Pokédex */
 function salvarAnimal(){
