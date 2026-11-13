@@ -293,7 +293,8 @@ header,main,footer{position:relative;z-index:1}
 <p>Este site agora é focado somente em flores, com tema rosa e verde.</p>
 <div class="row"><input id="q" placeholder="Qual flor você quer descobrir?"><button class="search" onclick="searchFlower()">🔎 PESQUISAR</button></div>
 <div class="photo">
-<label>📸 Escolher foto<input id="photo" type="file" accept="image/*" onchange="preview(event)"></label>
+<label>📷 Tirar foto<input id="camera" type="file" accept="image/*" capture="environment" onchange="preview(event)"></label>
+<label>🖼️ Escolher foto<input id="photo" type="file" accept="image/*" onchange="preview(event)"></label>
 <button class="search" onclick="sendPhoto()">🌸 ENVIAR FOTO</button>
 </div>
 <img id="preview" alt="Prévia">
@@ -352,14 +353,14 @@ lavanda:{n:"Lavanda",i:"💜",t:"💜 Perfumada • 🐝 Polinizadores",h:"Locai
 jasmim:{n:"Jasmim",i:"🤍",t:"🤍 Perfumado • 🌿 Jardim",h:"Muitas espécies são cultivadas em jardins.",c:"Precisa de luz e água adequadas à espécie.",u:"Muitas espécies são conhecidas por suas flores perfumadas.",d:"✅ Sem alerta especial nesta demonstração."},
 hibisco:{n:"Hibisco",i:"🌺",t:"🌺 Ornamental • 🌿 Arbusto",h:"Jardins e regiões de clima adequado à espécie.",c:"Gosta de luz e rega adequada.",u:"As flores grandes e coloridas são muito chamativas.",d:"✅ Sem alerta especial nesta demonstração."}
 };
-let current=null, photoUrl=null;
+let current=null, photoUrl=null, chosenFile=null;
 
 function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");if(id==="livro")renderSaved();if(id==="conquistas")renderTrophies();scrollTo(0,0)}
 function toast(t,ms=1600){const e=document.getElementById("toast");e.textContent=t;e.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>e.style.display="none",ms)}
 function picture(key){const f=F[key],c=document.createElement("canvas");c.width=800;c.height=500;const x=c.getContext("2d");const g=x.createLinearGradient(0,0,800,500);g.addColorStop(0,"#fff0f6");g.addColorStop(1,"#e6f7ea");x.fillStyle=g;x.fillRect(0,0,800,500);x.font="220px Arial";x.textAlign="center";x.textBaseline="middle";x.fillText(f.i,400,235);x.fillStyle="#2f7d4a";x.font="bold 38px Arial";x.fillText(f.n,400,430);return c.toDataURL()}
 function openFlower(key, img=null){const f=F[key];if(!f)return;current={key,f};document.getElementById("rname").textContent=f.n;document.getElementById("rtags").textContent=f.t;document.getElementById("rhab").textContent="🏡 Habitat: "+f.h;document.getElementById("rcare").textContent="💧 Cuidados: "+f.c;document.getElementById("rcur").textContent="💡 Curiosidade: "+f.u;document.getElementById("rdanger").textContent=f.d;document.getElementById("rimg").src=img||picture(key);show("resultado")}
 function searchFlower(){const q=(document.getElementById("q").value||"").trim().toLowerCase();if(!q){toast("Digite o nome de uma flor 🌸");return}const k=Object.keys(F).find(k=>q.includes(k)||F[k].n.toLowerCase().includes(q));if(k)openFlower(k);else toast("Essa flor ainda não está no jardim desta versão. 🌿")}
-function preview(e){const f=e.target.files?.[0];if(!f)return;photoUrl=URL.createObjectURL(f);const p=document.getElementById("preview");p.src=photoUrl;p.style.display="block";toast("Foto pronta! Toque em ENVIAR FOTO.")}
+function preview(e){const f=e.target.files?.[0];if(!f)return;chosenFile=f;photoUrl=URL.createObjectURL(f);const p=document.getElementById("preview");p.src=photoUrl;p.style.display="block";toast("Foto pronta! Toque em ENVIAR FOTO.")}
 /* ===== IDENTIFICAR FLOR PELA FOTO (usa /api/identificar, como os outros grupos) ===== */
 const GRUPO=(location.pathname.match(/\/grupos\/([^\/]+)/)||[])[1]||"";
 const PROMPT_FLOR='Identifique a flor da foto. Além dos campos de sempre, preencha: "emoji" (UM único emoji que represente essa flor, como 🌹 🌻 🌷 🌺 🌼 🪻 🪷 🌸 💐 ou 🏵️), "cuidados" (uma frase curta com cuidados de cultivo: luz, água e solo), "perigoso" (true se a planta for tóxica ou tiver espinhos) e "aviso" (uma frase curta de segurança, ou texto vazio se não houver).';
@@ -386,7 +387,7 @@ function addIdentified(r){
   return {key,isNew};
 }
 async function sendPhoto(){
-  const file=document.getElementById("photo").files?.[0];
+  const file=chosenFile;
   if(!file){toast("Escolha uma foto primeiro 📸");return}
   show("loading");
   try{
