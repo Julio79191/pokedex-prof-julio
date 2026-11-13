@@ -185,7 +185,10 @@
       <h2>📸 Vamos descobrir um animal?</h2>
       <p>Escolha uma foto de um animal para o Simba investigar.</p>
 
-      <label class="button blue" for="photoInput">Escolher foto</label>
+      <label class="button blue" for="cameraInput">📷 Tirar foto</label>
+      <input id="cameraInput" type="file" accept="image/*" capture="environment">
+
+      <label class="button blue" for="photoInput">🖼️ Escolher foto</label>
       <input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp,image/*">
 
       <img id="preview" alt="Foto escolhida">
@@ -230,8 +233,10 @@
   let selectedFile = null;
   let lastAnimalName = "";
 
-  photoInput.addEventListener("change", () => {
-    selectedFile = photoInput.files && photoInput.files[0];
+  const cameraInput = document.getElementById("cameraInput");
+
+  const aoEscolherFoto = (e) => {
+    selectedFile = e.target.files && e.target.files[0];
 
     result.style.display = "none";
     status.textContent = "";
@@ -251,7 +256,10 @@
     };
 
     reader.readAsDataURL(selectedFile);
-  });
+  };
+
+  photoInput.addEventListener("change", aoEscolherFoto);
+  cameraInput.addEventListener("change", aoEscolherFoto);
 
   function falarSimba(nome) {
     if (!("speechSynthesis" in window)) return;
@@ -426,7 +434,7 @@ PokedexAdaptador.iniciar({
   // Aviso vermelho na ficha (ex.: planta venenosa):
   alerta: info => info.perigoso === true ? (info.aviso || "Cuidado! Peça ajuda a um adulto.") : "",
   salvar: () => { document.getElementById("saveBtn").click(); document.getElementById("abaAlbum").click(); },
-  novaFoto: () => document.getElementById("fotoInput").click()
+  novaFoto: () => document.getElementById("photoInput").click()
 });
 </script>
  
